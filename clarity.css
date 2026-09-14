@@ -34,11 +34,21 @@
 .oracle-shot.board { grid-column: span 2; background: transparent; }
 .oracle-shot.board img { height: auto; object-fit: contain; }
 
-.ornament-editorial { display: grid; grid-template-columns: 1.05fr .95fr; grid-auto-rows: 20rem; gap: clamp(.8rem, 1.6vw, 1.5rem); }
-.ornament-shot.model-main, .ornament-shot.model-ring { grid-row: span 2; }
-.ornament-shot.still-life { grid-column: span 2; }
-.ornament-shot.small-detail { min-height: 15rem; }
-.ornament-shot.profile { grid-column: span 2; aspect-ratio: 2.1; }
+.ornament-editorial { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: clamp(.8rem, 1.6vw, 1.5rem); align-items: start; }
+.ornament-shot { background: transparent; }
+.ornament-shot img { height: auto; object-fit: contain; }
+.ornament-shot.jade-main { grid-column: span 7; }
+.ornament-shot.jade-worn { grid-column: span 5; }
+.ornament-shot.jade-body { grid-column: span 4; }
+.ornament-shot.jade-ring { grid-column: span 4; }
+.ornament-shot.jade-still { grid-column: span 4; }
+.ornament-shot.model-close { grid-column: span 5; }
+.ornament-shot.earring-pair { grid-column: span 4; }
+.ornament-shot.silver-pair { grid-column: span 3; }
+.ornament-shot.ring-hand { grid-column: span 5; }
+.ornament-shot.earring-cluster { grid-column: span 4; }
+.ornament-shot.model-pair { grid-column: span 6; }
+.ornament-shot.jade-object { grid-column: span 6; }
 
 /* Minimal personal opening: the studio image is intentionally the full visual. */
 .hero.hero-portrait {
@@ -99,7 +109,8 @@
   .oracle-editorial { grid-template-columns: 1fr; gap: .7rem; }
   .oracle-shot.opening, .oracle-shot.board { grid-column: span 1; }
   .oracle-shot.portrait { grid-row: span 1; min-height: auto; aspect-ratio: .72; }
-  .ornament-editorial { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 12rem; gap: .7rem; }
-  .ornament-shot.still-life, .ornament-shot.profile { grid-column: span 2; }
+  .ornament-editorial { grid-template-columns: repeat(2, 1fr); gap: .7rem; }
+  .ornament-shot.jade-main, .ornament-shot.jade-worn, .ornament-shot.jade-body, .ornament-shot.jade-ring, .ornament-shot.jade-still, .ornament-shot.model-close, .ornament-shot.earring-pair, .ornament-shot.silver-pair, .ornament-shot.ring-hand, .ornament-shot.earring-cluster, .ornament-shot.model-pair, .ornament-shot.jade-object { grid-column: span 1; }
+  .ornament-shot.jade-main, .ornament-shot.jade-worn { grid-column: span 2; }
   .detail h1 { max-width: 10ch; font-size: clamp(3rem, 13vw, 4.5rem); line-height: .91; }
 }
