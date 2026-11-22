@@ -22,204 +22,243 @@
       location.replace(to || './');
     })();
   </script>
-<meta name="theme-color" content="#f7f4ee"><!-- ds-allow-hardcode: the theme-color meta needs a literal colour -->
+<meta name="theme-color" content="#0e0e0e"><!-- ds-allow-hardcode: the theme-color meta needs a literal colour -->
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a2bc3'/%3E%3Cpath d='M7 8h18v4h-7v12h-4V12H7z' fill='%23f6f5f1'/%3E%3C/svg%3E" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
 <style>
   /* ds-allow-hardcode:start: standalone homepage prototype with its own local tokens, not part of the site's design system */
-  /* Direction (unslop pass, 2026-11-22)
-     Product: the portfolio of a fashion-trained designer of hardware and wearables people wear and touch.
-     Character: tactile, quiet, exact.
-     World: a pattern-cutting studio. Warm paper, fabric, soft fitting-room light; cobalt from the resume and the site icon.
-     Moments: the Eunoia studio photo in the hero; the work index told in real photographs.
-     Signature: the stitch, a running dashed line, used only for dividers and link underlines. */
+  /* Spray wall, third pass (2026-11-22)
+     The user: dark wall all the way down, no name sprayed, no blue; and the feel of a type-led studio site
+     (black and white, dense small information against very large titles, generous space, no decoration).
+     So: one black page, one sans family. The opening is a can spraying a single off-white ring onto a
+     halftone dot grid, with overspray and three drips. Then the page arrives: small information blocks
+     across the top, a short note on the left, and the greeting set very large along the bottom.
+     Afterwards the ring breathes, the dots lean away from the cursor, and pressing sprays a little paint.
+     The wall runs the length of the page: grey marks are sprayed in the empty space around the work as it
+     scrolls in, and a last white ring by the contact line answers the first. */
   :root {
-    --paper: #f7f4ee;
-    --raised: #efe9df;
-    --ink: #1f1b16;
-    --ink-2: #5e554a;
-    --ink-3: #74695c;          /* muted: meta and captions, about 4.9:1 on paper */
-    --line: rgba(31, 27, 22, .1);
-    --stitch: rgba(116, 105, 92, .55);
-    --accent: #1a2bc3;         /* cobalt, the resume's and the site icon's colour */
-    --accent-press: #1522a0;
-    --on-accent: #ffffff;
-    --dark: #161513;
-    --on-dark: #efe9de;
-    --on-dark-2: #aaa398;
-    --dark-line: rgba(239, 233, 222, .1);
-    --f-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
-    --f-serif: "Instrument Serif", Georgia, serif;
+    --bg: #0e0e0e;            /* the wall, and the whole page */
+    --raised: #1a1a1a;        /* behind images while they load */
+    --ink: #f4f2ee;
+    --ink-2: #b3b0aa;
+    --ink-3: #8a8780;         /* meta and captions, about 5.4:1 on the wall */
+    --line: rgba(244, 242, 238, .14);
+    --stitch: rgba(244, 242, 238, .3);
+    --wall-dot: rgba(244, 242, 238, .12);
+    --wall-line: rgba(244, 242, 238, .32);
+    --paint: #f4f2ee;         /* the opening ring and the closing ring */
+    --paint-2: #5b5852;       /* the marks around the work: grey, so text and photos stay first */
+    --on-ink: #0e0e0e;
+    --f: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
     --ease: cubic-bezier(.22, 1, .36, 1);
     --gut: clamp(24px, 4.4vw, 64px);
-    --max: 1344px;
+    --max: 1440px;
+    /* type: very large titles against small dense text */
+    --t-hero: clamp(56px, 9.2vw, 176px);
+    --t-xl: clamp(44px, 5vw, 96px);
+    --t-l: clamp(30px, 2.5vw, 44px);
+    --t-s: 13px;
   }
   * { box-sizing: border-box; }
-  html { background: var(--paper); scroll-behavior: smooth; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--f-sans); -webkit-font-smoothing: antialiased; }
+  html { background: var(--bg); scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 16px/1.55 var(--f); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--ink); color: var(--bg); }
   a { color: inherit; }
   img { display: block; max-width: 100%; height: auto; }
   i { font-style: normal; color: var(--ink); }
+  p { margin: 0; }
   .nb { white-space: nowrap; }
   .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
-  :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
-  .skip { position: absolute; left: 16px; top: -56px; z-index: 10; padding: 8px 12px; border-radius: 8px; background: var(--ink); color: var(--paper); font-size: 14px; text-decoration: none; }
+  .grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
+  .skip { position: absolute; left: 16px; top: -56px; z-index: 10; padding: 8px 12px; border-radius: 8px; background: var(--ink); color: var(--bg); font-size: 14px; text-decoration: none; }
   .skip:focus { top: 12px; }
 
-  /* the stitch: a running dashed line, the page's one signature detail */
+  /* small text, the counterweight to the big titles */
+  .small { font-size: var(--t-s); line-height: 1.45; color: var(--ink-2); }
+  .small b { font-weight: 500; color: var(--ink); }
+  .label { font-size: var(--t-s); line-height: 1.45; color: var(--ink-3); }
+
+  /* the stitch: a running dashed line for dividers and link underlines */
   .stitched { position: relative; }
   .stitched::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: repeating-linear-gradient(90deg, var(--stitch) 0 6px, rgba(0, 0, 0, 0) 6px 12px); }
   .sew { position: relative; text-decoration: none; }
-  .sew::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: repeating-linear-gradient(90deg, currentColor 0 4px, rgba(0, 0, 0, 0) 4px 8px); transform: scaleX(0); transform-origin: left center; transition: transform .45s var(--ease); }
+  .sew::after { content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: repeating-linear-gradient(90deg, currentColor 0 4px, rgba(0, 0, 0, 0) 4px 8px); transform: scaleX(0); transform-origin: left center; transition: transform .45s var(--ease); }
   .sew:hover::after, .sew:focus-visible::after, a:hover .sew::after, a:focus-visible .sew::after { transform: scaleX(1); }
 
-  /* nav */
-  .nav { height: 64px; display: flex; align-items: center; justify-content: space-between; }
-  .brand { font: 500 16px/1 var(--f-sans); text-decoration: none; }
-  .nav ul { display: flex; gap: 28px; margin: 0; padding: 0; list-style: none; }
-  .nav ul a { font-size: 14px; color: var(--ink-2); transition: color .15s var(--ease); }
-  .nav ul a:hover { color: var(--ink); }
+  /* top: a row of small information blocks, sitting on the wall */
+  .top { position: absolute; top: 0; left: 0; right: 0; z-index: 3; }
+  .top .grid { padding-top: 24px; align-items: start; }
+  .brand { grid-column: 1 / span 3; font: 500 17px/1.2 var(--f); letter-spacing: -.01em; text-decoration: none; }
+  .brand span { display: block; margin-top: 4px; font-size: var(--t-s); font-weight: 400; color: var(--ink-2); letter-spacing: 0; }
+  .menu { grid-column: 4 / span 2; margin: 0; padding: 0; list-style: none; }
+  .menu a { font-size: var(--t-s); line-height: 1.6; color: var(--ink-2); transition: color .15s var(--ease); }
+  .menu a:hover { color: var(--ink); }
+  .where { grid-column: 6 / span 2; }
+  .school { grid-column: 8 / span 2; }
+  .open { grid-column: 10 / span 2; }
+  .top .pill { grid-column: 12; justify-self: end; }
+  .pill { display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: 999px; background: var(--ink); color: var(--on-ink); font: 500 13px/1 var(--f); text-decoration: none; transition: background-color .15s var(--ease), transform .12s var(--ease); }
+  .pill:hover { background: var(--ink-2); }
+  .pill:active { transform: scale(.98); }
 
-  /* hero: an asymmetric split, the words on the calm side, the photograph carrying the colour */
-  /* a short hero with no picture: one line on calm paper, then the work begins on the same screen */
-  .hero { padding-top: clamp(120px, 22vh, 220px); padding-bottom: clamp(40px, 6vh, 64px); } /* top and bottom only, so the side gutter of .wrap stays */
-  .hero + .section { padding-top: 48px; }
-  .hero h1 { margin: 0; font: 400 clamp(36px, 3.2vw, 48px)/1.1 var(--f-serif); letter-spacing: -.01em; }
-  .actions { display: flex; align-items: center; gap: 28px; margin-top: 32px; }
-  .btn { display: inline-flex; align-items: center; height: 48px; padding: 0 20px; border-radius: 10px; background: var(--accent); color: var(--on-accent); font: 500 15px/1 var(--f-sans); text-decoration: none; transition: background-color .15s var(--ease), transform .12s var(--ease); }
-  .btn:hover { background: var(--accent-press); }
-  .btn:active { transform: scale(.98); }
-  .text-link { font: 500 15px/1 var(--f-sans); color: var(--ink); }
+  /* the wall */
+  .wall { position: relative; height: 100vh; height: 100svh; min-height: 660px; }
+  .revealed .wall { cursor: crosshair; }
+  /* one canvas fixed behind the whole page draws the wall; the page sits on top of it */
+  #spray { position: fixed; inset: 0; z-index: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+  main, .foot { position: relative; z-index: 1; }
+  .note { position: absolute; z-index: 2; left: 0; right: 0; top: 34%; pointer-events: none; }
+  .note .inner { grid-column: 1 / span 4; }
+  .note .label { margin-bottom: 10px; }
+  .note p:not(.label) { max-width: 30ch; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  .foot-of-wall { position: absolute; z-index: 2; left: 0; right: 0; bottom: clamp(28px, 5vh, 48px); pointer-events: none; }
+  .foot-of-wall .row { display: flex; justify-content: space-between; align-items: baseline; padding-bottom: 14px; }
+  .wall h1 { margin: 0; font: 500 var(--t-hero)/.9 var(--f); letter-spacing: -.045em; white-space: nowrap; }
+  @media (max-width: 760px) { .wall h1 { white-space: normal; } } /* phones are not designed yet; this only stops the greeting running off the screen */
+  .skip-intro { display: none; position: absolute; z-index: 4; right: var(--gut); bottom: clamp(28px, 5vh, 48px); height: 40px; align-items: center; padding: 0 16px; border: 1px solid var(--wall-line); border-radius: 999px; background: transparent; color: var(--ink); font: 500 13px/1 var(--f); cursor: pointer; transition: background-color .15s var(--ease), color .15s var(--ease), opacity .3s var(--ease), visibility .3s; }
+  .js .skip-intro { display: inline-flex; }
+  .skip-intro:hover { background: var(--ink); color: var(--bg); }
+  .revealed .skip-intro { opacity: 0; visibility: hidden; }
 
-  /* one entrance on load: the hero rises a few pixels, with a short stagger */
-  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  .enter > * { animation: rise .5s var(--ease) both; }
-  .enter > *:nth-child(2) { animation-delay: .05s; }
-  .enter > *:nth-child(3) { animation-delay: .1s; }
-  .enter > *:nth-child(4) { animation-delay: .15s; }
-  .enter > *:nth-child(5) { animation-delay: .2s; }
+  /* what arrives after the paint: the information row, the note, the greeting */
+  .reveal { transition: opacity .7s var(--ease), transform .7s var(--ease); }
+  .js:not(.revealed) .reveal { opacity: 0; transform: translateY(12px); }
+  .revealed .note { transition-delay: .12s; }
+  .revealed .foot-of-wall { transition-delay: .22s; }
 
-  /* sections */
-  .section { padding-top: 112px; }
-  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-bottom: 24px; }
-  .sec-head h2 { margin: 0; font: 400 clamp(32px, 2.6vw, 38px)/1.1 var(--f-serif); letter-spacing: -.01em; } /* a step below the greeting, which stays the largest line */
-  .sec-head p { margin: 0; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  /* sections: a very large title against a line of small meta */
+  .section { padding-top: 160px; }
+  .sec-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding-bottom: 28px; }
+  .sec-head h2 { margin: 0; font: 500 var(--t-xl)/.95 var(--f); letter-spacing: -.04em; }
+  .sec-head h2 sup { margin-left: 8px; font-size: var(--t-s); font-weight: 400; letter-spacing: 0; color: var(--ink-3); vertical-align: top; position: relative; top: .55em; }
+  .sec-head p { padding-bottom: 6px; text-align: right; }
 
-  /* selected work: an index in photographs, sizes deliberately unequal */
-  .work { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 88px; padding-top: 48px; }
+  /* selected work */
+  .work { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 104px; padding-top: 40px; }
   .item { display: grid; align-content: start; gap: 20px; color: inherit; text-decoration: none; }
-  .item-img { margin: 0; overflow: hidden; border-radius: 16px; background: var(--raised); }
+  .item-img { margin: 0; overflow: hidden; border-radius: 12px; background: var(--raised); }
   .item-img img { width: 100%; height: 100%; object-fit: cover; }
-  .item-meta { display: flex; gap: 16px; margin: 0; font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
-  .item h3 { margin: 8px 0 0; font: 400 40px/1.08 var(--f-serif); letter-spacing: -.02em; transition: color .15s var(--ease); }
-  .item:hover h3 { color: var(--accent); }
-  .item-line { margin: 12px 0 0; max-width: 34rem; font-size: 17px; line-height: 1.5; color: var(--ink-2); }
-  .item-proof { margin: 8px 0 0; max-width: 34rem; font-size: 15px; line-height: 1.55; color: var(--ink-3); }
-  .item-more { display: inline-block; margin-top: 20px; color: var(--accent); font: 500 15px/1 var(--f-sans); }
+  .item-meta { display: flex; gap: 16px; font-variant-numeric: tabular-nums; }
+  .item h3 { margin: 10px 0 0; font: 500 var(--t-l)/1 var(--f); letter-spacing: -.03em; }
+  .item-line { margin-top: 14px; max-width: 34rem; font-size: 17px; line-height: 1.45; color: var(--ink-2); }
+  .item-proof { margin-top: 10px; max-width: 34rem; font-size: 14px; line-height: 1.55; color: var(--ink-3); }
+  .item-more { display: inline-block; margin-top: 20px; font: 500 14px/1 var(--f); }
   .i-eunoia { grid-column: 1 / -1; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: 24px; align-items: end; }
   .i-eunoia .item-img { aspect-ratio: 3 / 2; }
   .i-wonderorb { grid-column: 1 / span 7; }
   .i-wonderorb .item-img { aspect-ratio: 16 / 9; }
   .i-fadence { grid-column: 8 / span 5; }
-  .i-fadence .item-img { aspect-ratio: 4 / 3; background: linear-gradient(180deg, #dfe1e3 0%, #c3c7cc 100%); }
+  .i-fadence .item-img { aspect-ratio: 4 / 3; background: linear-gradient(180deg, #262626 0%, #181818 100%); }
   .i-fadence .item-img img { object-position: 50% 18%; }
   .i-nature { grid-column: 1 / -1; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: 24px; align-items: end; }
   .i-nature .item-img { order: 2; aspect-ratio: 9 / 4; }
 
-  /* experience */
+  /* experience: dense rows, like a colophon */
   .xp { list-style: none; margin: 0; padding: 0; }
-  .xp li { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 24px; padding: 28px 0; }
-  .xp .org { margin: 0; font: 500 17px/1.4 var(--f-sans); }
-  .xp .role { margin: 4px 0 0; font-size: 15px; line-height: 1.45; color: var(--ink-2); }
-  .xp .when { margin: 4px 0 0; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
-  .xp .what { margin: 0; max-width: 44rem; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
-  .xp .text-link { display: inline-block; margin-top: 14px; color: var(--accent); }
-  .after-list { padding: 28px 0 0; }
+  .xp li { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; padding: 24px 0 28px; }
+  .xp .org { grid-column: 1 / span 4; font: 500 20px/1.25 var(--f); letter-spacing: -.01em; }
+  .xp .role { grid-column: 5 / span 2; }
+  .xp .when { grid-column: 7 / span 2; font-variant-numeric: tabular-nums; }
+  .xp .what { grid-column: 9 / span 4; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+  .text-link { display: inline-block; margin-top: 12px; font: 500 14px/1 var(--f); color: var(--ink); }
 
   /* about */
-  .about { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: start; padding-top: 24px; }
-  .about-lead { margin: 0; max-width: 40rem; font: 400 32px/1.25 var(--f-serif); letter-spacing: -.01em; }
-  .about-text p:not(.about-lead) { margin: 20px 0 0; max-width: 40rem; font-size: 17px; line-height: 1.65; color: var(--ink-2); }
-  .awards { margin-top: 48px; }
-  .awards h3 { margin: 0 0 8px; font: 500 15px/1.4 var(--f-sans); }
+  .about { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: start; padding-top: 32px; }
+  .about-lead { max-width: 22ch; font: 500 var(--t-l)/1.1 var(--f); letter-spacing: -.025em; }
+  .about-text p:not(.about-lead):not(.label) { margin-top: 24px; max-width: 40rem; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
+  .awards { margin-top: 56px; }
+  .awards .label { margin-bottom: 8px; }
   .awards ul { list-style: none; margin: 0; padding: 0; }
-  .awards li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; padding: 14px 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  .awards li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; padding: 14px 0; font-size: 14px; line-height: 1.5; color: var(--ink-2); }
   .awards .yr { color: var(--ink-3); font-variant-numeric: tabular-nums; }
   .about-photo { margin: 0; }
-  .about-photo img { width: 100%; border-radius: 16px; }
-  .about-photo figcaption { margin-top: 12px; font-size: 13px; color: var(--ink-3); }
+  .about-photo img { width: 100%; border-radius: 12px; }
+  .about-photo figcaption { margin-top: 12px; }
 
-  /* fashion and craft: two photographs, each opening its chapter of the fashion page */
-  .craft-k { margin: 0 0 8px; font-size: 14px; color: var(--ink-3); }
-  .craft-title { margin: 0; font: 400 clamp(32px, 2.6vw, 38px)/1.1 var(--f-serif); letter-spacing: -.01em; }
-  .craft-lede { margin: 12px 0 0; max-width: 36rem; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
-  .craft-more { display: inline-block; margin-top: 20px; color: var(--accent); font: 500 15px/1 var(--f-sans); }
+  /* fashion and craft */
+  .craft-title { margin: 10px 0 0; font: 500 var(--t-l)/1 var(--f); letter-spacing: -.03em; }
+  .craft-lede { margin-top: 14px; max-width: 36rem; font-size: 17px; line-height: 1.55; color: var(--ink-2); }
   .craft-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: end; margin-top: 48px; }
+  .craft-more { display: inline-block; margin-top: 20px; font: 500 14px/1 var(--f); }
   .craft figure { margin: 0; }
   .craft-item { display: block; color: inherit; text-decoration: none; }
-  .craft-img { display: block; overflow: hidden; border-radius: 16px; background: var(--raised); }
+  .craft-img { display: block; overflow: hidden; border-radius: 12px; background: var(--raised); }
   .craft img { width: 100%; object-fit: cover; transition: transform .8s var(--ease); }
   .craft-item:hover img, .craft-item:focus-visible img { transform: scale(1.03); }
   .craft .c1 img { aspect-ratio: 5 / 6; }
   .craft .c2 img { aspect-ratio: 3 / 4; object-position: 50% 30%; } /* keeps the face and the necklace in the crop */
   .craft figcaption { margin-top: 16px; }
-  .craft .t { margin: 0; font: 500 16px/1.4 var(--f-sans); transition: color .15s var(--ease); }
-  .craft-item:hover .t, .craft-item:focus-visible .t { color: var(--accent); }
-  .craft .m { margin: 2px 0 0; font-size: 13px; color: var(--ink-3); }
-  .craft figcaption p:last-child { margin: 8px 0 0; max-width: 32rem; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+  .craft .t { font: 500 16px/1.4 var(--f); }
+  .craft figcaption p:last-child { margin-top: 8px; max-width: 32rem; font-size: 14px; line-height: 1.55; color: var(--ink-2); }
 
-  /* contact: the page closes on the dark of the studio after hours */
-  .contact { margin-top: 144px; background: var(--dark); color: var(--on-dark); }
-  .contact .wrap { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 64px; align-items: end; padding-top: 112px; padding-bottom: 112px; }
-  .contact-k { margin: 0 0 20px; font-size: 14px; color: var(--on-dark-2); }
-  .contact h2 { margin: 0; max-width: 16ch; font: 400 clamp(48px, 4.6vw, 72px)/1.05 var(--f-serif); letter-spacing: -.02em; }
-  .contact-side p { margin: 0 0 28px; font-size: 17px; line-height: 1.6; color: var(--on-dark-2); }
-  .contact .btn { background: var(--on-dark); color: var(--dark); }
-  .contact .btn:hover { background: var(--on-accent); }
-  .contact .text-link { color: var(--on-dark); }
-  .contact-mail { margin: 24px 0 0 !important; font-size: 15px !important; }
-  .contact-mail a { color: var(--on-dark); }
-  .foot { background: var(--dark); color: var(--on-dark-2); }
-  .foot .wrap { display: flex; justify-content: space-between; padding-top: 20px; padding-bottom: 28px; border-top: 1px solid var(--dark-line); font-size: 13px; }
+  /* contact: the largest line on the page after the greeting */
+  .contact { margin-top: 176px; }
+  .contact .wrap { padding-top: 40px; padding-bottom: 300px; } /* room for the closing ring and its drips above the footer */
+  .contact h2.label { margin: 0; font-weight: 400; }
+  .contact-row { display: flex; align-items: center; gap: 28px; margin-top: 24px; }
+  .contact-row .pill { height: 44px; padding: 0 20px; font-size: 15px; }
+  .contact-row a.sew { font-size: 15px; }
+  .foot .wrap { display: flex; justify-content: space-between; padding-top: 20px; padding-bottom: 28px; border-top: 1px solid var(--line); }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
-    .enter > * { animation: none; }
-    .sew::after, .btn, .item h3, .nav ul a, .craft img, .craft .t { transition: none; }
+    .reveal, .sew::after, .pill, .menu a { transition: none; }
+    .hint, .js .skip-intro { display: none; }
   }
   /* ds-allow-hardcode:end */
 </style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
+<canvas id="spray" aria-hidden="true"></canvas>
 
-<header class="wrap nav">
-  <a class="brand" href="./">Tianhao Wang</a>
-  <nav aria-label="Main">
-    <ul>
-      <li><a class="sew" href="#work">Work</a></li>
-      <li><a class="sew" href="#about">About</a></li>
-      <li><a class="sew" href="mailto:wang.t14@northeastern.edu">Email</a></li>
-    </ul>
-  </nav>
+<header class="top reveal">
+  <div class="wrap grid">
+    <a class="brand" href="./">Tianhao Wang<span>Product &amp; Experience Designer</span></a>
+    <nav aria-label="Main">
+      <ul class="menu">
+        <li><a class="sew" href="#work">Work</a></li>
+        <li><a class="sew" href="#about">About</a></li>
+        <li><a class="sew" href="mailto:wang.t14@northeastern.edu">Email</a></li>
+      </ul>
+    </nav>
+    <p class="small where">Based in Boston<br><span class="clock" aria-label="Local time in Boston">Boston</span></p>
+    <p class="small school">M.S. in Experience Design<br>Northeastern University</p>
+    <p class="small open">Open to Summer 2027 internships and <span class="nb">6-month</span> co-ops</p>
+    <a class="pill" href="mailto:wang.t14@northeastern.edu">Email me</a>
+  </div>
 </header>
 
 <main id="main">
-  <section class="wrap hero" aria-labelledby="hero-title">
-    <div class="enter">
-      <h1 id="hero-title">Hi, I’m Tianhao Wang.</h1>
+  <section class="wall" aria-labelledby="hero-title">
+    <div class="note reveal">
+      <div class="wrap grid">
+        <div class="inner">
+          <p class="label">Before product design</p>
+          <p>Fashion taught me how materials feel and how things sit on the body. Now I design products that people wear and touch.</p>
+        </div>
+      </div>
     </div>
+    <div class="foot-of-wall reveal">
+      <div class="wrap">
+        <div class="row"><p class="label">Selected work below</p><p class="label hint" aria-hidden="true">Press and drag to spray</p></div>
+        <h1 id="hero-title">Hi, I’m Tianhao Wang.</h1>
+      </div>
+    </div>
+    <button class="skip-intro" type="button">Skip intro</button>
   </section>
 
   <section class="wrap section" id="work" aria-labelledby="work-title">
-    <div class="sec-head"><h2 id="work-title">Selected work</h2><p>Four projects, 2025</p></div>
+    <div class="sec-head"><h2 id="work-title">Selected work<sup>04</sup></h2><p class="small">Four projects, 2025</p></div>
     <div class="work stitched">
       <a class="item i-eunoia" href="eunoia/">
-        <figure class="item-img"><img src="media/eunoia-cover-torso.jpg" width="2000" height="1333" alt="The Eunoia garment up close: glowing light lines run over the shoulders and around the soft air chamber at the waist"></figure>
+        <figure class="item-img"><img loading="lazy" decoding="async" src="media/eunoia-cover-torso.jpg" width="2000" height="1333" alt="The Eunoia garment up close: glowing light lines run over the shoulders and around the soft air chamber at the waist"></figure>
         <div>
-          <p class="item-meta"><span>01</span><span>2025</span></p>
+          <p class="item-meta label"><span>01</span><span>2025</span></p>
           <h3>Eunoia</h3>
           <p class="item-line">A screen-free garment designed to ease anxiety in older adults</p>
           <p class="item-proof">I surveyed 30 older adults, then built a working garment that guides a body scan with light, air, and vibration.</p>
@@ -227,9 +266,9 @@
         </div>
       </a>
       <a class="item i-wonderorb" href="wonderorb/">
-        <figure class="item-img"><img src="media/cover-wonderorb-clean.jpg" width="1200" height="475" alt="A child playing with the soft, textured Wonderorb"></figure>
+        <figure class="item-img"><img loading="lazy" decoding="async" src="media/cover-wonderorb-clean.jpg" width="1200" height="475" alt="A child playing with the soft, textured Wonderorb"></figure>
         <div>
-          <p class="item-meta"><span>02</span><span>2025</span></p>
+          <p class="item-meta label"><span>02</span><span>2025</span></p>
           <h3>Wonderorb</h3>
           <p class="item-line">A soft play orb for children with touch sensitivity</p>
           <p class="item-proof">Task success dropped from 60% in a simple room to 40% in a home-like room. The room itself seemed to get in the way.</p>
@@ -237,19 +276,18 @@
         </div>
       </a>
       <a class="item i-fadence" href="fadence/">
-        <!-- the Fadence page's own cut-out of a real studio photo, on a quiet silver ground (the old card image carried a downloaded gradient) -->
-        <figure class="item-img"><img src="media/fadence-cutout.webp" width="1320" height="1800" alt="The wearer seen from behind, head bowed, the Fadence shell resting on her neck and shoulders"></figure>
+        <figure class="item-img"><img loading="lazy" decoding="async" src="media/fadence-cutout.webp" width="1320" height="1800" alt="The wearer seen from behind, head bowed, the Fadence shell resting on her neck and shoulders"></figure>
         <div>
-          <p class="item-meta"><span>03</span><span>2025</span></p>
+          <p class="item-meta label"><span>03</span><span>2025</span></p>
           <h3>Fadence</h3>
           <p class="item-line">A bedtime wearable that answers racing thoughts with warmth, then a soft pulse</p>
           <span class="item-more sew">See the project</span>
         </div>
       </a>
       <a class="item i-nature" href="nature-designer/">
-        <figure class="item-img"><img src="media/cover-nature-designer.jpg" width="1800" height="800" alt="A 3D rendering of a figure in translucent blue clothing built from plant-like forms, in an icy blue landscape"></figure>
+        <figure class="item-img"><img loading="lazy" decoding="async" src="media/cover-nature-designer.jpg" width="1800" height="800" alt="A 3D rendering of a figure in translucent blue clothing built from plant-like forms, in an icy blue landscape"></figure>
         <div>
-          <p class="item-meta"><span>04</span><span>Virtual clothing design, 2025</span></p>
+          <p class="item-meta label"><span>04</span><span>Virtual clothing design, 2025</span></p>
           <h3>Nature Designer</h3>
           <p class="item-line">Exploring how mycelium and slime molds can generate form and structure</p>
           <span class="item-more sew">See the project</span>
@@ -259,19 +297,25 @@
   </section>
 
   <section class="wrap section" id="experience" aria-labelledby="xp-title">
-    <div class="sec-head"><h2 id="xp-title">Experience</h2></div>
+    <div class="sec-head"><h2 id="xp-title">Experience<sup>03</sup></h2></div>
     <ol class="xp">
       <li class="stitched">
-        <div><p class="org">Shandong Jovision Technology</p><p class="role">Interaction Design Intern, AI Companion Robot</p><p class="when">Jun to Sep 2025</p></div>
-        <div><p class="what">Designed the look and feel of an AI companion robot for children: form, color, materials, and surface details. Worked with engineers on sensor and speaker placement, and took the design from sketches to 3D models to a working prototype.</p><a class="text-link sew" href="project.html?project=jovision">Read the summary</a></div>
+        <p class="org">Shandong Jovision Technology</p>
+        <p class="small role">Interaction Design Intern, AI Companion Robot</p>
+        <p class="label when">Jun to Sep 2025</p>
+        <div class="what"><p>Designed the look and feel of an AI companion robot for children: form, color, materials, and surface details. Worked with engineers on sensor and speaker placement, and took the design from sketches to 3D models to a working prototype.</p><a class="text-link sew" href="project.html?project=jovision">Read the summary</a></div>
       </li>
       <li class="stitched">
-        <div><p class="org">MIAMING DESIGN</p><p class="role">Racing Visual Design Intern</p><p class="when">Jan to Mar 2026</p></div>
-        <div><p class="what">Created visual concepts for 10 racing helmets and 2 vehicle liveries for racing clients.</p></div>
+        <p class="org">MIAMING DESIGN</p>
+        <p class="small role">Racing Visual Design Intern</p>
+        <p class="label when">Jan to Mar 2026</p>
+        <div class="what"><p>Created visual concepts for 10 racing helmets and 2 vehicle liveries for racing clients.</p></div>
       </li>
       <li class="stitched">
-        <div><p class="org">Independent Fashion Studio, Beijing</p><p class="role">Design Assistant</p><p class="when">Jul to Oct 2023</p></div>
-        <div><p class="what">Built mood boards, sketched garments, sampled fabrics and trims, and helped make patterns and samples for a collection.</p></div>
+        <p class="org">Independent Fashion Studio, Beijing</p>
+        <p class="small role">Design Assistant</p>
+        <p class="label when">Jul to Oct 2023</p>
+        <div class="what"><p>Built mood boards, sketched garments, sampled fabrics and trims, and helped make patterns and samples for a collection.</p></div>
       </li>
     </ol>
   </section>
@@ -283,7 +327,7 @@
         <p class="about-lead">I'm a first-year M.S. student in Experience Design at Northeastern University in Boston.</p>
         <p>Before that, I studied fashion design at Wuhan Textile University for four years. Fashion taught me how materials feel and how things sit on the body. Now I design products that people wear and touch, and I build prototypes with sensors and code to test my ideas.</p>
         <div class="awards">
-          <h3>Awards</h3>
+          <p class="label">Awards</p>
           <ul>
             <li class="stitched"><span>Excellence Award, Hempel Award: 32nd China International Young Fashion Designers Contest (<i>Reconstruction of Oracle Bone</i>)</span><span class="yr">2024</span></li>
             <li class="stitched"><span>Bronze Award (Provincial), “Internet+” College Students’ Innovation and Entrepreneurship Competition (<i>Smart Pregnancy Care</i>)</span><span class="yr">2025</span></li>
@@ -293,27 +337,27 @@
         </div>
       </div>
       <figure class="about-photo">
-        <img src="media/home-studio.jpg" width="1600" height="1067" alt="Tianhao working in the studio">
-        <figcaption>In the studio</figcaption>
+        <img loading="lazy" decoding="async" src="media/home-studio.jpg" width="1600" height="1067" alt="Tianhao working in the studio">
+        <figcaption class="label">In the studio</figcaption>
       </figure>
     </div>
 
     <div class="craft section">
-      <p class="craft-k">Before product design</p>
+      <p class="label">Before product design</p>
       <h2 class="craft-title">Fashion and craft</h2>
       <p class="craft-lede">Four years of fashion training shaped how I see material, color, and the body.</p>
       <a class="craft-more sew" href="fashion/">See the fashion work</a>
       <div class="craft-grid">
         <a class="craft-item c1" href="fashion/#oracle">
           <figure>
-            <span class="craft-img"><img src="media/oracle-editorial-02.jpg" width="1600" height="2240" alt="Editorial photo of one look from Reconstruction of Oracle Bone"></span>
-            <figcaption><p class="t">Reconstruction of Oracle Bone</p><p class="m">Excellence Award, Hempel Award 2024</p><p>A four-look collection that turns oracle-bone script into modular structures and Klein blue.</p></figcaption>
+            <span class="craft-img"><img loading="lazy" decoding="async" src="media/oracle-editorial-02.jpg" width="1600" height="2240" alt="Editorial photo of one look from Reconstruction of Oracle Bone"></span>
+            <figcaption><p class="t">Reconstruction of Oracle Bone</p><p class="label">Excellence Award, Hempel Award 2024</p><p>A four-look collection that turns oracle-bone script into modular structures and Klein blue.</p></figcaption>
           </figure>
         </a>
         <a class="craft-item c2" href="fashion/#ornament">
           <figure>
-            <span class="craft-img"><img src="media/ornament-model-necklace.jpg" width="1333" height="2000" alt="A model wears the jade bead necklace and long earrings of silver and green jade"></span>
-            <figcaption><p class="t">Ornament as Memory Device</p><p class="m">Jewelry, 2023</p><p>Jade, metal, and beads, made to be worn close to the face and body.</p></figcaption>
+            <span class="craft-img"><img loading="lazy" decoding="async" src="media/ornament-model-necklace.jpg" width="1333" height="2000" alt="A model wears the jade bead necklace and long earrings of silver and green jade"></span>
+            <figcaption><p class="t">Ornament as Memory Device</p><p class="label">Jewelry, 2023</p><p>Jade, metal, and beads, made to be worn close to the face and body.</p></figcaption>
           </figure>
         </a>
       </div>
@@ -321,24 +365,396 @@
   </section>
 
   <section class="contact" id="contact" aria-labelledby="contact-title">
-    <div class="wrap">
-      <div>
-        <p class="contact-k">Contact</p>
-        <h2 id="contact-title">Open to Summer 2027 internships and <span class="nb">6-month</span> co-ops</h2>
-      </div>
-      <div class="contact-side">
-        <p>Product design, available from May to December 2027.</p>
-        <div class="actions">
-          <a class="btn" href="mailto:wang.t14@northeastern.edu">Email me</a>
-        </div>
-        <p class="contact-mail"><a class="sew" href="mailto:wang.t14@northeastern.edu">wang.t14@northeastern.edu</a></p>
+    <div class="wrap stitched">
+      <h2 class="label" id="contact-title">Contact</h2>
+      <div class="contact-row">
+        <a class="pill" href="mailto:wang.t14@northeastern.edu">Email me</a>
+        <a class="sew" href="mailto:wang.t14@northeastern.edu">wang.t14@northeastern.edu</a>
+        <p class="small">Product design, available from May to December 2027.</p>
       </div>
     </div>
   </section>
 </main>
 
 <footer class="foot">
-  <div class="wrap"><span>© 2026 Tianhao Wang</span><span>wang.t14@northeastern.edu</span></div>
+  <div class="wrap label"><span>© 2026 Tianhao Wang</span><span>wang.t14@northeastern.edu</span></div>
 </footer>
+
+<script>
+/* Boston time in the information row, like a studio's local clock */
+(function () {
+  var el = document.querySelector(".clock");
+  if (!el || !window.Intl) return;
+  var fmt = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", minute: "2-digit" });
+  function tick() { el.textContent = "Boston, " + fmt.format(new Date()); }
+  tick(); setInterval(tick, 30000);
+})();
+
+/* The wall.
+   One canvas sits fixed behind the whole page and draws the part of the wall in view: a grid of dots laid
+   out in page coordinates, so the wall scrolls with the page. Each dot holds paint (white or grey), overspray
+   and whatever the visitor sprays, and is drawn as one circle whose area follows the paint it holds.
+   Paint goes on in jobs: a nozzle travelling a path. The opening ring is the first. The rest go on in grey,
+   in the empty space around the work, as each part of the page comes into view; the last is a white ring
+   by the contact line, answering the first. */
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var cv = document.getElementById("spray");
+  var hero = document.querySelector(".wall");
+  if (!cv || !cv.getContext || !hero) return;
+  var ctx = cv.getContext("2d");
+  var skipBtn = document.querySelector(".skip-intro");
+  var q = new URLSearchParams(location.search);
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var TAU = Math.PI * 2;
+  var START = .35, REVEAL = 2.15, END = 2.75; /* the opening, in seconds */
+
+  function prop(n) { return getComputedStyle(root).getPropertyValue(n).trim(); }
+  var COL = {};
+  function readColors() { COL.wall = prop("--wall-dot"); COL.white = prop("--paint"); COL.grey = prop("--paint-2"); COL.ring = prop("--ink"); }
+
+  /* small value noise, for the wall's texture and the breathing phase */
+  function hash(x, y) { var h = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return h - Math.floor(h); }
+  function sm(t) { return t * t * (3 - 2 * t); }
+  function noise(x, y) {
+    var xi = Math.floor(x), yi = Math.floor(y), u = sm(x - xi), v = sm(y - yi);
+    var a = hash(xi, yi), b = hash(xi + 1, yi), c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
+    return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+  }
+  function c01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+  function inOut(t) { t = c01(t); return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
+  function out3(t) { t = c01(t); return 1 - Math.pow(1 - t, 3); }
+  function glide(t) { t = c01(t); return .8 * t + .2 * sm(t); }          /* a steady hand: near even speed */
+  function pressure(u) { return 1 - .85 * sm(c01((u - .82) / .18)); }  /* the can lifts off at the end */
+
+  var VW = 0, VH = 0, dpr = 1, S = 10, cols = 0, rows = 0, N = 0, ox = 0, heroN = 0;
+  var X, Y, base, phase, rnd, white, grey, mistW, mistG, user, skipCell;
+  var B = [], BN = [0, 0, 0], dripList = [];
+  var jobs = [], hero0 = null;
+  var clock = 0, done = false, revealed = false, started = false, frozen = false, wallIn = 0, breathe = 0;
+  var cur = { x: -999, y: -999, tx: -999, ty: -999, over: false, down: false, moved: -1e9 };
+  var sp = { x: 0, y: 0, on: false };
+
+  function pageRect(el) { var r = el.getBoundingClientRect(); return { x: r.left, y: r.top + window.scrollY, w: r.width, h: r.height }; }
+
+  /* paths the nozzle can take, each a function of u from 0 to 1 */
+  function ringPath(cx, cy, r, a0, turns) {
+    return function (u) { var th = a0 + u * TAU * turns, rr = r * (1 + .035 * Math.sin(u * TAU * 2.3 + .7)); return [cx + Math.cos(th) * rr, cy + Math.sin(th) * rr]; };
+  }
+  function swipePath(x0, y0, x1, y1, bow) {
+    return function (u) { return [x0 + (x1 - x0) * u, y0 + (y1 - y0) * u - Math.sin(u * Math.PI) * bow]; };
+  }
+  function zigPath(x0, x1, yc, amp, waves) {
+    return function (u) { return [x0 + (x1 - x0) * u, yc + amp * (1 - .35 * u) * Math.sin(u * TAU * waves)]; };
+  }
+  function makeJob(id, colour, path, o) {
+    return { id: id, colour: colour, path: path, core: o.core, mist: o.mist, rate: o.rate || 15, dur: o.dur, ndrips: o.drips || 0, maxRun: o.maxRun || 8,
+             trig: o.trig || 0, state: 0, t: 0, drips: [], planned: false, nx: 0, ny: 0, na: 0 };
+  }
+
+  /* where the paint goes, measured from the page, so it lands in the empty space around the work */
+  function defineJobs() {
+    var old = {}; jobs.forEach(function (j) { old[j.id] = j; });
+    var list = [], el, r, m, t;
+    var hh = hero.getBoundingClientRect().height, R0 = Math.min(hh * .21, VW * .16);
+    list.push(makeJob("hero", "white", ringPath(VW * .66, hh * .42, R0, -2.25, 1.08), { core: R0 * .3, mist: R0 * .7, dur: 1.5, drips: 3 }));
+    if ((el = document.querySelector("#work .sec-head h2")) && (m = document.querySelector("#work .sec-head p"))) {
+      r = pageRect(el); var mr = pageRect(m);
+      list.push(makeJob("work", "grey", swipePath(r.x + r.w + 64, r.y + r.h * .66, mr.x - 64, r.y + r.h * .34, 16), { core: 20, mist: 48, dur: 1.1, drips: 2, trig: r.y }));
+    }
+    if ((el = document.querySelector(".i-eunoia")) && (t = document.querySelector(".i-eunoia > div"))) {
+      r = pageRect(el); var tr = pageRect(t), gap = tr.y - r.y;
+      if (gap > 160) {
+        var er = Math.min(tr.w * .3, gap * .3);
+        list.push(makeJob("eunoia", "grey", ringPath(tr.x + tr.w * .5, r.y + gap * .45, er, -1.9, 1.05), { core: er * .28, mist: er * .65, dur: 1.3, drips: 2, maxRun: 4, trig: r.y + gap * .2 }));
+      }
+    }
+    if ((el = document.querySelector(".i-fadence .item-img"))) {
+      r = pageRect(el); var fr = Math.min(r.w, r.h) * .22;
+      list.push(makeJob("fadence", "grey", ringPath(Math.min(r.x + r.w, VW - fr * 1.7), r.y, fr, 2.0, .62), { core: fr * .3, mist: fr * .7, dur: .95, drips: 1, trig: r.y - fr })); /* kept clear of the window edge */
+    }
+    if ((el = document.querySelector("#experience .sec-head h2"))) {
+      r = pageRect(el); var x0 = r.x + r.w + 72;
+      list.push(makeJob("xp", "grey", zigPath(x0, Math.min(VW - 96, x0 + VW * .34), r.y + r.h * .42, r.h * .26, 3.2), { core: 15, mist: 36, dur: 1.1, drips: 0, trig: r.y }));
+    }
+    if ((el = document.querySelector("#contact .wrap"))) {
+      r = pageRect(el); var cr = Math.min(115, VW * .09);
+      list.push(makeJob("contact", "white", ringPath(VW * .68, r.y + 40 + cr * 1.3, cr, -2.25, 1.08), { core: cr * .3, mist: cr * .7, dur: 1.4, drips: 3, trig: r.y }));
+    }
+    /* a mark already sprayed keeps its place; only the ones still waiting follow the layout */
+    jobs = list.map(function (j) { var o = old[j.id]; return o && o.state > 0 ? o : j; });
+    hero0 = jobs[0];
+  }
+
+  function layout() {
+    VW = document.documentElement.clientWidth; VH = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(VW * dpr); cv.height = Math.round(VH * dpr);
+    S = Math.max(8, Math.min(12, Math.round(VW / 144)));
+    cols = Math.floor(VW / S);
+    rows = Math.ceil((Math.max(document.documentElement.scrollHeight, VH) * 1.1 + VH) / S); /* room for the page to grow a little */
+    ox = (VW - (cols - 1) * S) / 2;
+    N = cols * rows;
+    heroN = Math.min(N, (Math.ceil(hero.getBoundingClientRect().height / S) + 8) * cols);
+    X = new Float32Array(N); Y = new Float32Array(N); base = new Float32Array(N); phase = new Float32Array(N); rnd = new Float32Array(N);
+    white = new Float32Array(N); grey = new Float32Array(N); mistW = new Float32Array(N); mistG = new Float32Array(N);
+    user = new Float32Array(N); skipCell = new Uint8Array(N);
+    var slice = (Math.ceil(VH / S) + 5) * cols * 3;
+    B = [new Float32Array(slice), new Float32Array(slice + 1500), new Float32Array(slice + 1500)];
+    for (var rr = 0, i = 0; rr < rows; rr++) for (var c = 0; c < cols; c++, i++) {
+      X[i] = ox + c * S; Y[i] = S / 2 + rr * S;
+      var n = noise(c * .07, rr * .07) * .7 + noise(c * .21 + 9, rr * .21 + 3) * .3;
+      base[i] = .04 + .12 * n * n + .03 * hash(c, rr + 17);
+      phase[i] = noise(c * .045 + 40, rr * .045 + 11) * TAU * 2;
+      rnd[i] = hash(c + 3.1, rr + 7.7);
+    }
+    jobs = [];
+    defineJobs();
+  }
+
+  /* one burst of the can: paint falls off with distance from the nozzle, unevenly from dot to dot */
+  function spray(px, py, rad, rate, dt, layer, cap) {
+    var c0 = Math.max(0, Math.floor((px - rad - ox) / S)), c1 = Math.min(cols - 1, Math.ceil((px + rad - ox) / S));
+    var r0 = Math.max(0, Math.floor((py - rad) / S)), r1 = Math.min(rows - 1, Math.ceil((py + rad) / S));
+    var r2 = rad * rad, inv = 2.2 / r2;
+    for (var rr = r0; rr <= r1; rr++) for (var c = c0; c <= c1; c++) {
+      var i = rr * cols + c, dx = X[i] - px, dy = Y[i] - py, d2 = dx * dx + dy * dy;
+      if (d2 > r2) continue;
+      var top = cap < 1 ? cap * (.4 + rnd[i]) : cap;
+      layer[i] = Math.min(top, layer[i] + Math.exp(-d2 * inv) * rate * dt * (.5 + rnd[i]));
+    }
+  }
+
+  /* runs of paint from the lowest points of a mark, each starting at the lower edge of the paint there */
+  function planDrips(j) {
+    j.planned = true; j.drips = [];
+    if (!j.ndrips) return;
+    var L = j.colour === "white" ? white : grey, pts = [], used = [];
+    for (var k = 0; k <= 80; k++) { var u = .12 + .83 * k / 80, p = j.path(u); pts.push([p[1], p[0], u]); }
+    pts.sort(function (a, b) { return b[0] - a[0]; });
+    for (var m = 0; m < pts.length && j.drips.length < j.ndrips; m++) {
+      var p2 = pts[m], near = false;
+      for (var z = 0; z < used.length; z++) if (Math.abs(used[z] - p2[2]) < .12) near = true;
+      if (near) continue;
+      used.push(p2[2]);
+      var c = Math.round((p2[1] - ox) / S), r = Math.round((p2[0] - S / 2) / S);
+      if (c < 0 || c >= cols || r < 0 || r >= rows) continue;
+      while (r + 1 < rows && L[(r + 1) * cols + c] > .55) r++;
+      var n = j.drips.length;
+      j.drips.push({ c: c, r: r, len: Math.min(j.maxRun, 3 + Math.floor(hash(n, j.id.length + 9) * 6)), t0: j.t + .05 + n * .14, dur: .8 + hash(n, j.id.length) * .5 });
+    }
+  }
+
+  function advanceJob(j, t, dt) {
+    if (t - dt < j.dur) {
+      var L = j.colour === "white" ? white : grey, M = j.colour === "white" ? mistW : mistG, sub = 4;
+      for (var s = 1; s <= sub; s++) {
+        var ts = t - dt + dt * s / sub; if (ts < 0 || ts > j.dur) continue;
+        var u = glide(ts / j.dur), p = j.path(u), pr = pressure(u);
+        spray(p[0], p[1], j.core, j.rate * pr, dt / sub, L, 1);
+        spray(p[0], p[1], j.mist, 1.6 * pr, dt / sub, M, .32);
+        j.nx = p[0]; j.ny = p[1];
+      }
+    }
+    j.na = t > 0 && t < j.dur ? Math.min(1, t / .15, (j.dur - t) / .2) : 0;
+    j.t = t;
+    if (!j.planned && t >= j.dur * .9) planDrips(j);
+  }
+  function complete(j) { var st = 1 / 60; while (j.t < j.dur + 2.2) advanceJob(j, j.t + st, st); j.state = 2; j.na = 0; }
+
+  function advanceIntro(tt, dt) {
+    if (tt > START) { hero0.state = Math.max(hero0.state, 1); advanceJob(hero0, tt - START, dt); }
+    wallIn = inOut(tt / .7);
+    breathe = c01((tt - REVEAL) / 1.5);
+    clock = tt;
+  }
+
+  function put(k, x, y, r) { var b = B[k], n = BN[k]; b[n] = x; b[n + 1] = y; b[n + 2] = r; BN[k] = n + 3; }
+  function fillDots(k, color) {
+    var b = B[k], n = BN[k]; if (!n) return;
+    ctx.fillStyle = color; ctx.beginPath();
+    for (var j = 0; j < n; j += 3) { var x = b[j], y = b[j + 1], r = b[j + 2]; ctx.moveTo(x + r, y); ctx.arc(x, y, r, 0, TAU); }
+    ctx.fill();
+  }
+
+  function draw(time) {
+    var sy = window.scrollY;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, VW, VH);
+    BN[0] = BN[1] = BN[2] = 0;
+    var R = .5 * S * .96, lensR = 150, LR2 = lensR * lensR, mx = cur.x, my = cur.y;
+    var lens = revealed && cur.over && !reduce;
+    var pulse = 1 + breathe * .035 * Math.sin(time * .9); /* white rings swell and settle, slowly */
+    var r0 = Math.max(0, Math.floor(sy / S) - 1), r1 = Math.min(rows - 1, Math.ceil((sy + VH) / S) + 1);
+    /* drips first, so the cells they run over are known */
+    dripList.length = 0;
+    for (var k = 0; k < jobs.length; k++) {
+      var j = jobs[k]; if (!j.drips.length) continue;
+      var kb = j.colour === "white" ? 1 : 2, jp = kb === 1 ? pulse : 1;
+      for (var m = 0; m < j.drips.length; m++) {
+        var d = j.drips[m], gr = out3((j.t - d.t0) / d.dur);
+        if (gr <= 0) continue;
+        var L = d.len * gr, n = Math.floor(L);
+        for (var s = 1; s <= n + 1; s++) {
+          var row = d.r + s; if (row >= rows) break;
+          var frac = s <= n ? 1 : L - n; if (frac <= .02) break;
+          if (row < r0 || row > r1) continue;
+          var i0 = row * cols + d.c;
+          skipCell[i0] = 1; dripList.push(i0);
+          var a0 = (1 - .5 * s / (d.len + 2)) * frac; if (s >= n) a0 *= 1.3; /* the bead at the end of the run */
+          if (BN[kb] < B[kb].length - 3) put(kb, X[i0], Y[i0] - sy, R * Math.sqrt(Math.min(1.15, a0)) * jp);
+        }
+      }
+    }
+    for (var rr = r0; rr <= r1; rr++) {
+      var y0 = Y[rr * cols] - sy;
+      for (var c = 0, i = rr * cols; c < cols; c++, i++) {
+        if (skipCell[i]) continue;
+        var wv = white[i] > user[i] ? white[i] : user[i], mw = mistW[i] * .5, gv = grey[i], mg = mistG[i] * .5;
+        var w1 = wv > mw ? wv : mw, g1 = gv > mg ? gv : mg, a, kk;
+        if ((wv > .05 || mw > .015) && w1 >= g1) { a = w1; kk = 1; }
+        else if (gv > .05 || mg > .015) { a = g1; kk = 2; }
+        else { a = base[i] * wallIn; kk = 0; }
+        var x = X[i], y = y0, rad = R * Math.sqrt(a);
+        if (kk === 1) rad *= pulse;
+        if (breathe > 0) rad *= 1 + breathe * (kk === 0 ? .25 : .05) * Math.sin(time * (kk === 0 ? .9 : 1.4) + phase[i]);
+        if (lens) {
+          var dx = x - mx, dy = y - my, d2 = dx * dx + dy * dy;
+          if (d2 < LR2) { var dd = Math.sqrt(d2) || 1, f = 1 - dd / lensR; f *= f; x += dx / dd * f * 6; y += dy / dd * f * 6; rad *= 1 + f * (kk === 0 ? 1.25 : .15); }
+        }
+        if (rad < .35) continue;
+        put(kk, x, y, rad);
+      }
+    }
+    for (var z = 0; z < dripList.length; z++) skipCell[dripList[z]] = 0;
+    fillDots(0, COL.wall); fillDots(2, COL.grey); fillDots(1, COL.white);
+    for (var k2 = 0; k2 < jobs.length; k2++) { /* each nozzle: a thin ring that leads the paint */
+      var jj = jobs[k2]; if (!(jj.na > 0)) continue;
+      var ny = jj.ny - sy; if (ny < -60 || ny > VH + 60) continue;
+      ctx.globalAlpha = .55 * jj.na; ctx.strokeStyle = COL.ring; ctx.fillStyle = COL.ring; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(jj.nx, ny, jj.core * .55, 0, TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(jj.nx, ny, 2, 0, TAU); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  var raf = 0, last = 0, lastDraw = 0, lastSY = -1;
+  function frame(now) {
+    raf = 0;
+    var dt = last ? Math.min(.1, (now - last) / 1000) : 1 / 60; last = now; /* near real time; only a very slow frame stretches the paint */
+    var busy = false, sy = window.scrollY;
+    if (!done) {
+      var tt = clock + dt; /* the opening keeps its own clock: a late frame slows the paint, never skips it */
+      advanceIntro(tt, dt);
+      if (tt >= REVEAL) reveal();
+      if (tt >= END) done = true;
+      busy = true;
+    } else if (breathe < 1) breathe = Math.min(1, breathe + dt / 1.5);
+    for (var k = 0; k < jobs.length; k++) {
+      var j = jobs[k];
+      if (k === 0) {
+        if (done && j.state === 1) { advanceJob(j, j.t + dt, dt); if (j.t > j.dur + 2.2) { j.state = 2; j.na = 0; } busy = true; }
+        continue;
+      }
+      if (j.state === 0 && revealed && sy + VH * .82 > j.trig) j.state = 1;
+      if (j.state === 1) { advanceJob(j, j.t + dt, dt); if (j.t > j.dur + 2.2) { j.state = 2; j.na = 0; } busy = true; }
+    }
+    var e = 1 - Math.exp(-dt * 14);
+    cur.x += (cur.tx - cur.x) * e; cur.y += (cur.ty - cur.y) * e;
+    /* the visitor's can, on the opening wall: spray along the path the pointer took, so a quick stroke stays one stroke */
+    if (revealed && cur.down) {
+      var px = cur.tx, py = cur.ty + sy;
+      if (!sp.on) { sp.x = px; sp.y = py; sp.on = true; }
+      var ddx = px - sp.x, ddy = py - sp.y, steps = Math.max(1, Math.ceil(Math.sqrt(ddx * ddx + ddy * ddy) / 8));
+      for (var s = 1; s <= steps; s++) spray(sp.x + ddx * s / steps, sp.y + ddy * s / steps, 40, 9, dt / steps * 1.6, user, .95);
+      sp.x = px; sp.y = py; busy = true;
+    } else sp.on = false;
+    var fade = Math.exp(-dt / 4.5), wet = false;
+    for (var i = 0; i < heroN; i++) if (user[i] > .002) { user[i] *= fade; wet = true; } else user[i] = 0;
+    if (wet || now - cur.moved < 2500 || sy !== lastSY) busy = true;
+    lastSY = sy;
+    if (busy || now - lastDraw > 40) { draw(now / 1000); lastDraw = now; } /* idle, the wall still breathes, at about 25 fps */
+    if (!document.hidden) raf = requestAnimationFrame(frame);
+  }
+  function kick() { if (started && !raf && !document.hidden && !reduce && !frozen) { last = 0; raf = requestAnimationFrame(frame); } }
+
+  function reveal() { if (revealed) return; revealed = true; root.classList.add("revealed"); }
+  function finishIntro() {
+    var tt = clock, st = 1 / 60;
+    while (tt < END) { tt = Math.min(END, tt + st); advanceIntro(tt, st); }
+    done = true; reveal(); complete(hero0); breathe = Math.max(breathe, .4);
+  }
+  /* a skip runs the rest of the opening without drawing, so it lands on the same finished wall */
+  function finish() { if (done || !started) return; finishIntro(); draw(performance.now() / 1000); kick(); }
+
+  function rebuild() {
+    var states = {}; jobs.forEach(function (j) { states[j.id] = j.state; });
+    readColors(); layout();
+    clock = 0; done = false;
+    finishIntro();
+    for (var k = 1; k < jobs.length; k++) if (states[jobs[k].id] > 0) complete(jobs[k]);
+    draw(performance.now() / 1000); kick();
+  }
+
+  function seen() { try { return sessionStorage.getItem("wall-sprayed") === "1"; } catch (e) { return false; } }
+  function mark() { try { sessionStorage.setItem("wall-sprayed", "1"); } catch (e) { /* storage blocked: the opening just plays again */ } }
+
+  function start() {
+    if (started) return;
+    started = true;
+    readColors(); layout();
+    var hold = parseFloat(q.get("t"));
+    if (hold >= 0) { /* ?t=1.2 freezes the opening at that second; from ?t=3 on every mark is shown, for checking */
+      frozen = true;
+      for (var tt = 0; tt < hold; ) { tt = Math.min(hold, tt + 1 / 60); advanceIntro(tt, 1 / 60); }
+      if (hold >= REVEAL) reveal();
+      if (hold >= END) { done = true; complete(hero0); for (var k = 1; k < jobs.length; k++) complete(jobs[k]); breathe = 1; }
+      draw(hold);
+      return;
+    }
+    if (reduce) { finishIntro(); for (var k2 = 1; k2 < jobs.length; k2++) complete(jobs[k2]); breathe = 0; draw(0); return; }
+    if (!q.has("replay") && seen()) finishIntro(); /* once per visit, so coming back from a project does not replay it; ?replay plays it again */
+    kick();
+    mark();
+  }
+
+  var pend = 0;
+  window.addEventListener("scroll", function () {
+    if (!(reduce || frozen) || pend) return;
+    pend = requestAnimationFrame(function () { pend = 0; draw(performance.now() / 1000); });
+  }, { passive: true });
+  if (skipBtn) skipBtn.addEventListener("click", function (e) { e.stopPropagation(); finish(); });
+  hero.addEventListener("pointerdown", function (e) {
+    if (!done) { finish(); return; }
+    if (reduce || e.target.closest("a, button")) return;
+    cur.down = true;
+    try { hero.setPointerCapture(e.pointerId); } catch (err) { /* older browsers: spraying still works while over the wall */ }
+    kick();
+  });
+  window.addEventListener("pointerup", function () { cur.down = false; });
+  hero.addEventListener("pointerleave", function () { cur.down = false; });
+  window.addEventListener("pointermove", function (e) {
+    cur.tx = e.clientX; cur.ty = e.clientY;
+    if (!cur.over) { cur.x = cur.tx; cur.y = cur.ty; }
+    cur.over = true; cur.moved = performance.now(); kick();
+  }, { passive: true });
+  document.documentElement.addEventListener("mouseleave", function () { cur.over = false; cur.down = false; });
+  window.addEventListener("keydown", function (e) { if (!done && !e.metaKey && !e.ctrlKey && !e.altKey) finish(); });
+  document.addEventListener("visibilitychange", kick);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { if (started) defineJobs(); });
+  var rt = 0;
+  window.addEventListener("resize", function () {
+    clearTimeout(rt);
+    rt = setTimeout(function () {
+      if (!started) return;
+      if (Math.abs(document.documentElement.clientWidth - VW) < 2 && Math.abs(window.innerHeight - VH) < 2) return;
+      rebuild();
+    }, 160);
+  });
+
+  start();
+})();
+</script>
 </body>
 </html>
