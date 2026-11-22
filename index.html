@@ -18,7 +18,7 @@
       if (!p) return;
       var to = { eunoia: 'eunoia/', eunola: 'eunoia/', wonderorb: 'wonderorb/', fadence: 'fadence/',
         'nature-designer': 'nature-designer/', symbiotic: 'nature-designer/', jovision: 'project.html?project=jovision',
-        fashion: './#about', oracle: './#about', ornament: './#about' }[p];
+        fashion: 'fashion/', oracle: 'fashion/#oracle', ornament: 'fashion/#ornament' }[p];
       location.replace(to || './');
     })();
   </script>
@@ -151,17 +151,22 @@
   .about-photo img { width: 100%; border-radius: 16px; }
   .about-photo figcaption { margin-top: 12px; font-size: 13px; color: var(--ink-3); }
 
-  /* fashion and craft */
+  /* fashion and craft: two photographs, each opening its chapter of the fashion page */
   .craft-k { margin: 0 0 8px; font-size: 14px; color: var(--ink-3); }
   .craft-title { margin: 0; font: 400 clamp(32px, 2.6vw, 38px)/1.1 var(--f-serif); letter-spacing: -.01em; }
   .craft-lede { margin: 12px 0 0; max-width: 36rem; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
+  .craft-more { display: inline-block; margin-top: 20px; color: var(--accent); font: 500 15px/1 var(--f-sans); }
   .craft-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: end; margin-top: 48px; }
   .craft figure { margin: 0; }
-  .craft img { width: 100%; object-fit: cover; border-radius: 16px; background: var(--raised); }
+  .craft-item { display: block; color: inherit; text-decoration: none; }
+  .craft-img { display: block; overflow: hidden; border-radius: 16px; background: var(--raised); }
+  .craft img { width: 100%; object-fit: cover; transition: transform .8s var(--ease); }
+  .craft-item:hover img, .craft-item:focus-visible img { transform: scale(1.03); }
   .craft .c1 img { aspect-ratio: 5 / 6; }
-  .craft .c2 img { aspect-ratio: 3 / 4; }
+  .craft .c2 img { aspect-ratio: 3 / 4; object-position: 50% 30%; } /* keeps the face and the necklace in the crop */
   .craft figcaption { margin-top: 16px; }
-  .craft .t { margin: 0; font: 500 16px/1.4 var(--f-sans); }
+  .craft .t { margin: 0; font: 500 16px/1.4 var(--f-sans); transition: color .15s var(--ease); }
+  .craft-item:hover .t, .craft-item:focus-visible .t { color: var(--accent); }
   .craft .m { margin: 2px 0 0; font-size: 13px; color: var(--ink-3); }
   .craft figcaption p:last-child { margin: 8px 0 0; max-width: 32rem; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
 
@@ -182,7 +187,7 @@
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
     .enter > * { animation: none; }
-    .sew::after, .btn, .item h3, .nav ul a { transition: none; }
+    .sew::after, .btn, .item h3, .nav ul a, .craft img, .craft .t { transition: none; }
   }
   /* ds-allow-hardcode:end */
 </style>
@@ -297,15 +302,20 @@
       <p class="craft-k">Before product design</p>
       <h2 class="craft-title">Fashion and craft</h2>
       <p class="craft-lede">Four years of fashion training shaped how I see material, color, and the body.</p>
+      <a class="craft-more sew" href="fashion/">See the fashion work</a>
       <div class="craft-grid">
-        <figure class="c1">
-          <img src="media/oracle-editorial-02.jpg" width="1600" height="2240" alt="Editorial photo of one look from Reconstruction of Oracle Bone">
-          <figcaption><p class="t">Reconstruction of Oracle Bone</p><p class="m">Excellence Award, Hempel Award 2024</p><p>A four-look collection that turns oracle-bone script into modular structures and Klein blue.</p></figcaption>
-        </figure>
-        <figure class="c2">
-          <img src="media/jade-necklace-still.jpg" width="1059" height="1400" alt="A jade necklace with metal and beads">
-          <figcaption><p class="t">Ornament as Memory Device</p><p class="m">Jewelry, 2023</p><p>Jade, metal, and beads, made to be worn close to the face and body.</p></figcaption>
-        </figure>
+        <a class="craft-item c1" href="fashion/#oracle">
+          <figure>
+            <span class="craft-img"><img src="media/oracle-editorial-02.jpg" width="1600" height="2240" alt="Editorial photo of one look from Reconstruction of Oracle Bone"></span>
+            <figcaption><p class="t">Reconstruction of Oracle Bone</p><p class="m">Excellence Award, Hempel Award 2024</p><p>A four-look collection that turns oracle-bone script into modular structures and Klein blue.</p></figcaption>
+          </figure>
+        </a>
+        <a class="craft-item c2" href="fashion/#ornament">
+          <figure>
+            <span class="craft-img"><img src="media/ornament-model-necklace.jpg" width="1333" height="2000" alt="A model wears the jade bead necklace and long earrings of silver and green jade"></span>
+            <figcaption><p class="t">Ornament as Memory Device</p><p class="m">Jewelry, 2023</p><p>Jade, metal, and beads, made to be worn close to the face and body.</p></figcaption>
+          </figure>
+        </a>
       </div>
     </div>
   </section>

@@ -298,7 +298,7 @@ const routes = {
   fadence: () => location.replace('fadence/'), // the motion page replaces the summary page; old ?project=fadence links still land there
   jovision: jovision,
   'nature-designer': () => location.replace('nature-designer/'), symbiotic: () => location.replace('nature-designer/'), // old link to the same project
-  fashion: () => location.replace('./#about'), oracle: () => location.replace('./#about'), ornament: () => location.replace('./#about')
+  fashion: () => location.replace('fashion/'), oracle: () => location.replace('fashion/#oracle'), ornament: () => location.replace('fashion/#ornament')
 };
 const key = new URLSearchParams(location.search).get('project');
 (routes[key] || (() => location.replace('./')))(); // this shell only serves ?project= pages; the homepage is index.html
