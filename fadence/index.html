@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fadence · Tianhao Wang</title>
+<meta name="description" content="Fadence: a wearable for the moment before sleep, when racing thoughts won’t stop. A case study by Tianhao Wang.">
+<meta name="theme-color" content="#eceef2"><!-- ds-allow-hardcode: the theme-color meta needs a literal colour -->
+<!-- the site's cobalt icon, the same line as the home page, so the browser stops asking for /favicon.ico -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a2bc3'/%3E%3Cpath d='M7 8h18v4h-7v12h-4V12H7z' fill='%23f6f5f1'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Angkor&family=Anton&family=Inter:wght@400;500&family=Julius+Sans+One&family=Outfit:wght@500;600&family=Unbounded:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* ds-allow-hardcode:start: standalone motion prototype with its own local tokens, taken from the Fadence boards */
+  @property --p { syntax: "<percentage>"; inherits: true; initial-value: 0%; }
+  :root {
+    /* the boards: silver paper, frosted grey glass, black heavy titles, a touch of periwinkle */
+    --paper: #eceef2;
+    --ink: #121418;
+    --ink-2: #2b2f37;
+    --ink-rgb: 17, 19, 24;
+    --muted: #565c68;
+    --line: rgba(17, 19, 24, .13);
+    --line-2: rgba(17, 19, 24, .32);
+    --peri: #a3aeea;
+    --peri-rgb: 163, 174, 234;
+    --peri-deep: #4a5794;
+    --warm: #f3a46c;
+    --warm-2: #c4652a;
+    --warm-rgb: 243, 164, 108;
+    --pill: #3a3e47;
+    --white: #ffffff;
+    --bg: var(--paper);
+    --gut: clamp(20px, 5vw, 80px);
+    --ease: cubic-bezier(.2, .7, .2, 1);
+    --f-display: "Unbounded", "Arial Black", sans-serif;
+    --f-head: "Outfit", "Helvetica Neue", sans-serif;
+    --f-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --f-quote: "Angkor", Georgia, serif;
+    --f-cap: "Julius Sans One", "Helvetica Neue", sans-serif;
+    --f-num: "Anton", Impact, sans-serif;
+    --f-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+  body { margin: 0; background: var(--bg); color: var(--ink-2); font: 400 18px/1.6 var(--f-body); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--peri); color: var(--ink); }
+  main { overflow-x: clip; } /* elements waiting to slide in never widen the page */
+  img, video { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { position: relative; width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 var(--gut); }
+  .skip { position: absolute; left: 16px; top: -60px; z-index: 100; background: var(--ink); color: var(--paper); padding: 10px 16px; font: 500 14px var(--f-body); text-decoration: none; }
+  .skip:focus { top: 16px; }
+  :focus-visible { outline: 2px solid var(--peri-deep); outline-offset: 4px; }
+
+  /* film grain, as on the boards */
+  .grain { position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: .1; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+  /* frosted glass, the way the boards lay out their panels */
+  .glass { position: relative; border-radius: 28px; background: linear-gradient(150deg, rgba(255,255,255,.7), rgba(255,255,255,.28)); border: 1px solid rgba(255,255,255,.88); box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 34px 70px -38px rgba(28,34,54,.34); -webkit-backdrop-filter: blur(24px) saturate(1.3); backdrop-filter: blur(24px) saturate(1.3); }
+  .frost { position: relative; border-radius: 24px; background: linear-gradient(160deg, rgba(122,129,146,.3), rgba(122,129,146,.07)); border: 1px solid rgba(255,255,255,.62); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); }
+  .deco { position: absolute; pointer-events: none; z-index: 0; }
+  .ghost img { width: 100%; height: 100%; object-fit: cover; }
+  .blob { border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--peri-rgb), .6), rgba(var(--peri-rgb), 0)); }
+  section { position: relative; background-color: var(--paper); }
+
+  .eyebrow { margin: 0; font: 400 13px/1.4 var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--peri-deep); }
+  .statement { margin: 18px 0 0; font: 600 clamp(42px, 5.6vw, 96px)/.98 var(--f-head); letter-spacing: -.03em; color: var(--ink); }
+  .body { margin: 0; color: var(--ink-2); font-size: clamp(17px, 1.3vw, 20px); }
+  .cap { margin: 16px 0 0; font: 400 12px/1.5 var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .wl { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-bottom: -.08em; }
+  .wl > .w { display: inline-block; }
+  .link { position: relative; display: inline-flex; gap: 8px; align-items: center; padding: 12px 0; font: 500 15px var(--f-body); text-decoration: none; color: var(--peri-deep); }
+  .btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border: 1px solid var(--ink); border-radius: 99px; color: var(--ink); font: 500 15px var(--f-body); text-decoration: none; background: rgba(255,255,255,.5); transition: background .35s var(--ease), color .35s var(--ease), transform .15s; }
+  .btn:hover { background: var(--ink); color: var(--paper); }
+  .btn:active { transform: scale(.97); }
+
+  /* board headers: a heavy black title with a soft drop shadow, a grey subtitle beside it */
+  .board-h { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px clamp(16px, 2vw, 32px); }
+  .bt { margin: 0; font: 800 clamp(44px, 8.2vw, 148px)/.9 var(--f-display); letter-spacing: -.035em; text-transform: uppercase; color: var(--ink); text-shadow: 0 12px 26px rgba(var(--ink-rgb), .2); }
+  .bs { font: 500 clamp(22px, 2.5vw, 40px)/1.1 var(--f-head); color: var(--muted); }
+  .sq { margin: 0; font: 500 clamp(20px, 1.8vw, 28px)/1.2 var(--f-head); color: var(--ink-2); }
+  .sq::before { content: ""; display: inline-block; width: .52em; height: .52em; margin-right: .55em; background: var(--ink-2); vertical-align: .06em; }
+
+  /* nav: same layout as the other case pages, on a light frosted bar */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: 14px var(--gut); color: var(--ink); background: rgba(236,238,242,.5); -webkit-backdrop-filter: blur(14px) saturate(1.2); backdrop-filter: blur(14px) saturate(1.2); border-bottom: 1px solid rgba(255,255,255,.5); }
+  .brand { font: 700 15px var(--f-display); letter-spacing: .02em; text-decoration: none; }
+  .nav nav { display: flex; gap: 28px; }
+  .nav a { font: 500 14px var(--f-body); text-decoration: none; position: relative; padding: 12px 0; }
+  .nav nav a::after, .link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .5s var(--ease); }
+  .nav nav a:hover::after, .link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  /* cover: laid out like board 16. Grainy silver light, the wearer on the right with a faded echo of her behind,
+     and a dark translucent block holding the words. The type keeps the earlier treatment */
+  .hero { height: 100svh; min-height: 720px; overflow: hidden; background-color: #c9ccd2; }
+  .h-sky { position: absolute; inset: 0; background:
+      radial-gradient(42% 58% at 20% 2%, rgba(255,255,255,1), rgba(255,255,255,0) 72%),
+      radial-gradient(46% 60% at 96% 16%, rgba(255,255,255,.75), rgba(255,255,255,0) 70%),
+      linear-gradient(180deg, #dfe1e5 0%, #c3c6cc 46%, #8f9299 100%); }
+  .h-tex { position: absolute; left: 6vw; top: -8vh; width: 74vw; height: 116vh; opacity: .28; mix-blend-mode: multiply; -webkit-mask-image: radial-gradient(closest-side, #000 48%, transparent); mask-image: radial-gradient(closest-side, #000 48%, transparent); will-change: transform; }
+  .h-tex img { width: 100%; height: 100%; object-fit: cover; filter: blur(1.5px); }
+  .h-noise { position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: .3; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .5  0 0 0 0 .5  0 0 0 1 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"); }
+  /* the same photo twice, as on the board: a cool translucent echo a step to the left, the real one cropped above the belt */
+  .h-echo { position: absolute; z-index: 1; right: calc(39svh - 6vw); top: 2svh; height: 82svh; width: auto; max-width: none; opacity: .6; mix-blend-mode: multiply; filter: grayscale(1) sepia(.4) hue-rotate(180deg) saturate(2) brightness(1.04) contrast(.92); -webkit-mask-image: linear-gradient(180deg, #000 48%, transparent 88%); mask-image: linear-gradient(180deg, #000 48%, transparent 88%); will-change: transform; }
+  .h-fig { position: absolute; z-index: 1; right: -6vw; top: 0; height: 117svh; width: auto; max-width: none; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 86%); mask-image: linear-gradient(180deg, #000 70%, transparent 86%); will-change: transform; }
+  .h-fade { position: absolute; z-index: 2; left: 0; right: 0; bottom: 0; height: 16vh; pointer-events: none; background: linear-gradient(180deg, rgba(236,238,242,0), var(--paper)); }
+  .h-num { position: absolute; z-index: 3; right: 4vw; top: clamp(78px, 11vh, 120px); font: 800 clamp(56px, 6vw, 110px)/1 var(--f-display); letter-spacing: -.02em; color: var(--white); transform: skewX(-12deg); text-shadow: 0 6px 24px rgba(var(--ink-rgb), .22); }
+  /* the dark block sits low like the board: empty at the top, the words settled at its foot */
+  .h-panel { position: absolute; z-index: 3; left: 0; bottom: 9vh; width: 46vw; min-height: 64vh; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-start; padding: clamp(28px, 5vh, 56px) clamp(24px, 3vw, 48px) clamp(24px, 4vh, 40px) var(--gut); background-color: rgba(22,24,28,.6); background-image: linear-gradient(180deg, rgba(22,24,28,0), rgba(12,13,16,.22)); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); color: var(--white); }
+  .hero-title { margin: 0; font: 800 clamp(52px, 6vw, 108px)/.86 var(--f-display); letter-spacing: -.045em; text-transform: uppercase; color: var(--white); white-space: nowrap; text-shadow: 0 10px 30px rgba(0,0,0,.25); }
+  .hero-title .line { display: block; overflow: hidden; padding: .08em .1em .04em 0; transform: skewX(-8deg); transform-origin: 0 100%; }
+  .hero-title .ch { display: inline-block; opacity: var(--o, 1); will-change: transform, opacity; }
+  .h-intro { margin: clamp(14px, 2.2vh, 22px) 0 0; max-width: 64ch; font: 400 clamp(14px, 1.9vh, 16.5px)/1.55 var(--f-body); color: rgba(255,255,255,.9); }
+  .h-intro b { font-weight: 500; color: var(--white); }
+  .h-tags { display: flex; flex-wrap: wrap; gap: 8px; margin: clamp(12px, 2vh, 18px) 0 0; padding: 0; list-style: none; }
+  .h-tags li { padding: 5px 13px; border-radius: 99px; background-color: rgba(38,40,46,.78); border: 1px solid rgba(255,255,255,.55); color: var(--white); font: 500 13px/1.2 var(--f-body); }
+  .h-facts { display: grid; grid-template-columns: 1.1fr 1.2fr 1.4fr; gap: 10px 28px; width: 100%; max-width: 68ch; margin: clamp(14px, 2.2vh, 22px) 0 0; padding-top: clamp(12px, 1.8vh, 16px); border-top: 1px solid rgba(255,255,255,.22); }
+  .h-facts dt { font: 400 11px var(--f-cap); letter-spacing: .2em; text-transform: uppercase; color: #c9d0f4; }
+  .h-facts dd { margin: 4px 0 0; font: 400 clamp(12.5px, 1.6vh, 14px)/1.45 var(--f-body); color: rgba(255,255,255,.84); }
+  .h-foot { display: flex; flex-direction: column; align-items: flex-start; gap: clamp(8px, 1.4vh, 12px); margin-top: clamp(14px, 2.2vh, 22px); }
+  .h-date { margin: 0; font: 600 clamp(22px, 2vw, 32px)/1 var(--f-head); color: #c4c7ce; }
+  .h-panel .link { color: #cdd4f8; }
+
+  /* facts on a frosted strip */
+  .facts { padding: clamp(60px, 9vh, 110px) 0 clamp(40px, 6vh, 80px); }
+  .facts-grid { display: grid; grid-template-columns: 1.15fr .8fr .8fr 1.1fr 1.3fr; margin: 0; padding: 8px 30px 30px; }
+  .f { padding: 24px 24px 0 0; }
+  .f + .f { padding-left: 22px; border-left: 1px solid var(--line); }
+  .f dt { font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--peri-deep); margin-bottom: 10px; }
+  .f dd { margin: 0; font: 400 16px/1.55 var(--f-body); color: var(--ink); }
+
+  .sec { padding: clamp(90px, 14vh, 170px) 0 clamp(100px, 15vh, 190px); overflow: hidden; }
+
+  /* 01 background: board 17 */
+  .bg-sec .ghost { right: -10vw; top: 4%; width: 52vw; height: 84%; opacity: .26; -webkit-mask-image: radial-gradient(closest-side, #000 50%, transparent); mask-image: radial-gradient(closest-side, #000 50%, transparent); }
+  .bg-grid { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 90px); align-items: start; margin-top: clamp(56px, 9vh, 110px); }
+  .bg-copy .statement { max-width: 10ch; }
+  .bg-copy .body { max-width: 34ch; margin-top: clamp(24px, 4vh, 40px); }
+  .ask { color: var(--ink); background: linear-gradient(var(--peri-deep), var(--peri-deep)) 0 100% / var(--u, 0%) 2px no-repeat; padding-bottom: 2px; }
+  .race { position: relative; z-index: 1; height: clamp(110px, 18vh, 200px); margin: clamp(48px, 8vh, 96px) 0 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent); }
+  .race canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ins { margin: 0; padding: 28px 30px 30px; }
+  .ins .sq { margin-bottom: 26px; }
+  .ins-grid { position: relative; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); grid-template-areas: "n1 ." "n2 s1" "n3 s2" "n4 o1" "n5 o1" "e1 ."; gap: 40px 52px; }
+  .ins-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  .ins-wires .w-base { fill: none; stroke: var(--line); stroke-width: 1.2; }
+  .ins-wires .w-live { fill: none; stroke: var(--ink-2); stroke-width: 1.4; }
+  .ins-wires .w-head { fill: var(--ink-2); }
+  .ins-wires text { font: 500 11px var(--f-body); letter-spacing: .08em; fill: var(--muted); text-transform: uppercase; }
+  .nd { position: relative; z-index: 1; padding: 12px 16px; border: 1px solid var(--line-2); border-radius: 10px; background: rgba(255,255,255,.72); font: 400 clamp(13px, 1vw, 15px)/1.45 var(--f-body); color: var(--ink-2); transition: opacity .6s var(--ease), transform .8s var(--ease), box-shadow .8s var(--ease), background .8s var(--ease); }
+  .nd.side, .nd.end { align-self: center; justify-self: start; border-radius: 99px; padding: 12px 22px; font-weight: 500; }
+  .nd.out { align-self: center; padding: 22px 20px; border-radius: 22px; font: 600 clamp(16px, 1.4vw, 21px)/1.25 var(--f-head); color: var(--ink); text-align: center; }
+  .nd.out.lit { background: rgba(var(--peri-rgb), .45); border-color: var(--peri-deep); box-shadow: 0 0 0 10px rgba(var(--peri-rgb), .18), 0 24px 60px -20px rgba(74,87,148,.45); }
+  .n1 { grid-area: n1; } .n2 { grid-area: n2; } .n3 { grid-area: n3; } .n4 { grid-area: n4; } .n5 { grid-area: n5; } .s1 { grid-area: s1; } .s2 { grid-area: s2; } .o1 { grid-area: o1; } .e1 { grid-area: e1; }
+  .ins-foot { margin: 30px 0 0; padding-top: 20px; border-top: 1px solid var(--line); font: 500 clamp(16px, 1.3vw, 19px)/1.45 var(--f-body); color: var(--ink); }
+  .thread { position: relative; z-index: 1; margin: clamp(80px, 13vh, 150px) 0 0; }
+  .thread .pre { margin: 0 0 14px; font: 500 clamp(17px, 1.4vw, 21px) var(--f-body); color: var(--muted); }
+  .thread .big { margin: 0; font: 800 clamp(40px, 6.6vw, 118px)/.95 var(--f-display); letter-spacing: -.04em; text-transform: uppercase; color: var(--ink); text-shadow: 0 12px 26px rgba(var(--ink-rgb), .16); }
+
+  /* 02 research: board 18 */
+  .rs-sec .blob.b1 { width: 50vw; aspect-ratio: 1; right: -14vw; top: 22%; opacity: .5; filter: blur(14px); }
+  .rs-sec .ghost { left: -10vw; bottom: 0; width: 60vw; height: 56%; opacity: .26; -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent); mask-image: radial-gradient(closest-side, #000 45%, transparent); }
+  .comp { position: relative; z-index: 1; margin: clamp(48px, 8vh, 96px) 0 0; }
+  .comp > .eyebrow { margin-bottom: 20px; }
+  .comp-stage { position: relative; height: min(84vh, 780px); min-height: 620px; }
+  .rings { position: absolute; left: 50%; top: 50%; width: 0; height: 0; }
+  .rings i { position: absolute; left: 0; top: 0; border-radius: 50%; border: 1px solid rgba(255,255,255,.9); background: radial-gradient(closest-side, rgba(122,129,146,.04), rgba(122,129,146,.16)); transform: translate(-50%, -50%); }
+  .rings .r1 { width: 380px; height: 380px; }
+  .rings .r2 { width: 560px; height: 560px; }
+  .rings .r3 { width: 740px; height: 740px; background: radial-gradient(closest-side, rgba(122,129,146,0) 70%, rgba(122,129,146,.12)); }
+  .rings b { position: absolute; left: 0; transform: translate(-50%, -50%); font: 400 12px var(--f-cap); letter-spacing: .3em; color: var(--muted); white-space: nowrap; }
+  .rings .a1 { top: -345px; } .rings .a2 { top: -255px; } .rings .a3 { top: 255px; } .rings .a4 { top: 345px; }
+  .core { position: absolute; left: 50%; top: 50%; width: 230px; height: 230px; margin: -115px 0 0 -115px; border-radius: 50%; display: grid; place-items: center; text-align: center; font: 600 22px/1.15 var(--f-head); color: var(--ink); }
+  .when { position: absolute; transform: translate(-50%, -50%); width: 140px; text-align: center; font: 500 13px/1.3 var(--f-body); color: var(--muted); transition: color .6s var(--ease); }
+  .when.lit { color: var(--ink); }
+  .comp-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  .comp-wires line { stroke: var(--peri-deep); stroke-width: 1.2; stroke-dasharray: 3 5; opacity: 0; transition: opacity .6s var(--ease); }
+  .comp-wires line.lit { opacity: .8; }
+  .rv { position: absolute; width: min(320px, 26vw); padding: 22px 24px 20px; transition: scale .9s var(--ease), box-shadow .9s var(--ease); }
+  .rv > * { transition: opacity .7s var(--ease); }
+  .rv.tl { left: 0; top: 0; } .rv.tr { right: 0; top: 0; } .rv.bl { left: 0; bottom: 0; } .rv.br { right: 0; bottom: 0; }
+  .rv h4 { margin: 0 0 14px; font: 600 clamp(22px, 2vw, 30px)/1.1 var(--f-head); color: var(--ink); }
+  .rv dl { margin: 0; }
+  .rv dt { margin-top: 12px; font: 400 11px var(--f-cap); letter-spacing: .2em; text-transform: uppercase; color: var(--peri-deep); }
+  .rv dd { margin: 4px 0 0; font: 400 15px/1.45 var(--f-body); color: var(--ink-2); }
+  .rv dd.miss { color: var(--ink); font-weight: 500; }
+  .rv .when-m { display: none; }
+  /* dimming lives on the children and on `scale`, so it never fights the GSAP entrance on the card itself */
+  .comp-stage.scan .rv { scale: .97; }
+  .comp-stage.scan .rv > * { opacity: .38; }
+  .comp-stage.scan .rv.lit { scale: 1; box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 0 0 8px rgba(var(--peri-rgb), .16), 0 40px 80px -36px rgba(74,87,148,.45); }
+  .comp-stage.scan .rv.lit > * { opacity: 1; }
+  .goals { position: relative; z-index: 1; margin: clamp(90px, 14vh, 160px) 0 0; }
+  .goal-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.6vw, 24px); margin: 26px 0 0; padding: 0; list-style: none; }
+  .goal { display: flex; align-items: center; gap: 16px; min-height: 96px; padding: 20px 26px; }
+  .goal .gi { font: 400 30px/1 var(--f-num); color: var(--peri-deep); }
+  .goal span:last-child { font: 600 clamp(19px, 1.6vw, 24px)/1.2 var(--f-head); color: var(--ink); }
+  .tech { position: relative; z-index: 1; margin: clamp(60px, 9vh, 110px) 0 0; padding: clamp(28px, 3vw, 48px); }
+  .tech > .sq { margin-bottom: clamp(26px, 4vh, 40px); }
+  .t-row { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); gap: clamp(24px, 3vw, 56px); padding: clamp(26px, 4vh, 40px) 0; border-top: 1px solid var(--line); }
+  .t-h h4 { margin: 0; font: 600 clamp(26px, 2.4vw, 38px)/1.05 var(--f-head); font-style: italic; color: var(--ink); }
+  .t-h p { margin: 10px 0 0; font: 400 15px/1.45 var(--f-body); color: var(--muted); }
+  .t-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2vw, 32px); }
+  .t-cols h5, .lv h5 { margin: 0 0 10px; font: 600 17px/1.3 var(--f-head); color: var(--ink); }
+  .t-cols ul, .lv ul { margin: 0; padding: 0; list-style: none; }
+  .t-cols li, .lv li { position: relative; padding: 6px 0 6px 18px; font: 400 15px/1.45 var(--f-body); color: var(--ink-2); border-bottom: 1px solid var(--line); }
+  .t-cols li::before, .lv li::before { content: ""; position: absolute; left: 0; top: 14px; width: 6px; height: 6px; border-radius: 50%; background: var(--peri-deep); }
+  .lv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+  .lv { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 20px; padding: 22px 24px; }
+  .lv-art { position: relative; width: 150px; height: 150px; }
+  .contour { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .contour path { fill: none; stroke: var(--peri-deep); stroke-width: .8; opacity: .55; }
+  .contour g { transform-origin: 52px 52px; animation: spin 40s linear infinite; }
+  .lv:nth-child(2) .contour g { animation-duration: 26s; animation-direction: reverse; }
+  .lv-art img { position: absolute; left: 13%; top: 13%; width: 74%; height: 74%; object-fit: contain; mix-blend-mode: multiply; filter: saturate(.8) contrast(1.04); animation: float 6s ease-in-out infinite; }
+  .lv:nth-child(2) .lv-art img { animation-delay: -3s; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes float { 0%, 100% { transform: translateY(-4px); } 50% { transform: translateY(4px); } }
+  .lv .tag { grid-column: 1 / -1; margin: 6px 0 0; font: 400 clamp(18px, 1.5vw, 23px)/1.3 var(--f-head); color: var(--muted); }
+
+  /* 03 ideation: board 19. The sketches are the user's own drawings on transparent backgrounds */
+  .id-lead { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 90px); align-items: end; margin-top: clamp(48px, 8vh, 90px); }
+  .id-lead .statement { max-width: 13ch; }
+  .id-lead .body { max-width: 42ch; padding-bottom: 8px; }
+  .sk-wall { position: relative; z-index: 1; height: min(100vh, 880px); min-height: 640px; margin-top: clamp(30px, 5vh, 70px); }
+  .sk { position: absolute; margin: 0; will-change: transform; }
+  .sk img { width: 100%; height: auto; }
+  /* the back sketch sits in the middle; the references and details circle it */
+  .k53 { left: 26%; top: 0; width: 48%; z-index: 2; }
+  .k54 { left: 3%; top: 2%; width: 14%; } .k56 { left: 82%; top: 1%; width: 15%; }
+  .k57 { left: 0; top: 40%; width: 16%; } .k45 { left: 68%; top: 6%; width: 13%; }
+  .k28 { left: 13%; top: 60%; width: 18%; } .k47 { left: 83%; top: 46%; width: 16%; } .k46 { left: 63%; top: 58%; width: 21%; }
+  .k54 img { -webkit-mask-image: radial-gradient(closest-side, #000 72%, transparent); mask-image: radial-gradient(closest-side, #000 72%, transparent); }
+  .sk-blob { position: absolute; border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--peri-rgb), .55), rgba(var(--peri-rgb), 0)); filter: blur(6px); }
+  .sb1 { left: 36%; top: 26%; width: 28%; aspect-ratio: 1; } .sb2 { left: 4%; top: 58%; width: 15%; aspect-ratio: 1; } .sb3 { left: 72%; top: 60%; width: 15%; aspect-ratio: 1; }
+  .sys { position: relative; z-index: 1; margin-top: clamp(70px, 11vh, 130px); }
+  .sys-stage { position: relative; height: min(82vh, 720px); min-height: 580px; margin-top: 18px; }
+  .sys-center { position: absolute; inset: 0; display: grid; place-items: center; }
+  .sys-center > * { grid-area: 1 / 1; }
+  .disc { width: min(46vw, 600px); aspect-ratio: 1; border-radius: 50%; border: 1px solid rgba(255,255,255,.95); background: radial-gradient(circle at 32% 28%, rgba(255,255,255,.95), rgba(255,255,255,.15) 46%), radial-gradient(circle at 72% 24%, rgba(208,228,120,.42), rgba(208,228,120,0) 42%), radial-gradient(circle at 34% 78%, rgba(var(--peri-rgb), .55), rgba(var(--peri-rgb), 0) 52%), rgba(214,218,228,.55); box-shadow: inset 0 0 70px rgba(255,255,255,.75), 0 60px 100px -60px rgba(28,34,54,.45); }
+  .sys-art { position: relative; width: min(54vw, 720px); height: auto; }
+  .sys-cw { position: relative; z-index: 2; width: 100%; height: 100%; align-self: stretch; justify-self: stretch; overflow: visible; pointer-events: none; } /* above the disc and drawing, which keep a transform after their entrance */
+  .cw-halo { fill: none; stroke: rgba(255,255,255,.85); stroke-width: 7; stroke-linecap: round; }
+  .cw-line { fill: none; stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; }
+  .cw-dot { fill: var(--peri-deep); stroke: rgba(var(--peri-rgb), .55); paint-order: stroke fill; opacity: 0; transition: opacity .8s var(--ease); }
+  .sys-cw.drawn .cw-dot { opacity: 1; }
+  .sys-wires { position: absolute; inset: 0; z-index: 1; overflow: visible; pointer-events: none; }
+  .sys-wires line { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 2 4; }
+  .sys-wires circle { fill: var(--peri-deep); }
+  .ptag { position: absolute; z-index: 2; width: min(250px, 19vw); padding: 14px 16px 15px; border-radius: 18px; }
+  .ptag b { display: block; font: 600 17px/1.2 var(--f-head); color: var(--ink); }
+  .ptag span { display: block; margin-top: 6px; font: 400 14px/1.45 var(--f-body); color: var(--ink-2); }
+  .t-ard { left: 0; top: 18%; } .t-heat { left: 3%; bottom: 3%; } .t-lap { right: 0; top: 2%; } .t-ppg { right: 0; top: 37%; } .t-vib { right: 2%; bottom: 5%; }
+  .sys-notes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 26px 0 0; padding: 0; list-style: none; }
+  .sys-notes li { padding: 18px 20px; font: 400 15px/1.5 var(--f-body); color: var(--ink-2); }
+  .sys-notes b { display: block; margin-bottom: 4px; font: 600 16px/1.3 var(--f-head); color: var(--ink); }
+  .sys-cap { margin: 24px 0 0; max-width: 72ch; font: 500 clamp(16px, 1.3vw, 19px)/1.5 var(--f-body); color: var(--ink); }
+
+  /* key decision: the UML cards from board 19, lit one after another */
+  .uml-sec { overflow: hidden; }
+  .uml-glow { position: absolute; z-index: 0; right: 10%; top: 30%; width: 70vmax; aspect-ratio: 1; margin: -35vmax -35vmax 0 0; border-radius: 50%; background: radial-gradient(closest-side, rgba(var(--warm-rgb), .45), rgba(var(--warm-rgb), .14) 45%, rgba(var(--warm-rgb), 0) 72%); opacity: 0; transition: opacity 1.4s var(--ease); pointer-events: none; }
+  .uml-sec.is-warm .uml-glow { opacity: 1; }
+  .uml-stage { position: relative; z-index: 1; min-height: 100svh; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 5vw, 96px); align-items: center; padding-top: clamp(96px, 12vh, 130px); padding-bottom: clamp(36px, 6vh, 64px); }
+  .uml-copy .statement { font-size: clamp(34px, 4vw, 68px); max-width: 12ch; }
+  .uml-copy .body { max-width: 42ch; margin-top: 22px; font-size: clamp(16px, 1.2vw, 19px); }
+  .uml-copy .neck { margin-top: 14px; color: var(--muted); }
+  .uml { margin: 0; }
+  .uml > .sq { margin-bottom: 30px; }
+  .uml-list { list-style: none; margin: 0; padding: 0; }
+  .u { position: relative; padding: 24px 22px 14px; border-radius: 20px; text-align: center; background: linear-gradient(160deg, rgba(122,129,146,.34), rgba(122,129,146,.1)); border: 1px solid rgba(255,255,255,.62); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); transition: background .7s var(--ease), box-shadow .9s var(--ease), scale .9s var(--ease); }
+  .u + .u { margin-top: 50px; }
+  .u + .u::before { content: ""; position: absolute; left: 50%; top: -46px; width: 1px; height: 20px; background: var(--ink-2); }
+  .u + .u::after { content: ""; position: absolute; left: 50%; top: -30px; width: 7px; height: 7px; margin-left: -3.5px; border-right: 1px solid var(--ink-2); border-bottom: 1px solid var(--ink-2); transform: rotate(45deg); }
+  .u .cond { position: absolute; left: calc(50% + 16px); top: -44px; font: 400 11px/1.3 var(--f-cap); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .ut { position: absolute; left: 50%; top: 0; transform: translate(-50%, -50%); padding: 6px 18px; border-radius: 99px; background: var(--white); font: 500 15px/1.2 var(--f-head); color: var(--ink); white-space: nowrap; box-shadow: 0 8px 18px -10px rgba(28,34,54,.35); }
+  .ut b { font-weight: 600; }
+  .u p { margin: 6px 0 0; font: 400 14.5px/1.45 var(--f-body); color: var(--ink-2); transition: opacity .6s var(--ease); }
+  .uml.scan .u:not(.on) p { opacity: .45; }
+  .u.on { background: linear-gradient(160deg, rgba(255,255,255,.88), rgba(255,255,255,.55)); box-shadow: 0 0 0 6px rgba(var(--peri-rgb), .18), 0 30px 60px -30px rgba(74,87,148,.45); scale: 1.02; }
+  .u.warm.on { box-shadow: 0 0 0 8px rgba(var(--warm-rgb), .25), 0 0 70px 8px rgba(var(--warm-rgb), .35); }
+  .rip { position: absolute; inset: 0; border-radius: 20px; border: 1.5px solid var(--peri-deep); opacity: 0; pointer-events: none; }
+  .u.vib.on .rip { animation: rip 2s cubic-bezier(.1, .6, .3, 1) infinite; }
+  .u.vib.on .rip + .rip { animation-delay: .7s; }
+  @keyframes rip { 0% { transform: scale(1); opacity: .8; } 100% { transform: scale(1.18, 1.6); opacity: 0; } }
+  .u.rec.on { background: linear-gradient(160deg, rgba(255,255,255,.7), rgba(214,218,228,.5)); box-shadow: 0 0 0 6px rgba(var(--peri-rgb), .1); }
+  .uml-foot { margin: 28px 0 0; font: 600 clamp(18px, 1.6vw, 24px)/1.25 var(--f-head); color: var(--ink); }
+
+  /* 04 prototype: board 20 */
+  .pt-eb { margin-top: clamp(28px, 4vh, 44px); }
+  .pt-sec .blob { width: 46vw; aspect-ratio: 1; left: -16vw; top: 18%; opacity: .45; filter: blur(14px); }
+  .tests { position: relative; z-index: 1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); margin-top: clamp(48px, 8vh, 90px); }
+  .test { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 22px; align-items: start; padding: 22px; }
+  .test-ph { margin: 0; border-radius: 16px; overflow: hidden; aspect-ratio: 3 / 4; background: var(--white); }
+  .test-ph img { width: 100%; height: 100%; object-fit: cover; }
+  .test h4 { margin: 0 0 10px; font: 600 clamp(20px, 1.7vw, 26px)/1.15 var(--f-head); color: var(--ink); }
+  .test p { margin: 0 0 6px; font: 400 15px/1.5 var(--f-body); color: var(--ink-2); }
+  .test .note { color: var(--muted); }
+  .code { margin: 14px 0 0; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.62); border: 1px solid rgba(255,255,255,.95); }
+  .code h5 { margin: 0 0 6px; font: 600 13px var(--f-head); color: var(--ink); }
+  /* long lines wrap with a hanging indent instead of scrolling sideways, so nothing hides from keyboard users */
+  .code code { display: block; font: 400 12.5px/1.65 var(--f-mono); color: var(--ink-2); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .code .cl { display: block; padding-left: 2ch; text-indent: -2ch; }
+  .code .cm { color: var(--peri-deep); }
+  .heat { display: flex; align-items: center; gap: 16px; margin: 12px 0 4px; }
+  .dial { position: relative; flex: none; width: 92px; aspect-ratio: 1; }
+  .dial svg { width: 100%; height: 100%; overflow: visible; transform: rotate(-90deg); }
+  .d-ticks { fill: none; stroke: var(--line-2); stroke-width: 6; stroke-dasharray: 1.2 11.646; }
+  .d-track { fill: none; stroke: var(--line); stroke-width: 2; }
+  .d-arc { fill: none; stroke: url(#heatg); stroke-width: 5; stroke-linecap: round; stroke-dasharray: 502.65; stroke-dashoffset: 502.65; }
+  .hg1 { stop-color: var(--peri-deep); }
+  .hg2 { stop-color: var(--warm); }
+  .dial-in { position: absolute; inset: 0; display: grid; place-items: center; font: 400 26px/1 var(--f-num); color: var(--ink); }
+  .dial-in small { font: 400 10px var(--f-cap); letter-spacing: .2em; color: var(--muted); }
+  .temp { position: relative; display: inline-block; --p: 0%; font: 400 clamp(56px, 5.2vw, 88px)/.86 var(--f-num); color: transparent; -webkit-text-stroke: 1.5px rgba(var(--warm-rgb), .9); }
+  .temp::after { content: attr(data-text); position: absolute; inset: 0; -webkit-text-stroke: 0; color: transparent; background: linear-gradient(0deg, var(--warm-2), var(--warm)); -webkit-background-clip: text; background-clip: text; clip-path: inset(calc(100% - var(--p)) 0 0 0); }
+  .mock { position: relative; z-index: 1; margin-top: clamp(70px, 10vh, 120px); padding: clamp(22px, 2.6vw, 40px); }
+  .mock-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: clamp(140px, 13vw, 220px); gap: 12px; margin-top: 22px; }
+  .mg { margin: 0; border-radius: 14px; overflow: hidden; background: var(--white); }
+  .mg img { width: 100%; height: 100%; object-fit: cover; }
+  .mg.tall { grid-row: span 2; } .mg.wide { grid-column: span 2; }
+  .mock-text { grid-column: span 2; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 18px 22px; border-radius: 14px; background: rgba(255,255,255,.55); font: 400 clamp(15px, 1.15vw, 18px)/1.5 var(--f-body); color: var(--ink); }
+  .mock-text p { margin: 0; }
+  .build { position: relative; z-index: 1; display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: clamp(20px, 3vw, 48px); align-items: start; margin-top: clamp(70px, 10vh, 120px); }
+  .trip { margin: 0; }
+  .trip-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 18px); align-items: start; }
+  .tclip { aspect-ratio: 9 / 16; overflow: hidden; border-radius: 16px; background: var(--white); }
+  .tclip:nth-child(2) { margin-top: 10%; }
+  .tclip video { width: 100%; height: 100%; object-fit: cover; }
+  .trip-bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 18px; }
+  .trip-bar .cap { margin: 0; }
+  .pause { flex: none; min-height: 44px; padding: 0 18px; border: 1px solid var(--line-2); border-radius: 99px; background: rgba(255,255,255,.75); color: var(--ink); font: 500 13px var(--f-body); cursor: pointer; transition: background .3s, color .3s, border-color .3s, transform .15s; }
+  .pause:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .pause:active { transform: scale(.97); }
+  .build-lead { margin: 18px 0 0; max-width: 46ch; font: 500 clamp(17px, 1.35vw, 20px)/1.45 var(--f-body); color: var(--ink); }
+  .model { margin: 0; padding: 20px 20px 16px; }
+  .model .sq { font-size: 20px; }
+  .model img { width: auto; max-width: 70%; max-height: min(58vh, 500px); margin: 14px auto 0; }
+  .next { position: relative; z-index: 1; margin: clamp(110px, 16vh, 190px) 0 0; }
+  .next p { max-width: 21ch; margin: 0; font: 600 clamp(32px, 4.4vw, 76px)/1.06 var(--f-head); letter-spacing: -.02em; color: var(--ink); }
+
+  /* 05 final product: board 21 */
+  .fp-stage { position: relative; z-index: 1; height: min(108vh, 980px); min-height: 720px; margin-top: 18px; }
+  .fp-ghost { position: absolute; left: 12%; top: 0; width: 60%; height: 100%; opacity: .55; -webkit-mask-image: radial-gradient(closest-side, #000 55%, transparent); mask-image: radial-gradient(closest-side, #000 55%, transparent); }
+  .fp-ghost img { width: 100%; height: 100%; object-fit: cover; filter: blur(1.5px); }
+  .fp-hand { position: absolute; left: 0; top: 0; width: 21%; margin: 0; }
+  .fp-hand img { width: 100%; height: auto; filter: drop-shadow(0 30px 40px rgba(var(--ink-rgb), .18)); }
+  .fp-thumbs { position: absolute; left: 3%; bottom: 2%; width: 17%; display: grid; gap: 12px; margin: 0; }
+  .fp-thumbs figure { margin: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 2; border: 1px solid rgba(255,255,255,.9); box-shadow: 0 20px 40px -24px rgba(28,34,54,.4); }
+  .fp-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+  .fp-back { position: absolute; left: 37%; bottom: 0; height: 86%; width: auto; max-width: none; -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 98%); mask-image: linear-gradient(180deg, #000 70%, transparent 98%); filter: drop-shadow(0 40px 50px rgba(var(--ink-rgb), .2)); }
+  .fp-rend { position: absolute; right: 0; top: 2%; width: 24%; display: grid; gap: 12px; margin: 0; }
+  .fp-rend figure { position: relative; margin: 0; border-radius: 14px; overflow: hidden; aspect-ratio: 16 / 10; border: 1px solid rgba(255,255,255,.9); box-shadow: 0 20px 40px -24px rgba(28,34,54,.4); }
+  .fp-rend img { width: 100%; height: 100%; object-fit: cover; }
+  .fp-rend figcaption, .rtag { position: absolute; left: 10px; bottom: 10px; padding: 4px 10px; border-radius: 99px; background: rgba(255,255,255,.9); font: 500 11px var(--f-body); letter-spacing: .06em; text-transform: uppercase; color: var(--ink); }
+  .fp-rend .sq { position: relative; margin-top: 10px; font-size: clamp(18px, 1.6vw, 24px); }
+  .fp-sec .sq.pir { position: relative; z-index: 2; margin-top: 12px; }
+  .fp-foot { position: relative; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; margin-top: 28px; }
+  .fp-foot p { margin: 0; max-width: 52ch; font: 500 clamp(16px, 1.3vw, 19px)/1.45 var(--f-body); color: var(--ink); }
+
+  /* end: all work, on glass */
+  .case-nav { position: relative; padding: clamp(80px, 12vh, 140px) 0 clamp(40px, 6vh, 72px); background-color: var(--paper); overflow: hidden; }
+  .case-nav .blob { width: 70vw; aspect-ratio: 1; left: 10vw; top: 0; opacity: .5; filter: blur(16px); }
+  .cn-bar { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 18px; }
+  .cn-bar .eyebrow { color: var(--muted); }
+  .all-work { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: clamp(16px, 3vw, 48px); padding: clamp(36px, 7vh, 80px) clamp(24px, 3.4vw, 56px); color: var(--ink); text-decoration: none; }
+  .aw-t { position: relative; display: block; --p: 0%; font: 800 clamp(44px, 11.4vw, 200px)/.84 var(--f-display); letter-spacing: -.05em; text-transform: uppercase; color: #f2f3f6; -webkit-text-stroke: 3px var(--ink); paint-order: stroke fill; white-space: nowrap; transition: --p 1s var(--ease); } /* fill matches the glass so the glyph overlaps stay hidden */
+  .aw-t::after { content: attr(data-text); position: absolute; inset: 0; color: var(--ink); -webkit-text-stroke: 0; clip-path: inset(0 calc(100% - var(--p)) 0 0); }
+  .aw-go { flex: none; display: grid; place-items: center; width: clamp(56px, 7vw, 120px); aspect-ratio: 1; border: 1px solid var(--line-2); border-radius: 50%; font: 400 clamp(22px, 2.4vw, 40px)/1 var(--f-body); color: var(--ink); transition: background .5s var(--ease), color .5s var(--ease), border-color .5s var(--ease); }
+  .aw-go i { font-style: normal; transition: transform .6s var(--ease); }
+  .all-work:hover .aw-t, .all-work:focus-visible .aw-t { --p: 100%; }
+  .all-work:hover .aw-go, .all-work:focus-visible .aw-go { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  .all-work:hover .aw-go i { transform: translateX(4px); }
+  .foot { background-color: var(--paper); }
+  .foot-in { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 12px 0 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  .totop { background: none; border: 0; cursor: pointer; }
+
+  @media (max-width: 900px) {
+    .nav { padding-top: 8px; padding-bottom: 8px; }
+    .nav nav { gap: 18px; }
+    /* phones are not tuned yet (desktop first, by request); this only keeps the cover stacked and readable */
+    .hero { height: auto; min-height: 0; display: flex; flex-direction: column; }
+    .h-fig { position: relative; right: auto; align-self: flex-end; height: 64svh; margin-top: 64px; }
+    .h-panel { position: relative; top: auto; width: auto; padding: 28px var(--gut) 34px; }
+    .h-echo, .h-num { display: none; }
+    .hero-title { font-size: 13.4vw; }
+    .h-facts { grid-template-columns: 1fr; }
+    .facts-grid { grid-template-columns: 1fr 1fr; padding: 4px 20px 20px; }
+    .f, .f + .f { padding: 18px 14px 18px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+    .f:last-child { grid-column: 1 / -1; border-bottom: 0; }
+    .bg-grid, .id-lead { grid-template-columns: 1fr; }
+    .bg-sec .ghost { width: 90vw; right: -30vw; opacity: .2; }
+    .ins { padding: 22px 16px 22px; }
+    .ins-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); gap: 30px 22px; }
+    .nd { padding: 10px 12px; font-size: 13px; }
+    .nd.side, .nd.end { padding: 10px 14px; }
+    .nd.out { padding: 16px 12px; font-size: 15px; }
+    .comp-stage { height: auto; min-height: 0; display: grid; gap: 14px; padding-top: 300px; }
+    .rings { top: 140px; }
+    .rings .r1 { width: 200px; height: 200px; }
+    .rings .r2 { width: 260px; height: 260px; }
+    .rings .r3 { width: 320px; height: 320px; }
+    .rings b, .when, .comp-wires { display: none; }
+    .core { top: 140px; width: 150px; height: 150px; margin: -75px 0 0 -75px; font-size: 17px; }
+    .rv { position: relative; inset: auto; width: auto; }
+    .rv.tl, .rv.tr, .rv.bl, .rv.br { left: auto; right: auto; top: auto; bottom: auto; }
+    .rv .when-m { display: block; }
+    .goal-row { grid-template-columns: 1fr; }
+    .t-row, .t-cols, .lv-grid { grid-template-columns: 1fr; }
+    .lv { grid-template-columns: 96px minmax(0, 1fr); }
+    .lv-art { width: 96px; height: 96px; }
+    .sk-wall { height: auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .sk-wall .sk { position: relative; left: auto; top: auto; width: auto; }
+    .sk-wall .sk-c { grid-column: 1 / -1; width: 86%; justify-self: center; }
+    .sk-blob { display: none; }
+    .sys-stage { height: auto; min-height: 0; display: grid; gap: 10px; }
+    .sys-center { position: relative; inset: auto; padding: 10px 0; }
+    .disc { width: 92vw; }
+    .sys-art { width: 92vw; }
+    .sys-wires { display: none; }
+    .ptag { position: relative; inset: auto; width: auto; }
+    .t-ard, .t-heat, .t-lap, .t-ppg, .t-vib { left: auto; right: auto; top: auto; bottom: auto; }
+    .sys-notes { grid-template-columns: 1fr; }
+    .uml-stage { min-height: 0; grid-template-columns: 1fr; gap: 40px; padding-top: clamp(90px, 13vh, 130px); padding-bottom: 80px; }
+    .u .cond { position: static; display: block; margin: 0 0 8px; white-space: normal; }
+    .u + .u { margin-top: 44px; }
+    .tests, .test, .build { grid-template-columns: 1fr; }
+    .test-ph { aspect-ratio: 4 / 3; }
+    .mock-grid { grid-template-columns: 1fr 1fr; grid-auto-rows: auto; }
+    .mg { aspect-ratio: 3 / 4; }
+    .mg.tall { grid-row: auto; }
+    .mg.wide { aspect-ratio: 4 / 3; }
+    .mock-text { grid-column: 1 / -1; }
+    .fp-stage { height: auto; min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .fp-ghost { display: none; }
+    .fp-hand, .fp-thumbs, .fp-back, .fp-rend { position: relative; inset: auto; width: auto; }
+    .fp-back { grid-column: 1 / -1; height: auto; width: 86%; justify-self: center; }
+    .fp-rend { grid-column: 1 / -1; grid-template-columns: 1fr 1fr; }
+    .all-work { flex-direction: column; align-items: flex-start; }
+    .aw-t { font-size: 11vw; -webkit-text-stroke-width: 2px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .contour g, .lv-art img, .u.vib.on .rip { animation: none; }
+    .nd, .when, .comp-wires line, .rv, .rv > *, .u, .u p, .uml-glow, .aw-t, .aw-go, .aw-go i, .btn, .pause { transition: none; }
+  }
+  /* without the motion layer everything stays readable and still */
+  .static .contour g, .static .lv-art img, .static .u.vib.on .rip { animation: none; }
+  .static .comp-stage .rv { scale: 1; }
+  .static .comp-stage .rv > * { opacity: 1; }
+  .static .when { color: var(--ink); }
+  .static .temp { --p: 100%; }
+  /* ds-allow-hardcode:end */
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="../">Tianhao Wang</a>
+  <nav aria-label="Main">
+    <a href="../#work">Work</a>
+    <a href="../#about">About</a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- Cover, laid out like board 16. The downloaded gradient from that board is not used: the light is CSS, the texture is the user's own negative print,
+       and the figure is the real photo Layer 0 cut out (in the Figma asset page as a real photo) -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="h-sky" aria-hidden="true"></div>
+    <div class="h-tex" aria-hidden="true"><img src="media/fadence-bw-4107.jpg" width="2200" height="1466" alt=""></div>
+    <img class="h-echo" src="media/cutout-woman.webp" width="1320" height="1800" alt="" aria-hidden="true">
+    <img class="h-fig" src="media/cutout-woman.webp" width="1320" height="1800" alt="The wearer seen from behind, head bowed, the Fadence shell resting on her neck and shoulders">
+    <div class="h-noise" aria-hidden="true"></div>
+    <div class="h-fade" aria-hidden="true"></div>
+    <div class="h-num" aria-hidden="true">03</div>
+    <div class="h-panel">
+      <h1 id="hero-title" class="hero-title" aria-label="Fadence"><span class="line" aria-hidden="true">Fadence</span></h1>
+      <p class="h-intro">Fadence is a sensory-driven wearable designed to intervene at the edge of awareness, before overthinking solidifies into sleeplessness. Inspired by the natural rhythms of forgetting, it listens to the body’s micro-signals and responds with gentle heat or vibration, forming a soft cadence that guides the user from alertness to rest. <b>No screens. No commands. Only the fading rhythm of thought, restructured by the body.</b></p>
+      <ul class="h-tags" aria-label="Tags"><li>Smart Wearable</li><li>Product Design</li></ul>
+      <dl class="h-facts">
+        <div><dt>Role</dt><dd>Research, form design, electronics, and coding</dd></div>
+        <div><dt>Tools</dt><dd>PPG sensor, graphene heating patch, vibration motor, Arduino Nano</dd></div>
+        <div><dt>Result</dt><dd>A working prototype: the sensor, heating patch, and vibration motor built into the shell, plus a video</dd></div>
+      </dl>
+      <div class="h-foot"><a class="link" href="https://youtu.be/Hr81NE6ey_Y" target="_blank" rel="noopener">Watch the video <span aria-hidden="true">↗</span></a><p class="h-date">Apr to Jun 2025</p></div>
+    </div>
+  </section>
+
+  <!-- 01 Background: board 17. Its photos are stock images, so only the user's own diagram and words are rebuilt -->
+  <section class="sec bg-sec" aria-labelledby="bg-title">
+    <div class="deco ghost" aria-hidden="true"><img src="media/fadence-bw-4117.jpg" width="1466" height="2200" alt=""></div>
+    <div class="wrap">
+      <header class="board-h"><h2 id="bg-title" class="bt" data-split>Background</h2><span class="bs">Inspiration</span></header>
+      <div class="bg-grid">
+        <div class="bg-copy">
+          <p class="eyebrow">01 · Problem</p>
+          <h3 class="statement" data-split>A mind that won’t slow down</h3>
+          <p class="body">Short-term insomnia often starts with racing thoughts. Most sleep aids still ask for your attention: <span class="ask">a light to follow</span>, <span class="ask">a sound to listen to</span>, or <span class="ask">a headset to wear</span>.</p>
+        </div>
+        <figure class="ins glass">
+          <figcaption class="sq">Short-Term Insomnia</figcaption>
+          <div class="ins-grid">
+            <svg class="ins-wires" aria-hidden="true"></svg>
+            <div class="nd n1">Early awakening, unwilling to go to bed at the appropriate time, and difficulty falling asleep without supervision</div>
+            <div class="nd n2">Sufficient sleep time and an appropriate sleep environment</div>
+            <div class="nd side s1">Undersleep?</div>
+            <div class="nd n3">Daytime symptoms: decline in work, study, social skills, and more</div>
+            <div class="nd side s2">Short sleeper?</div>
+            <div class="nd n4">Symptoms 3 or more times a week</div>
+            <div class="nd n5">Symptoms for 3 months or more</div>
+            <div class="nd out o1">Short-Term Insomnia</div>
+            <div class="nd end e1">Chronic insomnia</div>
+          </div>
+          <p class="ins-foot">We intervene at short-term insomnia, but what we truly address is the mind that won’t stop.</p>
+        </figure>
+      </div>
+    </div>
+    <!-- racing thoughts: a tangle of lines that runs faster while you scroll -->
+    <div class="race" aria-hidden="true"><canvas></canvas></div>
+    <div class="wrap">
+      <div class="thread">
+        <p class="pre">Yet beneath these layers lies one consistent thread:</p>
+        <p class="big" data-split>The mind’s refusal to rest.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 Research: board 18. Competitor circle, design goals, technical research. Lisa and the questionnaire numbers stay out -->
+  <section class="sec rs-sec" aria-labelledby="rs-title">
+    <div class="deco blob b1" aria-hidden="true"></div>
+    <div class="deco ghost" aria-hidden="true"><img src="media/fadence-bw-4134.jpg" width="2200" height="1466" alt=""></div>
+    <div class="wrap">
+      <header class="board-h"><h2 id="rs-title" class="bt" data-split>Research</h2><span class="bs">Competitor Analysis</span></header>
+
+      <figure class="comp">
+        <figcaption class="eyebrow">02 · What other sleep aids miss</figcaption>
+        <div class="comp-stage">
+          <div class="rings" aria-hidden="true"><i class="r3"></i><i class="r2"></i><i class="r1"></i><b class="ax a1">Weakness</b><b class="ax a2">Form</b><b class="ax a3">Form</b><b class="ax a4">Weakness</b></div>
+          <svg class="comp-wires" aria-hidden="true"></svg>
+          <div class="core glass" aria-hidden="true">Intervention<br>timing</div>
+          <span class="when" aria-hidden="true">Before sleep</span>
+          <span class="when" aria-hidden="true">Before and during sleep</span>
+          <span class="when" aria-hidden="true">Pre-sleep meditation</span>
+          <span class="when" aria-hidden="true">Deep sleep stage</span>
+          <article class="rv tl glass"><h4>Dodow</h4><dl><dt>Form</dt><dd>Breathing-guided blue light</dd><dt class="when-m">Timing</dt><dd class="when-m">Before sleep</dd><dt>Weakness</dt><dd class="miss">Requires mental focus; ineffective for anxious users</dd></dl></article>
+          <article class="rv tr glass"><h4>Kokoon</h4><dl><dt>Form</dt><dd>Music, ambient noise, real-time monitoring</dd><dt class="when-m">Timing</dt><dd class="when-m">Before and during sleep</dd><dt>Weakness</dt><dd class="miss">Intrusive in-ear design; lacks cognitive-level feedback</dd></dl></article>
+          <article class="rv bl glass"><h4>Muse S</h4><dl><dt>Form</dt><dd>EEG tracking with an audio meditation coach</dd><dt class="when-m">Timing</dt><dd class="when-m">Pre-sleep meditation</dd><dt>Weakness</dt><dd class="miss">Overly instructional; unsuitable for mental overload</dd></dl></article>
+          <article class="rv br glass"><h4>Philips SmartSleep</h4><dl><dt>Form</dt><dd>EEG-driven audio stimulation</dd><dt class="when-m">Timing</dt><dd class="when-m">Deep sleep stage</dd><dt>Weakness</dt><dd class="miss">Bulky and expensive; not useful for sleep-onset problems</dd></dl></article>
+        </div>
+      </figure>
+
+      <div class="goals">
+        <h3 class="sq">Design goals and challenges</h3>
+        <ol class="goal-row">
+          <li class="goal frost"><span class="gi" aria-hidden="true">01</span><span>Non-verbal intervention</span></li>
+          <li class="goal frost"><span class="gi" aria-hidden="true">02</span><span>Sensory-driven interaction</span></li>
+          <li class="goal frost"><span class="gi" aria-hidden="true">03</span><span>Non-intrusive experience</span></li>
+        </ol>
+      </div>
+
+      <div class="tech glass">
+        <h3 class="sq">Technical Research</h3>
+        <div class="t-row">
+          <div class="t-h"><h4>Detection</h4><p>Detecting cognitive arousal through heart signals</p></div>
+          <div class="t-cols">
+            <div><h5>Why PPG works here</h5><ul><li>Early-stage HRV changes are detectable</li><li>More responsive than EEG before sleep</li><li>Captures cognitive arousal</li></ul></div>
+            <div><h5>PPG location</h5><ul><li>Non-invasive</li><li>Sleep-compatible</li><li>Discreet placement</li></ul></div>
+            <div><h5>Why the neck or behind the ear</h5><ul><li>Stable blood flow</li><li>Artery near the skin surface</li><li>Low interference during sleep</li><li>Close to the intervention module</li></ul></div>
+          </div>
+        </div>
+        <div class="t-row">
+          <div class="t-h"><h4>Intervention</h4></div>
+          <div class="lv-grid">
+            <!-- the two module pictures are the vendor product shots used on board 18 -->
+            <article class="lv frost"><div class="lv-art"><svg class="contour" viewBox="0 0 104 104" aria-hidden="true"><g></g></svg><img src="media/module-heat.jpg" width="640" height="640" alt="A graphene heating patch next to its small driver board"></div><div><h5>Level 1: Heating module</h5><ul><li>Graphene heat patch</li><li>Subtle warmth</li><li>No audio, no light</li><li>Passive and continuous</li></ul></div><p class="tag">“When thoughts begin to gather.”</p></article>
+            <article class="lv frost"><div class="lv-art"><svg class="contour" viewBox="0 0 104 104" aria-hidden="true"><g></g></svg><img src="media/module-vibe.jpg" width="640" height="640" alt="A vibration motor module on a small black board"></div><div><h5>Level 2: Vibration module</h5><ul><li>Vibration pulse</li><li>Triggered by sustained HRV</li><li>Non-verbal cognitive break</li><li>Just enough to interrupt</li></ul></div><p class="tag">“When the mind refuses to slow down.”</p></article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 Ideation: board 19. The user's own sketches, the parts drawing, and the system notes -->
+  <section class="sec id-sec" aria-labelledby="id-title">
+    <div class="wrap">
+      <header class="board-h"><h2 id="id-title" class="bt" data-split>Ideation</h2><span class="bs">Concept Sketches</span></header>
+      <div class="id-lead">
+        <div>
+          <p class="eyebrow">03 · Form</p>
+          <h3 class="statement" data-split>Shaped to rest on the neck and back, with no straps</h3>
+        </div>
+        <p class="body">Inspired by the soft grip of an octopus and the structural elegance of insect shells, the device wraps the body like a second skin: seamless, strapless, and intuitive. Its segmental form offers protection without pressure, intimacy without intrusion.</p>
+      </div>
+      <div class="sk-wall">
+        <i class="sk-blob sb1" aria-hidden="true"></i><i class="sk-blob sb2" aria-hidden="true"></i><i class="sk-blob sb3" aria-hidden="true"></i>
+        <figure class="sk k53 sk-c" data-d="0.1"><img src="media/sketch-53.webp" width="750" height="1000" alt="Pencil sketch of a back wearing the device, with notes on soft contact and the stable blood flow area"></figure>
+        <figure class="sk k54" data-d="0.4"><img src="media/sketch-54.webp" width="750" height="1000" alt="Drawing of a stag beetle, a reference for the shell structure"></figure>
+        <figure class="sk k45" data-d="0.5"><img src="media/sketch-45.webp" width="750" height="1000" alt="Line sketch of a curved piece of the shell"></figure>
+        <figure class="sk k56" data-d="0.3"><img src="media/sketch-56.webp" width="750" height="1000" alt="Shaded drawing of a torso wrapped by octopus arms"></figure>
+        <figure class="sk k28" data-d="0.6"><img src="media/sketch-28.webp" width="750" height="1000" alt="Line sketch of the shell from the side"></figure>
+        <figure class="sk k57" data-d="0.45"><img src="media/sketch-57.webp" width="750" height="1000" alt="Line drawing of the device from the front"></figure>
+        <figure class="sk k46" data-d="0.2"><img src="media/sketch-46.webp" width="750" height="1000" alt="Detailed line drawing of the full device from the back"></figure>
+        <figure class="sk k47" data-d="0.55"><img src="media/sketch-47.webp" width="750" height="1000" alt="Line sketch of one arm of the shell"></figure>
+      </div>
+
+      <div class="sys">
+        <h3 class="sq">System Structures</h3>
+        <div class="sys-stage">
+          <div class="sys-center">
+            <i class="disc" aria-hidden="true"></i>
+            <img class="sys-art" src="media/sketch-48-parts.webp" width="1400" height="1050" alt="Drawing of the parts: an Arduino Nano, a laptop, a PPG sensor, a vibration motor module, and a graphene heating patch">
+            <!-- the wires between the parts, as on board 19: the laptop, the sensor, the motor and the patch all run to the Arduino -->
+            <svg class="sys-cw" aria-hidden="true"></svg>
+          </div>
+          <svg class="sys-wires" aria-hidden="true"></svg>
+          <div class="ptag glass t-ard" data-ax="30" data-ay="42"><b>Arduino Nano</b><span>Core controller that receives and processes biometric data in real time</span></div>
+          <div class="ptag glass t-lap" data-ax="70" data-ay="22"><b>Laptop</b><span>For data visualization, testing, and threshold calibration</span></div>
+          <div class="ptag glass t-ppg" data-ax="74" data-ay="50"><b>PPG Sensor</b><span>Continuously tracks HRV to detect signs of cognitive arousal</span></div>
+          <div class="ptag glass t-vib" data-ax="80" data-ay="68"><b>Vibration Motor Module</b><span>Sends micro-pulses to interrupt mental rumination before sleep</span></div>
+          <div class="ptag glass t-heat" data-ax="48" data-ay="80"><b>Graphene Heating Patch</b><span>Applies subtle warmth to induce calm and downregulate arousal</span></div>
+        </div>
+        <ul class="sys-notes">
+          <li class="frost"><b>Sleep-friendly</b>No gels or headgear, suitable for passive nighttime monitoring.</li>
+          <li class="frost"><b>Detects overthinking</b>HRV changes signal cognitive arousal before full wakefulness.</li>
+          <li class="frost"><b>Compact integration</b>Sensor and intervention share the same area, the neck or ear, minimizing intrusion.</li>
+        </ul>
+        <p class="sys-cap">A minimal yet complete system: each module plays a precise role, sensing, deciding, and intervening, to disrupt the cognitive buildup behind short-term insomnia.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Key decision: the UML state diagram from board 19, pinned on desktop -->
+  <section class="uml-sec" aria-labelledby="uml-title">
+    <i class="uml-glow" aria-hidden="true"></i>
+    <div class="wrap uml-stage">
+      <div class="uml-copy">
+        <p class="eyebrow">Key decision</p>
+        <h3 id="uml-title" class="statement" data-split>Listen quietly, then answer in two gentle steps</h3>
+        <p class="body">A PPG sensor near the neck, the same kind smartwatches use, tracks heart-rate variability (HRV). When HRV suggests the mind is still busy, Fadence first warms up. If that doesn’t help, a soft vibration pulse follows. When HRV settles, it fades out.</p>
+        <p class="body neck">Why the neck: blood flow is stable there, the artery is close to the skin, and the sensor stays out of the way during sleep.</p>
+      </div>
+      <figure class="uml">
+        <figcaption class="sq">UML State Diagram</figcaption>
+        <ol class="uml-list">
+          <li class="u"><span class="ut">Idle</span><p>Device is in a passive state, waiting for placement and skin contact.</p></li>
+          <li class="u"><span class="cond">skin contact</span><span class="ut">Monitoring</span><p>PPG sensor actively collects biometric data (HR and HRV). Detects signs of cognitive hyperarousal.</p></li>
+          <li class="u warm"><span class="cond">HRV rises</span><span class="ut">Level 1 <b>Graphene Heating</b></span><p>Gentle graphene-based thermal feedback starts. Waits for signs of HRV recovery.</p></li>
+          <li class="u vib"><span class="cond">HRV stays high</span><span class="ut">Level 2 <b>Vibration Trigger</b></span><p>Vibration pulses start if warmth does not help. Designed to interrupt repetitive cognitive loops.</p><i class="rip" aria-hidden="true"></i><i class="rip" aria-hidden="true"></i></li>
+          <li class="u rec"><span class="cond">HRV settles or time is up</span><span class="ut">Recovery</span><p>HRV stabilizes or the maximum duration is reached. The device enters a passive fade-out state.</p></li>
+        </ol>
+        <p class="uml-foot">Behavioral logic designed for calm, not control.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- 04 Prototype: board 20. Real test photos, the user's own Arduino code, the mock-up, and the three build clips -->
+  <section class="sec pt-sec" aria-labelledby="pt-title">
+    <div class="deco blob" aria-hidden="true"></div>
+    <div class="wrap">
+      <header class="board-h"><h2 id="pt-title" class="bt" data-split>Prototype</h2><span class="bs">Test</span></header>
+      <p class="eyebrow pt-eb">04 · Prototype tests</p>
+      <div class="tests">
+        <article class="test glass">
+          <figure class="test-ph"><img src="media/test-IMG_3998.jpg" width="1050" height="1400" alt="The graphene heating patch wired to the test circuit on a dark table" loading="lazy"></figure>
+          <div>
+            <h4>Graphene Heating</h4>
+            <div class="heat" aria-hidden="true">
+              <div class="dial"><svg viewBox="0 0 200 200"><defs><linearGradient id="heatg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" class="hg1"/><stop offset="1" class="hg2"/></linearGradient></defs><circle class="d-ticks" cx="100" cy="100" r="92"/><circle class="d-track" cx="100" cy="100" r="80"/><circle class="d-arc" cx="100" cy="100" r="80"/></svg><div class="dial-in"><span><b class="secs">90</b><small> s</small></span></div></div>
+              <span class="temp" data-text="36.5°C">36.5°C</span>
+            </div>
+            <p>The graphene patch reached 36.5°C in 90 seconds, close to body temperature.</p>
+            <p class="note">The Arduino confirmed stable, safe warmth for Level 1.</p>
+            <div class="code"><h5>Coding</h5><code><span class="cl">if (hr &gt; baselineHR + 10) {</span><span class="cl">  state = 1;  <span class="cm">// enter warmth</span></span><span class="cl">  digitalWrite(heatPin, HIGH);</span><span class="cl">  lastTriggerTime = now;</span><span class="cl">  Serial.println("Heat Activated");</span><span class="cl">}</span></code></div>
+          </div>
+        </article>
+        <article class="test glass">
+          <figure class="test-ph"><img src="media/test-IMG_3996.jpg" width="1050" height="1400" alt="Testing the circuit on a breadboard, with the heating film and a laptop" loading="lazy"></figure>
+          <div>
+            <h4>Vibration Trigger</h4>
+            <p>A simulated high-HRV signal triggered the vibration motor as intended.</p>
+            <p class="note">This confirmed that Level 2 steps in on time.</p>
+            <div class="code"><h5>Coding</h5><code><span class="cl">if (hr &gt; baselineHR + 10) {</span><span class="cl">  state = 2;</span><span class="cl">  digitalWrite(heatPin, LOW);</span><span class="cl">  digitalWrite(vibrationPin, HIGH);</span><span class="cl">  Serial.println("Vibration Activated");</span><span class="cl">}</span></code></div>
+          </div>
+        </article>
+      </div>
+
+      <div class="mock glass">
+        <h3 class="sq">Mock-up</h3>
+        <div class="mock-grid">
+          <figure class="mg tall"><img src="media/proc-IMG_4015.jpg" width="1050" height="1400" alt="The soft mock-up on a dress form, wired to the circuit" loading="lazy"></figure>
+          <figure class="mg"><img src="media/proc-IMG_3984.jpg" width="1050" height="1400" alt="Cutting a white pattern piece with scissors" loading="lazy"></figure>
+          <figure class="mg"><img src="media/proc-IMG_3990.jpg" width="1050" height="1400" alt="The cut pattern pieces laid out on a dark table" loading="lazy"></figure>
+          <figure class="mg tall"><img src="media/proc-IMG_4021.jpg" width="1050" height="1400" alt="One sewn piece of the shell on a dark table" loading="lazy"></figure>
+          <figure class="mg"><img src="media/proc-IMG_4001.jpg" width="1050" height="1400" alt="Sewing the mock-up on a sewing machine" loading="lazy"></figure>
+          <figure class="mg"><img src="media/proc-IMG_4005.jpg" width="1050" height="1400" alt="Hands fastening the electronics onto the soft shell" loading="lazy"></figure>
+          <figure class="mg wide"><img src="media/proc-IMG_4011.jpg" width="1050" height="1400" alt="The shell pieces with the electronics fitted in" loading="lazy"></figure>
+          <div class="mock-text"><p>I drew the pattern, cut the pieces, and sewed a soft mock-up. Then I tested it for fit and comfort around the neck and back.</p><p>It wears without pressure around the neck and back, ready for the intervention modules.</p></div>
+        </div>
+      </div>
+
+      <div class="build">
+        <figure class="trip">
+          <div class="trip-row">
+            <div class="tclip"><video src="media/fadence-sensor.mp4" poster="media/fadence-sensor.jpg" muted loop playsinline preload="none" aria-label="Wiring a vibration motor module next to a laptop"></video></div>
+            <div class="tclip"><video src="media/fadence-assemble.mp4" poster="media/fadence-assemble.jpg" muted loop playsinline preload="none" aria-label="Hands fasten the soft shell around the electronics"></video></div>
+            <div class="tclip"><video src="media/fadence-mannequin.mp4" poster="media/fadence-mannequin.jpg" muted loop playsinline preload="none" aria-label="The soft mock-up on a dress form, wired to the circuit"></video></div>
+          </div>
+          <div class="trip-bar"><figcaption class="cap">Wiring the parts and building them into the shell</figcaption><button class="pause" type="button" aria-pressed="false">Pause video</button></div>
+          <p class="build-lead">Then I built the sensor, heating patch, and motor into the shell, and they worked together.</p>
+        </figure>
+        <figure class="model glass">
+          <figcaption class="sq">Model</figcaption>
+          <img src="media/sketch-61.webp" width="466" height="1400" alt="Drawing of the shell split into its three parts" loading="lazy">
+        </figure>
+      </div>
+
+      <div class="next"><p data-words>Next, I’d test it with people at bedtime.</p></div>
+    </div>
+  </section>
+
+  <!-- 05 Final product: board 21. Real photos and cut-outs, renderings labelled as such -->
+  <section class="sec fp-sec" aria-labelledby="fp-title">
+    <div class="wrap">
+      <header class="board-h"><h2 id="fp-title" class="bt" data-split>Final Product</h2></header>
+      <h3 class="sq pir">Prototype in Reality</h3>
+      <div class="fp-stage">
+        <div class="fp-ghost" aria-hidden="true"><img src="media/fadence-bw-4108.jpg" width="2200" height="1466" alt="" loading="lazy"></div>
+        <figure class="fp-hand"><img src="media/cutout-hand.webp" width="934" height="1400" alt="A hand holding the finished shell up by one arm" loading="lazy"></figure>
+        <div class="fp-thumbs">
+          <figure><img src="media/product-black.jpg" width="1800" height="1200" alt="The finished shell on a black background" loading="lazy"></figure>
+          <figure><img src="media/product-white.jpg" width="1800" height="1200" alt="The finished shell on a white table" loading="lazy"></figure>
+        </div>
+        <img class="fp-back" src="media/cutout-back.webp" width="989" height="1700" alt="Back view of the wearer, the finished shell resting on the neck and back" loading="lazy">
+        <div class="fp-rend">
+          <figure><img src="media/render-111749565064.jpg" width="1400" height="875" alt="Rendering of the shell on a figure, seen from behind" loading="lazy"><figcaption>Rendering</figcaption></figure>
+          <figure><img src="media/render-91749565055.jpg" width="1400" height="875" alt="Rendering of the shell on a figure, seen from the side" loading="lazy"><figcaption>Rendering</figcaption></figure>
+          <figure><img src="media/render-101749565057.jpg" width="1400" height="875" alt="Rendering of the shell on a full figure, seen from behind" loading="lazy"><figcaption>Rendering</figcaption></figure>
+          <p class="sq">Digital Rendering</p>
+        </div>
+      </div>
+      <div class="fp-foot">
+        <p>A working prototype: the sensor, heating patch, and vibration motor built into the shell, plus a video.</p>
+        <a class="btn" href="https://youtu.be/Hr81NE6ey_Y" target="_blank" rel="noopener">Watch the video <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <nav class="case-nav" aria-label="More work">
+    <div class="deco blob" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="cn-bar"><p class="eyebrow">Case study 03 · Fadence</p></div>
+      <a class="all-work glass" href="../#work">
+        <span class="aw-t" data-text="All work">All work</span>
+        <span class="aw-go" aria-hidden="true"><i>→</i></span>
+      </a>
+    </div>
+  </nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap"><div class="foot-in"><span>© 2026 Tianhao Wang</span><button class="link totop" type="button">Back to top <span aria-hidden="true">↑</span></button></div></div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const root = document.documentElement;
+  const qs = new URLSearchParams(location.search);
+  // ?still shows the reduced-motion version, for checking it
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches || qs.has("still");
+  const css = getComputedStyle(root);
+  const tok = n => css.getPropertyValue(n).trim();
+  const clamp01 = v => Math.min(1, Math.max(0, v));
+
+  // Title: one span per letter, each fainter than the one before
+  const title = document.querySelector(".hero-title .line");
+  title.innerHTML = [...title.textContent].map((c, i) => `<span class="ch" style="--o:${(1 - i * .1).toFixed(2)}">${c}</span>`).join("");
+  // Headings rise word by word; long lines light up word by word
+  document.querySelectorAll("[data-split]").forEach(el => {
+    el.innerHTML = el.textContent.split(/(\s+)/).filter(Boolean).map(w => /\s+/.test(w) ? " " : `<span class="wl"><span class="w">${w}</span></span>`).join("");
+  });
+  document.querySelectorAll("[data-words]").forEach(el => {
+    el.innerHTML = el.textContent.split(/(\s+)/).filter(Boolean).map(w => /\s+/.test(w) ? w : `<span class="w">${w}</span>`).join("");
+  });
+
+  // Video: play only what is on screen, one button pauses all
+  const videos = [...document.querySelectorAll("video")];
+  const btn = document.querySelector(".pause");
+  let paused = reduce;
+  const visible = new Set();
+  const sync = () => videos.forEach(v => { if (!paused && visible.has(v)) { const pr = v.play(); if (pr) pr.catch(() => {}); } else if (!v.paused) v.pause(); });
+  const io = new IntersectionObserver(es => { es.forEach(e => e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)); sync(); }, { threshold: .2 });
+  videos.forEach(v => io.observe(v));
+  const setBtn = () => { btn.setAttribute("aria-pressed", String(paused)); btn.textContent = paused ? "Play video" : "Pause video"; };
+  btn.addEventListener("click", () => { paused = !paused; setBtn(); sync(); });
+  setBtn();
+
+  // Back to top
+  document.querySelector(".totop").addEventListener("click", () => {
+    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 2.2 });
+    else window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    document.querySelector(".brand").focus({ preventScroll: true });
+  });
+
+  // 01: racing thoughts drawn as a tangle of lines
+  const race = document.querySelector(".race canvas");
+  const inkRGB = tok("--ink-rgb");
+  let raceT = 0;
+  function drawRace() {
+    const w = race.clientWidth, h = race.clientHeight;
+    if (!w || !h) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    if (race.width !== Math.round(w * dpr) || race.height !== Math.round(h * dpr)) { race.width = Math.round(w * dpr); race.height = Math.round(h * dpr); }
+    const c = race.getContext("2d");
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.clearRect(0, 0, w, h);
+    c.lineWidth = 1;
+    for (let k = 0; k < 9; k++) {
+      const sp = 1 + k * .19, ph = k * 1.93, fq = 7 + k * 1.3;
+      c.beginPath();
+      for (let x = 0; x <= w + 6; x += 6) {
+        const u = x / w;
+        const y = h * .5 + Math.sin(u * fq + raceT * 3.4 * sp + ph) * h * .2 + Math.sin(u * 29 - raceT * 5.2 * sp + ph * 1.7) * h * .07 + Math.sin(u * 3.1 + raceT * .9 + ph) * h * .14;
+        if (x === 0) c.moveTo(x, y); else c.lineTo(x, y);
+      }
+      c.strokeStyle = `rgba(${inkRGB}, ${(.1 + (k % 4) * .07).toFixed(2)})`;
+      c.stroke();
+    }
+  }
+
+  // 01: the insomnia flowchart from board 17, wired between the real boxes so it follows any layout
+  const insGrid = document.querySelector(".ins-grid");
+  const insSvg = insGrid.querySelector(".ins-wires");
+  const nd = k => insGrid.querySelector("." + k);
+  const INS = [["n1", "n2", "Yes", "d", .04, .14], ["n2", "s1", "No", "r", .16, .24], ["n2", "n3", "Yes", "d", .24, .34], ["n3", "s2", "No", "r", .36, .44], ["n3", "n4", "Yes", "d", .44, .54], ["n4", "o1", "No", "r", .56, .64], ["n4", "n5", "Yes", "d", .6, .68], ["n5", "o1", "No", "r", .7, .78], ["n5", "e1", "Yes", "d", .84, .92]];
+  const SHOW = { n1: 0, n2: .14, s1: .24, n3: .34, s2: .44, n4: .54, n5: .68, o1: .64, e1: .92 };
+  let insW = [], insP = 0;
+  function renderIns(p) {
+    insP = p;
+    insW.forEach(w => {
+      const k = clamp01((p - w.a) / (w.b - w.a));
+      w.live.style.strokeDashoffset = String(w.len * (1 - k));
+      w.head.style.opacity = k > .98 ? "1" : "0";
+      w.txt.style.opacity = String(clamp01(k * 2 - .4));
+    });
+    Object.entries(SHOW).forEach(([k, at]) => { const el = nd(k); const on = p >= at; el.style.opacity = on ? "1" : ".18"; el.style.transform = on ? "none" : "translateY(10px)"; });
+    nd("o1").classList.toggle("lit", p >= .8);
+  }
+  function buildIns() {
+    const g = insGrid.getBoundingClientRect();
+    if (!g.width) return;
+    insSvg.setAttribute("width", g.width);
+    insSvg.setAttribute("height", g.height);
+    insSvg.setAttribute("viewBox", `0 0 ${g.width} ${g.height}`);
+    insSvg.textContent = "";
+    const NS = "http://www.w3.org/2000/svg";
+    const add = (tag, cls) => { const el = document.createElementNS(NS, tag); if (cls) el.setAttribute("class", cls); insSvg.appendChild(el); return el; };
+    const box = k => { const r = nd(k).getBoundingClientRect(); return { l: r.left - g.left, t: r.top - g.top, r: r.right - g.left, b: r.bottom - g.top }; };
+    insW = INS.map(([f, t, label, side, a, b]) => {
+      const A = box(f), B = box(t);
+      let x0, y0, x1, y1, d, tx, ty, down;
+      if (side === "d") { x0 = A.l + Math.min(40, (A.r - A.l) / 2); y0 = A.b; x1 = x0; y1 = B.t; d = `M${x0} ${y0} L${x1} ${y1 - 1}`; tx = x0 + 10; ty = (y0 + y1) / 2 + 4; down = true; }
+      else { x0 = A.r; y0 = Math.max(A.t + 18, Math.min(A.b - 18, (B.t + B.b) / 2)); x1 = B.l; y1 = Math.max(B.t + 14, Math.min(B.b - 14, y0)); d = `M${x0} ${y0} C${(x0 + x1) / 2} ${y0} ${(x0 + x1) / 2} ${y1} ${x1 - 1} ${y1}`; tx = (x0 + x1) / 2 - 8; ty = Math.min(y0, y1) - 8; down = false; }
+      add("path", "w-base").setAttribute("d", d);
+      const live = add("path", "w-live");
+      live.setAttribute("d", d);
+      const len = live.getTotalLength();
+      live.style.strokeDasharray = `${len} ${len}`;
+      const head = add("path", "w-head");
+      head.setAttribute("d", down ? `M${x1 - 4} ${y1 - 7} L${x1 + 4} ${y1 - 7} L${x1} ${y1 - 1} Z` : `M${x1 - 7} ${y1 - 4} L${x1 - 7} ${y1 + 4} L${x1 - 1} ${y1} Z`);
+      const txt = add("text");
+      txt.setAttribute("x", tx);
+      txt.setAttribute("y", ty);
+      txt.textContent = label;
+      return { live, head, txt, len, a, b };
+    });
+    renderIns(insP);
+  }
+
+  // 02: the competitor circle from board 18. Each product lights up in turn, joined to its timing on the ring
+  const stage = document.querySelector(".comp-stage");
+  const rvs = [...stage.querySelectorAll(".rv")];
+  const whens = [...stage.querySelectorAll(".when")];
+  const cSvg = stage.querySelector(".comp-wires");
+  let cLines = [], compOn = -1;
+  function buildComp() {
+    const s = stage.getBoundingClientRect();
+    if (!s.width) return;
+    const cx = s.width / 2, cy = s.height / 2, R = 190;
+    const diag = [[-1, -1], [1, -1], [-1, 1], [1, 1]];
+    whens.forEach((w, i) => { w.style.left = (cx + diag[i][0] * R * .72) + "px"; w.style.top = (cy + diag[i][1] * R * .72) + "px"; });
+    cSvg.setAttribute("width", s.width);
+    cSvg.setAttribute("height", s.height);
+    cSvg.textContent = "";
+    cLines = rvs.map((rv, i) => {
+      const r = rv.getBoundingClientRect();
+      const x = diag[i][0] < 0 ? r.right - s.left : r.left - s.left;
+      const y = diag[i][1] < 0 ? r.bottom - s.top : r.top - s.top;
+      const l = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      l.setAttribute("x1", x); l.setAttribute("y1", y);
+      l.setAttribute("x2", cx + diag[i][0] * R * .5); l.setAttribute("y2", cy + diag[i][1] * R * .5);
+      cSvg.appendChild(l);
+      return l;
+    });
+    setComp(compOn);
+  }
+  function setComp(i) {
+    compOn = i;
+    stage.classList.toggle("scan", i >= 0 && i < 4);
+    rvs.forEach((rv, k) => rv.classList.toggle("lit", k === i));
+    whens.forEach((w, k) => w.classList.toggle("lit", k <= i || i >= 4));
+    cLines.forEach((l, k) => l.classList.toggle("lit", k === i));
+  }
+
+  // 02: contour rings like the wave icons on board 18
+  document.querySelectorAll(".contour g").forEach((g, n) => {
+    let d = "";
+    for (let k = 0; k < 8; k++) {
+      const r0 = 16 + k * 4.6, amp = 1.4 + k * .45, f = 5 + n * 2, ph = k * .7;
+      for (let a = 0; a <= 72; a++) {
+        const t = a / 72 * Math.PI * 2, r = r0 + Math.sin(t * f + ph) * amp + Math.sin(t * 3 - ph) * amp * .5;
+        d += (a ? "L" : "M") + (52 + Math.cos(t) * r).toFixed(1) + " " + (52 + Math.sin(t) * r).toFixed(1);
+      }
+      d += "Z";
+    }
+    g.innerHTML = `<path d="${d}"/>`;
+  });
+
+  // 03: leader lines from each label to its part on the drawing
+  const sysStage = document.querySelector(".sys-stage");
+  const sysArt = sysStage.querySelector(".sys-art");
+  const sysSvg = sysStage.querySelector(".sys-wires");
+  const ptags = [...sysStage.querySelectorAll(".ptag")];
+  let sysLines = [];
+  function buildSys() {
+    const s = sysStage.getBoundingClientRect(), a = sysArt.getBoundingClientRect();
+    if (!s.width || getComputedStyle(sysSvg).display === "none") return;
+    sysSvg.setAttribute("width", s.width);
+    sysSvg.setAttribute("height", s.height);
+    sysSvg.textContent = "";
+    const NS = "http://www.w3.org/2000/svg";
+    sysLines = ptags.map(t => {
+      const r = t.getBoundingClientRect();
+      const ax = a.left - s.left + a.width * (+t.dataset.ax / 100), ay = a.top - s.top + a.height * (+t.dataset.ay / 100);
+      const left = r.left + r.width / 2 < s.left + s.width / 2;
+      const x0 = left ? r.right - s.left : r.left - s.left, y0 = r.top - s.top + r.height / 2;
+      const ln = document.createElementNS(NS, "line");
+      ln.setAttribute("x1", x0); ln.setAttribute("y1", y0); ln.setAttribute("x2", ax); ln.setAttribute("y2", ay);
+      const dot = document.createElementNS(NS, "circle");
+      dot.setAttribute("cx", ax); dot.setAttribute("cy", ay); dot.setAttribute("r", 4);
+      sysSvg.appendChild(ln); sysSvg.appendChild(dot);
+      return { ln, dot, len: Math.hypot(ax - x0, ay - y0) };
+    });
+  }
+
+  // 03: the wires between the parts, in percent of the drawing. Signals run sensor to Arduino, then Arduino out to the rest
+  const cw = sysStage.querySelector(".sys-cw");
+  const WIRES = [
+    [61, 50, 68, 46, 74, 44, 79, 38],   // Arduino to laptop
+    [69, 52, 66, 51, 64, 50, 60, 52],   // PPG sensor to Arduino
+    [58, 56, 63, 60, 68, 63, 74, 67],   // Arduino to vibration motor
+    [52, 60, 57, 63, 61, 64, 66, 64]    // Arduino to heating patch
+  ];
+  let cwPaths = [], cwDrawn = false;
+  function buildCW() {
+    const c = cw.getBoundingClientRect(), a = sysArt.getBoundingClientRect();
+    if (!c.width || !a.width) return;
+    cw.setAttribute("viewBox", `0 0 ${c.width} ${c.height}`);
+    cw.textContent = "";
+    const NS = "http://www.w3.org/2000/svg";
+    const P = (x, y) => `${(a.left - c.left + a.width * x / 100).toFixed(1)} ${(a.top - c.top + a.height * y / 100).toFixed(1)}`;
+    cwPaths = WIRES.map((w, i) => {
+      const d = `M${P(w[0], w[1])} C${P(w[2], w[3])} ${P(w[4], w[5])} ${P(w[6], w[7])}`;
+      const halo = document.createElementNS(NS, "path");
+      halo.setAttribute("d", d);
+      halo.setAttribute("class", "cw-halo");
+      const p = document.createElementNS(NS, "path");
+      p.setAttribute("d", d);
+      p.setAttribute("class", "cw-line");
+      cw.appendChild(halo);
+      cw.appendChild(p);
+      const len = p.getTotalLength();
+      [halo, p].forEach(e => { e.style.strokeDasharray = `${len} ${len}`; e.style.strokeDashoffset = String(cwDrawn ? 0 : len); });
+      if (!reduce) {
+        const dot = document.createElementNS(NS, "circle");
+        dot.setAttribute("r", Math.max(2.4, a.width * .006).toFixed(1));
+        dot.setAttribute("stroke-width", Math.max(3, a.width * .008).toFixed(1));
+        dot.setAttribute("class", "cw-dot");
+        const am = document.createElementNS(NS, "animateMotion");
+        am.setAttribute("dur", (1.8 + i * .35).toFixed(2) + "s");
+        am.setAttribute("repeatCount", "indefinite");
+        am.setAttribute("path", d);
+        dot.appendChild(am);
+        cw.appendChild(dot);
+      }
+      return { p: [halo, p], len };
+    });
+    cw.classList.toggle("drawn", cwDrawn);
+  }
+
+  // Key decision: one card on at a time, warmth and pulses where the board says
+  const umlSec = document.querySelector(".uml-sec");
+  const uml = umlSec.querySelector(".uml");
+  const us = [...uml.querySelectorAll(".u")];
+  let uOn = -2;
+  function setUml(i) {
+    if (i === uOn) return;
+    uOn = i;
+    uml.classList.toggle("scan", i >= 0 && i < us.length);
+    us.forEach((u, k) => u.classList.toggle("on", k === i));
+    umlSec.classList.toggle("is-warm", i === 2);
+  }
+
+  // 04: ninety seconds on the dial, the number fills with warmth
+  const heat = document.querySelector(".heat");
+  const arc = heat.querySelector(".d-arc");
+  const ARC = 2 * Math.PI * 80;
+  const secs = heat.querySelector(".secs");
+  const temp = heat.querySelector(".temp");
+  function renderHeat(p) {
+    const f = 1 - Math.pow(1 - p, 2.2); // warms fast, then levels off
+    arc.style.strokeDashoffset = String(ARC * (1 - p));
+    secs.textContent = String(Math.round(p * 90));
+    temp.style.setProperty("--p", (f * 100).toFixed(2) + "%");
+  }
+
+  if (reduce || !window.gsap || !window.ScrollTrigger || !window.Lenis) {
+    root.classList.add("static");
+    drawRace();
+    buildIns(); renderIns(1);
+    buildComp(); setComp(4);
+    buildSys();
+    cwDrawn = true;
+    buildCW();
+    setUml(-1);
+    renderHeat(1);
+    document.querySelectorAll(".ask").forEach(a => a.style.setProperty("--u", "100%"));
+    addEventListener("resize", () => { drawRace(); buildIns(); buildComp(); buildSys(); buildCW(); });
+    document.fonts && document.fonts.ready.then(() => { buildIns(); buildComp(); buildSys(); buildCW(); });
+    addEventListener("load", () => { buildSys(); buildCW(); });
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis = new Lenis({ lerp: .085, wheelMultiplier: 1, smoothWheel: true });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  window.__lenis = lenis; // lets the preview checks jump to a section
+
+  // Racing lines run only while on screen, and faster while you scroll
+  let raceOn = false;
+  const raceTick = (t, dt) => { raceT += (dt / 1000) * (1 + Math.min(3, Math.abs(lenis.velocity) * .05)); drawRace(); };
+  new IntersectionObserver(es => { const on = es[es.length - 1].isIntersecting; if (on === raceOn) return; raceOn = on; if (on) gsap.ticker.add(raceTick); else gsap.ticker.remove(raceTick); }).observe(race);
+  drawRace();
+
+  // Cover enters once: the print and the faded echo surface, the wearer rises, the dark block slides in, the name comes up letter by letter
+  gsap.set(".hero-title .ch", { yPercent: 110 });
+  gsap.timeline({ delay: .1 })
+    .from(".h-tex img", { scale: 1.15, opacity: 0, duration: 2.6, ease: "expo.out" }, 0)
+    .from(".h-echo", { opacity: 0, scale: 1.06, duration: 2.8, ease: "expo.out" }, .1)
+    .from(".h-fig", { yPercent: 8, opacity: 0, duration: 1.9, ease: "expo.out" }, .2)
+    .from(".h-panel", { xPercent: -100, duration: 1.6, ease: "expo.out" }, .3)
+    .to(".hero-title .ch", { yPercent: 0, duration: 1.4, ease: "expo.out", stagger: .06 }, .85)
+    .from(".h-panel > :not(.hero-title)", { y: 22, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .08 }, 1)
+    .from(".h-num", { opacity: 0, x: 30, duration: 1.4, ease: "power3.out" }, 1.05);
+
+  // Headings rise word by word
+  document.querySelectorAll("[data-split]").forEach(h => {
+    gsap.from(h.querySelectorAll(".w"), { yPercent: 115, duration: 1.2, ease: "expo.out", stagger: .05, scrollTrigger: { trigger: h, start: "top 86%" } });
+  });
+  gsap.utils.toArray(".bs").forEach(s => gsap.from(s, { opacity: 0, x: -20, duration: 1, ease: "power3.out", delay: .3, scrollTrigger: { trigger: s, start: "top 86%" } }));
+
+  // 01: the demands on your attention get underlined, the flowchart draws itself down to short-term insomnia
+  gsap.fromTo(".ask", { "--u": "0%" }, { "--u": "100%", ease: "none", stagger: .35, scrollTrigger: { trigger: ".bg-copy .body", start: "top 80%", end: "bottom 50%", scrub: true } });
+  gsap.from(".ins", { y: 60, opacity: 0, duration: 1.3, ease: "power3.out", scrollTrigger: { trigger: ".ins", start: "top 86%" } });
+  buildIns();
+  const ip = { p: 0 };
+  gsap.to(ip, { p: 1, ease: "none", onUpdate: () => renderIns(ip.p), scrollTrigger: { trigger: ".ins-grid", start: "top 72%", end: "bottom 46%", scrub: 1 } });
+  gsap.from(".thread .pre", { y: 20, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".thread", start: "top 86%" } });
+
+  // 02: goals and the technical card
+  buildComp();
+  gsap.from(".goal", { y: 40, opacity: 0, filter: "blur(10px)", duration: 1.1, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".goal-row", start: "top 86%" } });
+  gsap.from(".tech", { y: 70, opacity: 0, duration: 1.3, ease: "power3.out", scrollTrigger: { trigger: ".tech", start: "top 86%" } });
+  gsap.utils.toArray(".t-row").forEach(r => gsap.from(r.querySelectorAll(".t-cols > div, .lv"), { y: 30, opacity: 0, duration: 1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: r, start: "top 82%" } }));
+
+  // 03: the sketches gather around the back sketch
+  gsap.from(".sk-blob", { scale: .4, opacity: 0, duration: 2, ease: "expo.out", stagger: .2, scrollTrigger: { trigger: ".sk-wall", start: "top 78%" } });
+  gsap.from(".disc, .sys-art", { scale: .82, opacity: 0, duration: 1.6, ease: "expo.out", stagger: .15, scrollTrigger: { trigger: ".sys-stage", start: "top 76%" } });
+  buildCW();
+  ScrollTrigger.create({ trigger: ".sys-stage", start: "top 66%", once: true, onEnter: () => {
+    cwDrawn = true;
+    cwPaths.forEach((w, i) => gsap.to(w.p, { strokeDashoffset: 0, duration: 1.3, ease: "power2.inOut", delay: .5 + i * .2 }));
+    gsap.delayedCall(1.6, () => cw.classList.add("drawn"));
+  } });
+  gsap.from(".sys-notes li", { y: 30, opacity: 0, duration: 1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".sys-notes", start: "top 88%" } });
+  gsap.from(".sys-cap", { y: 20, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".sys-cap", start: "top 92%" } });
+
+  // 04: code lines type in, the mock-up wall fills, the clips rise
+  gsap.utils.toArray(".code").forEach(c => gsap.from(c.querySelectorAll(".cl"), { opacity: 0, x: -10, duration: .5, ease: "power2.out", stagger: .12, scrollTrigger: { trigger: c, start: "top 86%" } }));
+  gsap.from(".test", { y: 60, opacity: 0, duration: 1.2, ease: "power3.out", stagger: .14, scrollTrigger: { trigger: ".tests", start: "top 84%" } });
+  const hp = { p: 0 };
+  gsap.to(hp, { p: 1, ease: "none", onUpdate: () => renderHeat(hp.p), scrollTrigger: { trigger: ".heat", start: "top 82%", end: "top 38%", scrub: 1.2 } });
+  gsap.from(".mock", { y: 70, opacity: 0, duration: 1.3, ease: "power3.out", scrollTrigger: { trigger: ".mock", start: "top 86%" } });
+  gsap.from(".mg, .mock-text", { opacity: 0, scale: .94, duration: 1, ease: "power3.out", stagger: .07, scrollTrigger: { trigger: ".mock-grid", start: "top 82%" } });
+  gsap.from(".tclip", { y: 60, opacity: 0, duration: 1.2, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".trip", start: "top 84%" } });
+  gsap.from(".model", { y: 60, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: ".model", start: "top 88%" } });
+  // the words start at .55, not lower: even unlit they keep 3:1 on the paper, so the line is readable before it lights up
+  gsap.fromTo(".next .w", { opacity: .55 }, { opacity: 1, stagger: .15, ease: "none", scrollTrigger: { trigger: ".next", start: "top 84%", end: "bottom 50%", scrub: 1 } });
+
+  // 05: the board-21 layers settle at different speeds
+  gsap.from(".fp-back", { yPercent: 10, opacity: 0, duration: 1.8, ease: "expo.out", scrollTrigger: { trigger: ".fp-stage", start: "top 76%" } });
+  gsap.from(".fp-hand", { x: -60, opacity: 0, rotate: -6, duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: ".fp-stage", start: "top 76%" } });
+  gsap.from(".fp-thumbs figure, .fp-rend > *", { y: 40, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".fp-stage", start: "top 70%" } });
+  gsap.from(".fp-foot > *", { y: 24, opacity: 0, duration: 1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".fp-foot", start: "top 92%" } });
+
+  // End
+  gsap.from(".all-work", { y: 60, opacity: 0, duration: 1.4, ease: "power3.out", scrollTrigger: { trigger: ".case-nav", start: "top 85%" } });
+  gsap.from(".aw-t", { yPercent: 30, opacity: 0, duration: 1.8, ease: "expo.out", delay: .2, scrollTrigger: { trigger: ".case-nav", start: "top 85%" } });
+
+  // Desktop pins and parallax; phones scroll straight through
+  ScrollTrigger.addEventListener("refresh", () => { buildIns(); buildComp(); buildSys(); buildCW(); drawRace(); });
+  const mm = gsap.matchMedia();
+  mm.add("(min-width: 901px)", () => {
+    // the cover keeps its words; only the layers drift apart as it leaves
+    gsap.to(".h-echo", { yPercent: 12, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+    gsap.to(".h-fig", { y: () => innerHeight * .08, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true, invalidateOnRefresh: true } });
+    gsap.to(".h-tex", { yPercent: 8, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+    gsap.from(".rings i", { scale: .3, opacity: 0, duration: 1.6, ease: "expo.out", stagger: .12, scrollTrigger: { trigger: ".comp", start: "top 80%" } });
+    gsap.from(".core", { scale: .6, opacity: 0, duration: 1.4, ease: "expo.out", delay: .2, scrollTrigger: { trigger: ".comp", start: "top 80%" } });
+    gsap.from(".rv", { opacity: 0, x: (i) => (i % 2 ? 60 : -60), duration: 1.2, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".comp", start: "top 74%" } });
+    ScrollTrigger.create({ trigger: ".comp", start: "top 8%", end: () => "+=" + innerHeight * 1.6, pin: true, anticipatePin: 1, onUpdate: self => setComp(Math.min(4, Math.floor(self.progress * 5))), onLeaveBack: () => setComp(-1) });
+    // each sketch starts pulled in toward the back sketch and opens out to its place as the wall scrolls in
+    const wall = document.querySelector(".sk-wall");
+    gsap.utils.toArray(".sk:not(.sk-c)").forEach(s => {
+      const pull = () => [wall.clientWidth * .5 - (s.offsetLeft + s.offsetWidth / 2), wall.clientHeight * .42 - (s.offsetTop + s.offsetHeight / 2)];
+      gsap.fromTo(s, { x: () => pull()[0] * .45, y: () => pull()[1] * .45, scale: .72, opacity: 0 }, { x: 0, y: 0, scale: 1, opacity: 1, ease: "none", scrollTrigger: { trigger: wall, start: "top 88%", end: "top 22%", scrub: 1, invalidateOnRefresh: true } });
+      gsap.to(s.querySelector("img"), { y: () => -innerHeight * .16 * (+s.dataset.d), ease: "none", scrollTrigger: { trigger: wall, start: "top bottom", end: "bottom top", scrub: true } });
+    });
+    gsap.fromTo(".sk-c", { scale: .86, opacity: .15 }, { scale: 1, opacity: 1, ease: "none", scrollTrigger: { trigger: wall, start: "top 88%", end: "top 30%", scrub: 1 } });
+    gsap.from(".ptag", { opacity: 0, y: 20, duration: 1, ease: "power3.out", stagger: .14, delay: .3, scrollTrigger: { trigger: ".sys-stage", start: "top 70%" } });
+    gsap.from(".sys-wires", { opacity: 0, duration: 1.2, delay: 1, scrollTrigger: { trigger: ".sys-stage", start: "top 70%" } });
+    ScrollTrigger.create({ trigger: ".uml-sec", start: "top top", end: () => "+=" + innerHeight * 2.4, pin: ".uml-stage", anticipatePin: 1, onUpdate: self => setUml(self.progress > .96 ? 5 : Math.min(4, Math.floor(self.progress * 5.2))), onLeaveBack: () => setUml(-1) });
+    gsap.to(".fp-ghost", { yPercent: -10, ease: "none", scrollTrigger: { trigger: ".fp-stage", start: "top bottom", end: "bottom top", scrub: true } });
+    gsap.to(".fp-hand", { yPercent: -14, ease: "none", scrollTrigger: { trigger: ".fp-stage", start: "top bottom", end: "bottom top", scrub: true } });
+    ScrollTrigger.sort();
+    return () => { setComp(-1); setUml(-1); };
+  });
+  mm.add("(max-width: 900px)", () => {
+    gsap.from(".rv", { y: 40, opacity: 0, duration: 1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".rv", start: "top 88%" } });
+    gsap.from(".sk", { y: 30, opacity: 0, duration: 1, ease: "power3.out", stagger: .06, scrollTrigger: { trigger: ".sk-wall", start: "top 85%" } });
+    setComp(4);
+    us.forEach((u, i) => ScrollTrigger.create({ trigger: u, start: "top 62%", end: "bottom 38%", onToggle: self => { if (self.isActive) setUml(i); } }));
+    ScrollTrigger.sort();
+  });
+
+  ScrollTrigger.sort();
+  addEventListener("load", () => ScrollTrigger.refresh());
+  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+})();
+</script>
+</body>
+</html>

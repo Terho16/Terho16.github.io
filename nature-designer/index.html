@@ -1,0 +1,982 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nature Designer | Tianhao Wang</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a2bc3'/%3E%3Cpath d='M7 8h18v4h-7v12h-4V12H7z' fill='%23f6f5f1'/%3E%3C/svg%3E" />
+<meta name="description" content="Nature Designer: a post-human society virtual clothing design project by Tianhao Wang, Feb to May 2025.">
+<meta name="theme-color" content="#ffffff"><!-- ds-allow-hardcode: the theme-color meta needs a literal colour -->
+<script>
+  // Decide before first paint: motion, or the still version (?still or reduced motion)
+  (function () {
+    var still = matchMedia("(prefers-reduced-motion: reduce)").matches || /[?&]still\b/.test(location.search);
+    document.documentElement.classList.add(still ? "static" : "js-motion");
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Krona+One&display=swap" rel="stylesheet">
+<style>
+  /* ds-allow-hardcode:start: standalone motion prototype; tokens come from the Nature Designer boards in Figma, not the site's design system */
+  @property --p { syntax: "<percentage>"; inherits: true; initial-value: 0%; }
+  :root {
+    --white: #ffffff;
+    --ice: #eef5ff;
+    --ice-edge: #d6e0f6;
+    --ink: #000000;
+    --ink-2: #333333;
+    --cobalt: #4572ff;
+    --cobalt-deep: #3a63ec;
+    --cobalt-ink: #2f56d8;
+    --pill: #6b8fff;
+    --veil: rgba(142, 169, 255, .49);
+    --glass-tint: rgba(52, 84, 214, .44);
+    --halo: rgba(22, 40, 140, .7);
+    --halo-strong: rgba(22, 40, 140, .85);
+    --ring-shadow: #b8c9ff;
+    --node-shadow: #b3c3ff;
+    --line: rgba(69, 114, 255, .28);
+    --frame: #12f0ff;
+    --gut: clamp(20px, 2.3vw, 41px);
+    --ease: cubic-bezier(.2, .7, .2, 1);
+    --f-display: "Krona One", "Arial Black", sans-serif;
+    --f-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--white); }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+  body { margin: 0; background: var(--white); color: var(--ink); font: 400 17px/1.55 var(--f-body); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--cobalt); color: var(--white); }
+  main { overflow-x: clip; }
+  img { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .board { width: 100%; max-width: 1800px; margin: 0 auto; padding: 0 var(--gut); }
+  .skip { position: absolute; left: 16px; top: -60px; z-index: 100; background: var(--cobalt-ink); color: var(--white); padding: 10px 16px; font: 500 14px var(--f-body); text-decoration: none; }
+  .skip:focus { top: 16px; }
+  :focus-visible { outline: 2px solid var(--cobalt); outline-offset: 4px; }
+
+  /* type, as set on the boards: Krona One for titles, Inter for text */
+  .h2 { margin: 0; font: 400 clamp(30px, 2.75vw, 50px)/1.15 var(--f-display); color: var(--cobalt); text-transform: uppercase; letter-spacing: .01em; }
+  .h3 { margin: 12px 0 0; font: 400 clamp(16px, 1.3vw, 23px)/1.35 var(--f-display); color: var(--cobalt-ink); }
+  .lbl { margin: 0; font: 700 17px/1.35 var(--f-body); color: var(--cobalt-ink); }
+  .body { margin: 0; font: 400 clamp(16px, 1.05vw, 18px)/1.55 var(--f-body); color: var(--ink); text-align: justify; text-align-last: left; }
+  .cap { margin: 10px 0 0; font: 400 15px/1.4 var(--f-body); color: var(--ink); }
+  .wl { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; }
+  .wl > .w { display: inline-block; }
+  .sec { position: relative; padding: clamp(84px, 12vh, 140px) 0; }
+
+  /* nav: frosted glass, like the title board's panel */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: 6px var(--gut); background: rgba(255,255,255,.82); -webkit-backdrop-filter: blur(14px) saturate(1.3); backdrop-filter: blur(14px) saturate(1.3); border-bottom: 1px solid rgba(255,255,255,.7); }
+  .brand { padding: 12px 0; font: 400 14px var(--f-display); color: var(--cobalt-ink); text-decoration: none; letter-spacing: .02em; }
+  .nav nav { display: flex; gap: 28px; }
+  .nav nav a { position: relative; padding: 12px 0; font: 500 14px var(--f-body); color: var(--ink); text-decoration: none; }
+  .nav nav a::after, .link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .5s var(--ease); }
+  .nav nav a:hover::after, .link:hover::after { transform: scaleX(1); transform-origin: left; }
+  .link { position: relative; display: inline-flex; gap: 8px; align-items: center; padding: 12px 0; font: 500 15px var(--f-body); text-decoration: none; color: var(--cobalt-ink); }
+
+  /* title board */
+  .hero { position: relative; height: 100svh; min-height: 640px; overflow: hidden; background: var(--ice); }
+  .hero-media { position: absolute; inset: 0; overflow: hidden; --s1: 130%; --s2: 130%; --s3: 130%; }
+  .js-motion .hero-media { --s1: -16%; --s2: -16%; --s3: -16%;
+    -webkit-mask-image: radial-gradient(circle at 70% 34%, #000 var(--s1), transparent calc(var(--s1) + 16%)), radial-gradient(circle at 22% 70%, #000 var(--s2), transparent calc(var(--s2) + 16%)), radial-gradient(circle at 50% 20%, #000 var(--s3), transparent calc(var(--s3) + 16%));
+    mask-image: radial-gradient(circle at 70% 34%, #000 var(--s1), transparent calc(var(--s1) + 16%)), radial-gradient(circle at 22% 70%, #000 var(--s2), transparent calc(var(--s2) + 16%)), radial-gradient(circle at 50% 20%, #000 var(--s3), transparent calc(var(--s3) + 16%)); }
+  .js-motion .hero-media.grown { -webkit-mask-image: none; mask-image: none; }
+  .hero-move { position: absolute; inset: 0; will-change: transform; }
+  .hero-img { width: 100%; height: 100%; object-fit: cover; object-position: 62% 50%; }
+  .glass { position: absolute; z-index: 2; top: -6%; bottom: -6%; left: var(--gut); width: clamp(330px, 33.2vw, 640px); display: flex; align-items: center; background: var(--glass-tint); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.3); box-shadow: 0 4px 10px rgba(0,0,0,.1); }
+  .glass-in { width: 100%; padding: 40px clamp(24px, 4.7vw, 86px) 0; }
+  .hero-title { margin: 0; font: 400 clamp(34px, 3.1vw, 58px)/1.22 var(--f-display); color: var(--white); text-transform: uppercase; text-shadow: 0 0 2px var(--halo), 0 0 10px rgba(22,40,140,.4), 0 2px 18px rgba(46,78,190,.35); }
+  .hero-title .line { display: block; overflow: hidden; }
+  .hero-title .ch { display: inline-block; }
+  .js-motion .hero-title .ch { transform: translateY(110%); }
+  .pill { display: inline-block; margin: 14px 0 0; padding: 7px 16px 8px; border-radius: 999px; background: rgba(255,255,255,.95); box-shadow: 0 0 6px 2px rgba(255,255,255,.7); color: var(--cobalt-deep); font: 500 clamp(13px, .95vw, 17px)/1.2 var(--f-body); }
+  .hero-text { margin: clamp(26px, 4.4vh, 48px) 0 0; font: 500 clamp(15px, 1.12vw, 20px)/1.38 var(--f-body); color: var(--white); text-align: justify; text-align-last: left; text-shadow: 0 0 2px var(--halo-strong), 0 0 5px rgba(22,40,140,.6), 0 1px 12px rgba(46,78,190,.4); }
+  .hero-date { margin: 12px 0 0; font: 600 clamp(22px, 1.72vw, 31px)/1.2 var(--f-body); color: var(--white); text-shadow: 0 0 2px var(--halo-strong), 0 0 5px rgba(22,40,140,.6), 0 1px 12px rgba(46,78,190,.4); }
+  .cue { position: absolute; z-index: 3; right: var(--gut); bottom: 30px; display: flex; align-items: center; gap: 12px; margin: 0; font: 500 12px var(--f-body); letter-spacing: .18em; text-transform: uppercase; color: var(--cobalt-ink); text-shadow: 0 0 6px rgba(255,255,255,.9); }
+  .cue i { position: relative; display: block; width: 44px; height: 1px; background: var(--line); overflow: hidden; }
+  .cue i::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: var(--cobalt-ink); animation: cue 2.6s var(--ease) infinite; }
+  @keyframes cue { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+
+  /* inspiration and background */
+  .insp-grid { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); gap: clamp(28px, 3vw, 56px); align-items: start; }
+  .insp-main .body { max-width: 640px; margin-top: 26px; }
+  .insp-main strong { color: var(--cobalt-ink); font-weight: 600; }
+  .ask { margin: 18px 0 0; max-width: 600px; font: 500 clamp(17px, 1.25vw, 22px)/1.45 var(--f-body); }
+  .ask b { color: var(--cobalt-ink); font-weight: 600; }
+  .q-big { margin: clamp(56px, 9vh, 112px) 0 0; font: 400 clamp(30px, 3.3vw, 60px)/1.22 var(--f-display); color: var(--cobalt); letter-spacing: -.01em; }
+  .q-big .sw { display: inline-block; }
+  .q-sub { margin: 22px 0 0; max-width: 520px; font: 500 clamp(16px, 1.1vw, 19px)/1.5 var(--f-body); }
+  .bg-panel { position: relative; padding: clamp(26px, 2.4vw, 44px); border-radius: 10px; background: linear-gradient(160deg, #3d66f2 0%, #3760e8 55%, #2f55d6 100%); color: var(--white); overflow: hidden; }
+  .bg-panel .h2, .bg-panel .h3 { color: var(--white); }
+  .stages { list-style: none; position: relative; margin: 30px 0 0; padding: 0 0 0 26px; --sg: 1; }
+  .stages::before { content: ""; position: absolute; left: 4px; top: 8px; bottom: 26px; width: 1px; background: rgba(255,255,255,.55); transform-origin: top; transform: scaleY(var(--sg)); }
+  .stage { position: relative; padding: 0 0 22px; }
+  .stage::before { content: ""; position: absolute; left: -26px; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--white); box-shadow: 0 0 0 4px rgba(255,255,255,.18); }
+  .st-name { margin: 0; font: 600 17px/1.3 var(--f-body); }
+  .st-list { list-style: none; margin: 6px 0 0; padding: 0; font: 400 15px/1.5 var(--f-body); color: var(--white); }
+  .st-q { margin: 0; font: 500 15px/1.35 var(--f-body); }
+  .st-box { display: inline-block; margin: 10px 0 0; padding: 9px 16px 10px; border: 1.5px solid var(--white); border-radius: 8px; background: rgba(255,255,255,.06); font: 400 15px/1.2 var(--f-display); }
+
+  /* research */
+  .r-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(32px, 4vw, 80px); align-items: start; }
+  .kp-panel { margin-top: 26px; padding: clamp(22px, 2vw, 36px); border-radius: 18px; background: linear-gradient(150deg, #3d66f2, #3760e8 60%, #2f55d6); }
+  .kp-title { margin: 0 0 14px; font: 400 clamp(15px, 1.1vw, 19px) var(--f-display); color: var(--white); letter-spacing: .04em; text-transform: uppercase; }
+  .kp-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+  .kp { padding: 14px 18px; border-radius: 14px; background: var(--white); font: 500 15px/1.45 var(--f-body); color: var(--ink); box-shadow: 0 6px 18px rgba(28,52,160,.18); }
+  .r-note { margin-top: 22px; max-width: 640px; }
+  .r-right { padding-top: clamp(0px, 4.6vw, 84px); }
+  .r-right .h3 { margin-top: 0; }
+  .mark { position: relative; margin-top: 26px; padding-left: 22px; }
+  .mark::before { content: ""; position: absolute; left: 0; top: .12em; width: 8px; height: 1.15em; background: var(--cobalt); }
+  .r-right .body { margin-top: 12px; max-width: 620px; }
+  .roots { position: relative; margin-top: 18px; padding-top: clamp(90px, 13vh, 150px); }
+  .roots svg { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  .roots .rt { fill: none; stroke: var(--cobalt); stroke-width: 1.5; stroke-linecap: round; }
+  .principles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 1.4vw, 22px); }
+  .pr { position: relative; }
+  .pr .node { position: absolute; left: 50%; top: -7px; width: 13px; height: 13px; margin-left: -6.5px; border-radius: 50%; border: 1.5px solid var(--cobalt); background: var(--white); transition: background .6s var(--ease); }
+  .pr.is-on .node { background: var(--cobalt); }
+  /* unlit labels are outlined, not faded, so the text keeps its contrast before the root reaches them */
+  .bar { display: block; margin-top: 14px; padding: 12px 14px; background: var(--white); color: var(--cobalt-ink); box-shadow: inset 0 0 0 1.5px var(--cobalt-deep); font: 600 15px/1.3 var(--f-body); text-align: center; transition: background .6s var(--ease), color .6s var(--ease); }
+  .pr.is-on .bar { background: var(--cobalt-deep); color: var(--white); }
+
+  /* material experiment */
+  .lab-grid { display: grid; grid-template-columns: minmax(0, 26fr) minmax(0, 46fr) minmax(0, 28fr); gap: clamp(24px, 2.6vw, 48px); margin-top: clamp(28px, 4vh, 48px); align-items: start; }
+  .lab-copy .lbl + .body { margin-top: 8px; }
+  .lab-copy .body + .lbl { margin-top: 26px; }
+  .lab-copy .body, .obs .body { font-size: clamp(15px, 1vw, 17px); }
+  .days { display: grid; gap: clamp(10px, 1.6vh, 18px); }
+  .dayrow { display: grid; grid-template-columns: 62px repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.2vw, 22px); align-items: center; }
+  .dl { font: 400 15px/1 var(--f-body); color: var(--ink); text-transform: uppercase; letter-spacing: .02em; transition: color .4s var(--ease); }
+  .dayrow.is-on .dl { color: var(--cobalt-ink); font-weight: 700; }
+  .dish { position: relative; aspect-ratio: 1; padding: 5.6%; border: 1px dashed var(--ink); border-radius: 50%; }
+  .dish img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .obs .h3 { margin-top: 0; }
+  .obs .body { margin-top: 10px; }
+  .obs-list { margin: 14px 0 0; padding-left: 1.3em; font: 500 clamp(15px, 1.02vw, 17px)/1.45 var(--f-body); }
+  .obs-list li + li { margin-top: 8px; }
+  .obs-list li::marker { color: var(--cobalt-ink); font-weight: 700; }
+
+  /* point to mass */
+  .morph { position: relative; background: var(--white); }
+  .morph-pin { position: relative; height: 100svh; min-height: 620px; overflow: hidden; }
+  .net, .net-top { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .morph-pin::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(52% 40% at 18% 22%, rgba(255,255,255,.92), rgba(255,255,255,0) 72%), linear-gradient(0deg, rgba(255,255,255,.95) 0%, rgba(255,255,255,0) 30%); }
+  .morph-copy { position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: space-between; padding-top: clamp(96px, 14vh, 140px); padding-bottom: clamp(30px, 6vh, 60px); pointer-events: none; }
+  .morph-lead { margin: 0; max-width: 24ch; font: 400 clamp(20px, 1.8vw, 32px)/1.35 var(--f-display); color: var(--cobalt); }
+  .stages4 { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(12px, 2vw, 28px); border-top: 1px solid var(--line); }
+  .stages4 li { padding-top: 16px; }
+  .stages4 .n { display: block; margin-bottom: 10px; font: 600 13px var(--f-body); letter-spacing: .12em; color: var(--cobalt-ink); }
+  .sw4 { position: relative; display: inline-block; --p: 0%; font: 400 clamp(28px, 4.2vw, 76px)/1 var(--f-display); text-transform: uppercase; color: var(--white); -webkit-text-stroke: 1.5px var(--cobalt); paint-order: stroke fill; }
+  .sw4::after { content: attr(data-text); position: absolute; inset: 0; color: var(--cobalt); -webkit-text-stroke: 0; clip-path: inset(0 calc(100% - var(--p)) 0 0); }
+
+  /* concept and sketch: two rows, so the timeline and the sketches sit side by side and line up */
+  .concept { position: relative; background: linear-gradient(-89deg, #d6e0f6 .4%, rgba(214,224,246,0) 35%), var(--white); overflow: hidden; }
+  .c-bubbles { position: absolute; left: -14%; top: 4%; width: 58%; max-width: none; opacity: .15; mix-blend-mode: multiply; transform: scaleX(-1); pointer-events: none; }
+  .c-grid { position: relative; display: grid; grid-template-columns: minmax(0, 800fr) minmax(0, 992fr); column-gap: clamp(28px, 3.2vw, 60px); row-gap: clamp(30px, 5vh, 56px); }
+  .c-head, .s-head { align-self: start; }
+  .c-text, .sk-text { margin-top: 18px; }
+  .c-text { color: var(--ink-2); }
+  .tl { position: relative; display: grid; grid-template-columns: minmax(0, 40fr) minmax(0, 60fr); align-self: stretch; } /* as tall as the sketches beside it */
+  .tl-art { position: relative; }
+  /* the render runs off the left edge of the screen and under the list, every edge fading out, so no hard block or empty strip is left */
+  .tl-bleed { position: absolute; top: -12%; bottom: -12%; left: calc(-1 * (var(--gut) + max(0px, (100vw - 1800px) / 2))); right: -26%; pointer-events: none;
+    -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 56%, transparent 97%), linear-gradient(180deg, transparent 0%, #000 15%, #000 85%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(90deg, #000 0%, #000 56%, transparent 97%), linear-gradient(180deg, transparent 0%, #000 15%, #000 85%, transparent 100%);
+    mask-composite: intersect; }
+  .tl-render { display: block; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 45% 50%; transform: scaleY(-1); }
+  .tl-word { position: absolute; left: 10%; top: 50%; margin: 0; transform: translateY(-50%); font: 400 clamp(20px, 1.8vw, 30px) var(--f-display); color: var(--white); text-shadow: 0 4px 2px #0f28f0; }
+  .tl-links { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; filter: drop-shadow(0 0 1.5px rgba(255,255,255,.95)); }
+  .tl-links path { fill: none; stroke: var(--cobalt); stroke-width: 1.8; stroke-linecap: round; }
+  .tl-list { list-style: none; position: relative; margin: 0; padding: 6px 0 6px 30px; display: grid; align-content: space-between; gap: clamp(16px, 2.6vh, 28px); }
+  .tl-item { position: relative; }
+  .tl-dot { position: absolute; left: -30px; top: .26em; width: 11px; height: 11px; border-radius: 50%; background: var(--cobalt); box-shadow: 0 0 0 4px rgba(69,114,255,.18); }
+  .tl-h { margin: 0; font: 400 clamp(14px, 1.02vw, 17px)/1.3 var(--f-display); color: var(--ink); }
+  .tl-p { margin: 5px 0 0; font: 400 clamp(13px, .85vw, 14px)/1.4 var(--f-body); letter-spacing: -.01em; color: var(--ink); }
+  .sk-text { max-width: 760px; }
+  .sk-comp { position: relative; align-self: center; aspect-ratio: 767 / 694; --r1: 130%; --r2: 130%; --r3: 130%; }
+  .js-motion .sk-comp { --r1: -12%; --r2: -12%; --r3: -12%;
+    -webkit-mask-image: radial-gradient(circle at 52% 28%, #000 var(--r1), transparent calc(var(--r1) + 12%)), radial-gradient(circle at 18% 74%, #000 var(--r2), transparent calc(var(--r2) + 12%)), radial-gradient(circle at 88% 46%, #000 var(--r3), transparent calc(var(--r3) + 12%));
+    mask-image: radial-gradient(circle at 52% 28%, #000 var(--r1), transparent calc(var(--r1) + 12%)), radial-gradient(circle at 18% 74%, #000 var(--r2), transparent calc(var(--r2) + 12%)), radial-gradient(circle at 88% 46%, #000 var(--r3), transparent calc(var(--r3) + 12%)); }
+  .sk { position: absolute; margin: 0; }
+  .sk img { width: 100%; height: 100%; object-fit: cover; }
+  .sk-right { left: 9.5%; top: 2.6%; width: 14.6%; height: 36%; }
+  .sk-right img { object-fit: contain; }
+  .sk-main { left: 19.9%; top: 0; width: 61.4%; height: 90.3%; }
+  .sk-local { left: 76.9%; top: 3.2%; width: 21.8%; height: 32.4%; border: .8px solid #464646; background: #d8e1f6; }
+  .sk-back { left: 76.9%; top: 54.8%; width: 22%; height: 37%; border: .8px solid var(--ink); background: var(--white); }
+  .sk-sculpt { left: 0; top: 46.8%; width: 41.2%; height: 53%; opacity: .9; }
+  .sk-lab { position: absolute; margin: 0; font: 400 15px/1.2 var(--f-body); color: var(--ink); white-space: nowrap; }
+  .sk-lab.l1 { left: 6.8%; top: 41.4%; }
+  .sk-lab.l2 { left: 87.1%; top: 36%; transform: translateX(-50%); }
+  .sk-lab.l3 { left: 87.9%; top: 92.9%; transform: translateX(-50%); }
+  .sk-links { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .sk-links path { fill: none; stroke: #464646; stroke-width: 1; vector-effect: non-scaling-stroke; }
+
+  /* working process */
+  .tex::before { content: ""; position: absolute; inset: 0; background: url("media/nd-texture.jpg") center bottom / cover no-repeat; opacity: .5; transform: scaleX(-1); pointer-events: none; }
+  .tex > * { position: relative; }
+  /* working process: model and viewport on the left; the text, the node graph and the top view stacked on the right */
+  .wp-grid { display: grid; grid-template-columns: minmax(0, 62fr) minmax(0, 38fr); grid-template-areas: "h copy" "row1 side"; column-gap: clamp(24px, 2.4vw, 44px); row-gap: clamp(24px, 3.6vh, 40px); align-items: end; }
+  .wp-grid > .h2 { grid-area: h; }
+  .wp-copy { grid-area: copy; }
+  .wp-row1 { grid-area: row1; align-self: stretch; display: grid; grid-template-columns: minmax(0, 126fr) minmax(0, 575fr); gap: 4px; }
+  .wp-side { grid-area: side; align-self: stretch; display: grid; grid-template-rows: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(16px, 1.8vw, 26px); }
+  .wp-fig { margin: 0; overflow: hidden; }
+  .wp-fig img { width: 100%; height: 100%; object-fit: cover; }
+  .wp-model { aspect-ratio: 126 / 363; }
+  .wp-model img { object-position: 50% 0; }
+  .wp-view { aspect-ratio: 575 / 363; }
+  .wp-view img { object-position: 50% 100%; }
+  .wp-side .wp-fig { position: relative; min-height: 0; }
+  .wp-side .wp-fig img { position: absolute; inset: 0; } /* the right stack takes its height from the left row */
+  .wp-nodes { overflow: visible; --sh: 6px; }
+  .wp-nodes img { box-shadow: var(--sh) var(--sh) 1px 0 var(--node-shadow); }
+  .wp-copy .h3 { margin-top: 0; }
+  .wp-copy .body { margin-top: 14px; max-width: 520px; }
+
+  /* final showcase, laid out as on the board */
+  .sc-heads { display: grid; grid-template-columns: minmax(0, 883fr) minmax(0, 390fr) minmax(0, 392fr); gap: clamp(14px, 1.5vw, 27px); margin-top: clamp(26px, 4vh, 44px); }
+  .sc-heads .h3 { margin: 0 0 14px; }
+  .sc-grid { display: grid; grid-template-columns: minmax(0, 883fr) minmax(0, 390fr) minmax(0, 392fr); grid-template-rows: minmax(0, 248fr) minmax(0, 81fr) minmax(0, 259fr); gap: 0 clamp(14px, 1.5vw, 27px); aspect-ratio: 1719 / 588; }
+  .sc { margin: 0; overflow: hidden; }
+  .sc img { width: 100%; height: 100%; object-fit: cover; }
+  .sc-big { grid-column: 1; grid-row: 1 / 4; }
+  .sc-top { grid-column: 2; grid-row: 1; }
+  .sc-top img { object-position: 50% 100%; }
+  .sc-bot { grid-column: 2; grid-row: 3; }
+  .sc-tall { grid-column: 3; grid-row: 1 / 4; }
+
+  /* synthetic morphogenesis */
+  .mg-grid { display: grid; grid-template-columns: minmax(0, 482fr) minmax(0, 1165fr); gap: clamp(16px, 1.8vw, 33px); margin-top: clamp(20px, 3vh, 34px); align-items: start; }
+  .mg-room { margin: 0; aspect-ratio: 482 / 674; overflow: hidden; }
+  .mg-room img { width: 100%; height: 100%; object-fit: cover; }
+  .mg-right { display: grid; gap: clamp(16px, 1.8vw, 33px); }
+  .frames { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.5vw, 28px); }
+  .frame { aspect-ratio: 210 / 328; border: 1.5px solid var(--frame); outline: 0 solid var(--frame); outline-offset: 5px; overflow: hidden; transition: outline-width .3s var(--ease), border-width .3s var(--ease); } /* images are pre-blended the way the board's difference layer shows them */
+  .frame img { width: 100%; height: 100%; object-fit: cover; }
+  .frame.is-on { border-width: 3px; outline-width: 2px; }
+  .scenes { display: grid; grid-template-columns: minmax(0, 565fr) minmax(0, 569fr); gap: clamp(16px, 1.8vw, 33px); }
+  .scene { margin: 0; aspect-ratio: 567 / 308; overflow: hidden; }
+  .scene img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* all work + footer */
+  .case-nav { padding: clamp(40px, 6vh, 72px) 0 clamp(64px, 10vh, 110px); }
+  .cn-bar { padding-top: 16px; border-top: 1px solid var(--line); }
+  .cn-k { margin: 0; font: 400 14px var(--f-display); color: var(--cobalt-ink); text-transform: uppercase; letter-spacing: .04em; }
+  .next-case { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 26px 0 8px; color: var(--cobalt-ink); text-decoration: none; }
+  .nc-t { position: relative; display: block; --p: 0%; font: 400 clamp(40px, 9.6vw, 170px)/.9 var(--f-display); text-transform: uppercase; color: var(--white); -webkit-text-stroke: 2px var(--cobalt); paint-order: stroke fill; white-space: nowrap; transition: --p .9s var(--ease); }
+  .nc-t::after { content: attr(data-text); position: absolute; inset: 0; color: var(--cobalt); -webkit-text-stroke: 0; clip-path: inset(0 calc(100% - var(--p)) 0 0); }
+  .nc-go { flex: none; display: grid; place-items: center; width: clamp(52px, 6vw, 96px); aspect-ratio: 1; margin-bottom: .4vw; border: 1px solid var(--cobalt); border-radius: 50%; color: var(--cobalt-ink); font: 400 clamp(20px, 2.2vw, 34px)/1 var(--f-body); transition: background .5s var(--ease), color .5s var(--ease), transform .5s var(--ease); }
+  .next-case:hover .nc-t, .next-case:focus-visible .nc-t { --p: 100%; }
+  .next-case:hover .nc-go { background: var(--cobalt); color: var(--white); transform: rotate(45deg); }
+  .foot-in { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 12px 0 28px; border-top: 1px solid var(--line); color: var(--ink-2); font-size: 14px; }
+  .totop { background: none; border: 0; cursor: pointer; }
+
+  /* pinned layouts only while motion runs on a wide screen */
+  @media (min-width: 901px) {
+    .js-motion .lab-pin { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: clamp(70px, 9vh, 96px) 0 clamp(24px, 4vh, 44px); }
+    .js-motion .lab.sec { padding: 0; }
+    .js-motion .sc-pin, .js-motion .mg-pin { min-height: 100svh; display: flex; flex-direction: column; justify-content: center; padding: clamp(70px, 9vh, 96px) 0 clamp(24px, 4vh, 40px); }
+    .js-motion .showcase.sec, .js-motion .morpho.sec { padding: 0; }
+    .js-motion .sc-grid { max-height: calc(100svh - 230px); margin: 0 auto; }
+    .js-motion .mg-grid { max-height: calc(100svh - 180px); }
+  }
+
+  @media (max-width: 900px) {
+    .nav nav { gap: 18px; }
+    .glass { top: auto; bottom: 0; left: 0; right: 0; width: auto; border-width: 1px 0 0; }
+    .glass-in { padding: 26px var(--gut) 34px; }
+    .hero-title { font-size: 9.6vw; }
+    .hero-text { margin-top: 18px; }
+    .hero-img { object-position: 72% 30%; }
+    .cue { display: none; }
+    .insp-grid, .r-grid, .c-grid { grid-template-columns: 1fr; }
+    .c-head { order: 1; } .tl { order: 2; } .s-head { order: 3; } .sk-comp { order: 4; }
+    .wp-grid { grid-template-columns: 1fr; grid-template-areas: "h" "copy" "row1" "side"; }
+    .wp-side { grid-template-rows: none; }
+    .wp-nodes { aspect-ratio: 498 / 231; }
+    .wp-small { aspect-ratio: 1891 / 890; }
+    .r-right { padding-top: 0; }
+    .principles { grid-template-columns: 1fr; gap: 26px; }
+    .pr { padding-left: 30px; }
+    .pr .node { left: 0; top: 50%; margin: -6.5px 0 0; }
+    .bar { margin-top: 0; text-align: left; }
+    .roots { padding-top: 26px; }
+    .lab-grid { grid-template-columns: 1fr; gap: 34px; }
+    .dayrow { grid-template-columns: 42px repeat(5, minmax(0, 1fr)); gap: 7px; }
+    .dl { font-size: 11px; }
+    .stages4 { grid-template-columns: 1fr 1fr; row-gap: 22px; }
+    .sw4 { font-size: clamp(26px, 8.4vw, 48px); }
+    .tl { grid-template-columns: 1fr; }
+    .tl-art { height: 220px; margin-bottom: 18px; }
+    .tl-bleed { top: -8%; bottom: -22%; left: calc(-1 * var(--gut)); right: calc(-1 * var(--gut));
+      -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 62%, transparent 100%); -webkit-mask-composite: source-over;
+      mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 62%, transparent 100%); mask-composite: add; }
+    .tl-links { display: none; }
+    .tl-list { padding-left: 26px; }
+    .tl-dot { left: -26px; }
+    .sk-lab { font-size: 11px; }
+    .sc-heads { display: none; }
+    .sc-grid { display: grid; grid-template-columns: 1fr; grid-template-rows: none; gap: 16px; aspect-ratio: auto; }
+    .sc-big, .sc-top, .sc-bot, .sc-tall { grid-column: auto; grid-row: auto; overflow: visible; }
+    .sc img { height: auto; }
+    .sc-big img { aspect-ratio: 883 / 588; }
+    .sc-top img { aspect-ratio: 390 / 248; }
+    .sc-bot img { aspect-ratio: 390 / 259; }
+    .sc-tall img { aspect-ratio: 392 / 588; }
+    .sc-label { display: block; }
+    .mg-grid { grid-template-columns: 1fr; }
+    .mg-room { max-width: 360px; }
+    .frames { gap: 7px; }
+    .scenes { grid-template-columns: 1fr; }
+    .next-case { align-items: center; gap: 12px; }
+    .nc-t { font-size: 10vw; }
+    .nc-go { width: 48px; font-size: 20px; }
+  }
+  .sc-label { display: none; margin: 0 0 10px; }
+  @media (prefers-reduced-motion: reduce) {
+    .cue i::after { animation: none; }
+    .pr, .pr .node, .bar, .dl, .frame, .nc-t, .nc-go { transition: none; }
+  }
+  /* the still version: every stage is shown, nothing waits for scroll */
+  .static .pr .bar { background: var(--cobalt-deep); color: var(--white); }
+  .static .pr .node { background: var(--cobalt); }
+  .static .sw4 { --p: 100%; }
+  .static .frame.is-on { border-width: 1.5px; outline-width: 0; }
+  /* ds-allow-hardcode:end */
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="nav">
+  <a class="brand" href="../">Tianhao Wang</a>
+  <nav aria-label="Main">
+    <a href="../#work">Work</a>
+    <a href="../#about">About</a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- Title board: the render grows in from three spores, the glass panel slides over it -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-media">
+      <div class="hero-move">
+        <img class="hero-img" src="media/nd-hero.jpg" width="1800" height="800" alt="A 3D rendering of a figure in translucent blue clothing built from plant-like forms, among glassy flowers and bubble clusters in an icy blue landscape">
+      </div>
+    </div>
+    <div class="glass">
+      <div class="glass-in">
+        <h1 id="hero-title" class="hero-title" aria-label="Nature Designer"><span class="line" aria-hidden="true">Nature</span><span class="line" aria-hidden="true">Designer</span></h1>
+        <p class="pill">Post-human Society Virtual Clothing Design</p>
+        <p class="hero-text">In the post-human era, nature reclaims the power to shape. This project explores how ecological intelligence, represented by mycelium and slime molds, can generate form and structure autonomously. By translating natural growth behaviors into digital systems, the work speculates on a new design order where AI becomes the extension of nature, and humans become observers of its evolution.</p>
+        <p class="hero-date">Feb to May 2025</p>
+      </div>
+    </div>
+    <p class="cue" aria-hidden="true">Scroll <i></i></p>
+  </section>
+
+  <!-- Inspiration and background -->
+  <section class="sec insp" aria-labelledby="insp-title">
+    <div class="board insp-grid">
+      <div class="insp-main">
+        <h2 id="insp-title" class="h2" data-split>Inspiration</h2>
+        <h3 class="h3">New Ecological Order</h3>
+        <p class="body"><strong>Human expansion is disturbing ecological balance</strong>, evident in changing land use, chaotic weather, and more disasters.</p>
+        <p class="ask">As nature reclaims the body, can it also design through <b>intelligence and matter</b>?</p>
+        <p class="q-big" data-scatter>Will the “form” of the future still belong to humanity?</p>
+        <p class="q-sub">This project starts from here. Explore a world redefined by nature.</p>
+      </div>
+      <aside class="bg-panel" aria-labelledby="bg-title">
+        <h2 id="bg-title" class="h2">Background</h2>
+        <h3 class="h3">The Evolution of Socio-Ecological Relations</h3>
+        <ol class="stages">
+          <li class="stage"><p class="st-name">Agricultural society</p><ul class="st-list"><li>Large-scale deforestation</li><li>Excessive irrigation</li><li>Overgrazing</li></ul></li>
+          <li class="stage"><p class="st-name">Industrial society</p><ul class="st-list"><li>Fossil fuel extraction</li><li>Factory emissions</li><li>Urbanization</li></ul></li>
+          <li class="stage"><p class="st-name">Post-industrial society</p><ul class="st-list"><li>Global supply chains</li><li>High-tech industries</li><li>Urban ecological pressure</li></ul></li>
+          <li class="stage"><p class="st-q">New society? New relationship?</p><p class="st-box">Post-human Society</p></li>
+        </ol>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Research -->
+  <section class="sec research" aria-labelledby="research-title">
+    <div class="board r-grid">
+      <div class="r-left">
+        <h2 id="research-title" class="h2" data-split>Research</h2>
+        <h3 class="h3">Post-human and Non-Human Agency</h3>
+        <div class="kp-panel">
+          <p class="kp-title">Key points:</p>
+          <ol class="kp-list">
+            <li class="kp">A. Humans are no longer the center of the world but part of a larger ecological and technological network.</li>
+            <li class="kp">B. Matter possesses vitality and agency, capable of responding to external stimuli.</li>
+            <li class="kp">C. Design should acknowledge and respond to the agency of materials and nonhuman elements, fostering a more balanced symbiotic relationship.</li>
+          </ol>
+        </div>
+        <p class="body r-note">The post-human society refers to a new era of human-machine integration where technology deeply permeates life and reshapes human form, capabilities, and social structures.</p>
+      </div>
+      <div class="r-right">
+        <h3 class="h3">Ecological Intelligence</h3>
+        <p class="lbl mark">Distributed Nature Intelligence</p>
+        <p class="body">Intelligence in nature is not centralized in a single “brain,” but emerges through distributed systems such as fungal mycelia, coral colonies, forest root networks, and neural webs, all operating through three common principles.</p>
+        <div class="roots">
+          <svg aria-hidden="true"></svg>
+          <ul class="principles">
+            <li class="pr"><i class="node" aria-hidden="true"></i><span class="bar">Self-Organization in Microbial Systems</span></li>
+            <li class="pr"><i class="node" aria-hidden="true"></i><span class="bar">Feedback Loop in Microbial Systems</span></li>
+            <li class="pr"><i class="node" aria-hidden="true"></i><span class="bar">Nonlinear Growth in Coral System</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Material experiment: the user's own dish photos, five dishes over five days -->
+  <section class="sec lab" aria-labelledby="lab-title">
+    <div class="lab-pin">
+      <div class="board">
+        <h2 id="lab-title" class="h2" data-split>Material experiment</h2>
+        <h3 class="h3">Cultivation of Mycelial Networks</h3>
+        <div class="lab-grid">
+          <div class="lab-copy">
+            <p class="lbl">Ganoderma lucidum mycelium</p>
+            <p class="body">To explore how nature is involved in morphogenesis, I took Ganoderma lucidum mycelium to observe its growth process without manual intervention.</p>
+            <p class="lbl">Oat granules</p>
+            <p class="body">Mycelium was placed on a culture medium with oat particles. Oats are “energy nodes” or “food targets”; mycelium sought, connected and occupied resource points by its logic.</p>
+          </div>
+          <div class="days" role="img" aria-label="Five culture dishes photographed from day 1 to day 5: the mycelium spreads out from a few points, reaches the oat particles and joins into a network">
+            <div class="dayrow"><span class="dl">Day 1</span><span class="dish"><img src="media/dish-1-1.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-1-2.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-1-3.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-1-4.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-1-5.jpg" width="520" height="520" alt=""></span></div>
+            <div class="dayrow"><span class="dl">Day 2</span><span class="dish"><img src="media/dish-2-1.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-2-2.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-2-3.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-2-4.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-2-5.jpg" width="520" height="520" alt=""></span></div>
+            <div class="dayrow"><span class="dl">Day 3</span><span class="dish"><img src="media/dish-3-1.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-3-2.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-3-3.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-3-4.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-3-5.jpg" width="520" height="520" alt=""></span></div>
+            <div class="dayrow"><span class="dl">Day 4</span><span class="dish"><img src="media/dish-4-1.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-4-2.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-4-3.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-4-4.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-4-5.jpg" width="520" height="520" alt=""></span></div>
+            <div class="dayrow"><span class="dl">Day 5</span><span class="dish"><img src="media/dish-5-1.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-5-2.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-5-3.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-5-4.jpg" width="520" height="520" alt=""></span><span class="dish"><img src="media/dish-5-5.jpg" width="520" height="520" alt=""></span></div>
+          </div>
+          <div class="obs">
+            <h3 class="h3">Observation record</h3>
+            <p class="body">The mycelium begins exploratory extension within the first 24 hours. They actively search for food (oats) and the boundary of space. The growth path shows the coexistence of “direction + randomness”:</p>
+            <ol class="obs-list">
+              <li>It will avoid obstacles and choose the direction of less resistance.</li>
+              <li>It will accelerate the diffusion when it encounters an energy source.</li>
+              <li>Different colonies establish connections or compete with each other.</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The observed morphology, grown live as a network (an illustration, not data) -->
+  <section class="morph" aria-labelledby="morph-title">
+    <div class="morph-pin">
+      <canvas class="net" aria-hidden="true"></canvas>
+      <canvas class="net-top" aria-hidden="true"></canvas>
+      <div class="board morph-copy">
+        <h2 id="morph-title" class="morph-lead">The overall morphology is from point to net to sheet to mass.</h2>
+        <ol class="stages4" aria-hidden="true">
+          <li><span class="n">01</span><span class="sw4" data-text="Point">Point</span></li>
+          <li><span class="n">02</span><span class="sw4" data-text="Net">Net</span></li>
+          <li><span class="n">03</span><span class="sw4" data-text="Sheet">Sheet</span></li>
+          <li><span class="n">04</span><span class="sw4" data-text="Mass">Mass</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- Concept and sketch -->
+  <section class="sec concept" aria-labelledby="concept-title">
+    <img class="c-bubbles" src="media/nd-bubbles.jpg" width="1000" height="1000" alt="">
+    <div class="board c-grid">
+      <div class="c-head">
+        <h2 id="concept-title" class="h2" data-split>Concept</h2>
+        <h3 class="h3">The Symbiotic World of Plants, Technology, Humans</h3>
+        <p class="body c-text">In this future world, plants, technologies and humans form a continuous living network. Power shifts from human control to distributed ecological intelligence. Plants signal, machines interpret growth as emotion, and humans follow non-human rhythms. Forms arise through co-evolution as boundaries between organism, interface and environment dissolve into a shared, symbiotic field.</p>
+      </div>
+      <div class="s-head">
+        <h2 class="h2" data-split>Sketch</h2>
+        <h3 class="h3">Plant-based wearable device clothing</h3>
+        <p class="body sk-text">Inspired by natural systems that organize themselves, like the way fungi grow in networks or coral reefs form repeating patterns. These organisms show how complex structures can come from simple local actions, without any central control.</p>
+      </div>
+        <div class="tl">
+          <div class="tl-art" aria-hidden="true">
+            <div class="tl-bleed"><img class="tl-render" src="media/nd-timeline-render.jpg" width="771" height="1024" alt=""></div>
+            <p class="tl-word">Timeline</p>
+          </div>
+          <ol class="tl-list" aria-label="Timeline">
+            <li class="tl-item"><i class="tl-dot" aria-hidden="true"></i><p class="tl-h">2025-The First Connections</p><p class="tl-p">Wearables merge with live plants for biofeedback and calm. Growth and emotion share the same rhythm.</p></li>
+            <li class="tl-item"><i class="tl-dot" aria-hidden="true"></i><p class="tl-h">2058-Vegetal Autonomy</p><p class="tl-p">Plants sense and respond autonomously; designers follow vegetal networks instead of control.</p></li>
+            <li class="tl-item"><i class="tl-dot" aria-hidden="true"></i><p class="tl-h">2087-Hybrid Consciousness</p><p class="tl-p">Biological and digital systems merge; AI translates plant signals into emotional interfaces. The boundary between algorithm and organism begins to dissolve.</p></li>
+            <li class="tl-item"><i class="tl-dot" aria-hidden="true"></i><p class="tl-h">2105-Self-Growing Structures</p><p class="tl-p">Plant-based structures build and repair themselves through distributed feedback. Human intervention becomes minimal: nature designs its own intelligence.</p></li>
+            <li class="tl-item"><i class="tl-dot" aria-hidden="true"></i><p class="tl-h">2165-The Sentient Environment</p><p class="tl-p">The environment itself becomes sentient; data, roots, and memories intertwine. Human presence is archived as a trace inside living ecosystems.</p></li>
+          </ol>
+          <svg class="tl-links" aria-hidden="true"></svg>
+        </div>
+          <div class="sk-comp" role="img" aria-label="Line sketches of the outfit: a front view, a right elevation, a back elevation, local details and a sculptural study, with root-like strands falling from the body">
+            <figure class="sk sk-sculpt"><img src="media/nd-sketch-sculpt.webp" width="939" height="1050" alt=""></figure>
+            <figure class="sk sk-right"><img src="media/nd-sketch-right.webp" width="468" height="968" alt=""></figure>
+            <figure class="sk sk-main"><img src="media/nd-sketch-main.webp" width="1080" height="1436" alt=""></figure>
+            <figure class="sk sk-local"><img src="media/nd-sketch-local.jpg" width="1024" height="1024" alt=""></figure>
+            <figure class="sk sk-back"><img src="media/nd-sketch-back.jpg" width="800" height="1200" alt=""></figure>
+            <svg class="sk-links" viewBox="0 0 767 694" preserveAspectRatio="none" aria-hidden="true"><path d="M465 152 V67 H590"/><path d="M114 284 H291 V128"/></svg>
+            <p class="sk-lab l1" aria-hidden="true">right elevation</p>
+            <p class="sk-lab l2" aria-hidden="true">Local details</p>
+            <p class="sk-lab l3" aria-hidden="true">Back elevation</p>
+          </div>
+    </div>
+  </section>
+
+  <!-- Working process -->
+  <section class="sec process tex" aria-labelledby="wp-title">
+    <div class="board wp-grid">
+      <h2 id="wp-title" class="h2" data-split>Working process</h2>
+      <div class="wp-copy">
+        <h3 class="h3">Basic 3D Model</h3>
+        <p class="body">Simulating material layers and thickness variations for organic realism. Adding structural logic and connection points inspired by mycelium networks.</p>
+      </div>
+      <div class="wp-row1">
+        <figure class="wp-fig wp-model"><img src="media/nd-model.jpg" width="514" height="1485" alt="The grey 3D model of the outfit on a figure, before materials"></figure>
+        <figure class="wp-fig wp-view"><img src="media/nd-viewport.jpg" width="1024" height="482" alt="The outfit in the 3D modeling viewport, with the scene's flowers, spheres and a dark tree trunk around it"></figure>
+      </div>
+      <div class="wp-side">
+        <figure class="wp-fig wp-nodes"><img src="media/nd-nodes.jpg" width="1848" height="879" alt="A node graph used to build the material layers"></figure>
+        <figure class="wp-fig wp-small"><img src="media/nd-viewport-2.jpg" width="1891" height="890" alt="A top view of the scene in the modeling viewport"></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final showcase, laid out as on the board -->
+  <section class="sec showcase tex" aria-labelledby="sc-title">
+    <div class="sc-pin">
+      <div class="board">
+        <h2 id="sc-title" class="h2" data-split>Final showcase</h2>
+        <div class="sc-heads" aria-hidden="true"><p class="h3">Symbiotic Being</p><p class="h3">Ecological Interface</p></div>
+        <div class="sc-grid">
+          <figure class="sc sc-big"><p class="h3 sc-label">Symbiotic Being</p><img src="media/nd-show-symbiotic.jpg" width="1200" height="800" alt="Symbiotic Being: a 3D rendering of the figure in the translucent blue outfit, among glassy plants"></figure>
+          <figure class="sc sc-top"><p class="h3 sc-label">Ecological Interface</p><img src="media/nd-show-back.jpg" width="1024" height="768" alt="A 3D rendering of the figure from behind, among glassy blue flowers by the water"></figure>
+          <figure class="sc sc-bot"><img src="media/nd-show-wide.jpg" width="1200" height="800" alt="A wide 3D rendering of the figure in a pale blue landscape with chains of glassy forms"></figure>
+          <figure class="sc sc-tall"><img src="media/nd-show-close.jpg" width="800" height="1200" alt="A close 3D rendering of the outfit's ribbed, frond-like blue forms along the arm and body"></figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Synthetic morphogenesis -->
+  <section class="sec morpho tex" aria-labelledby="mg-title">
+    <div class="mg-pin">
+      <div class="board">
+        <h2 id="mg-title" class="h3">Synthetic Morphogenesis</h2>
+        <div class="mg-grid">
+          <figure class="mg-room"><img src="media/nd-morph-room.jpg" width="1145" height="1600" alt="A translucent generated form floating in a white room"></figure>
+          <div class="mg-right">
+            <ol class="frames" aria-label="Five generated forms">
+              <li class="frame"><img src="media/nd-frame-1.jpg" width="641" height="1024" alt="Generated form, version 1"></li>
+              <li class="frame"><img src="media/nd-frame-2.jpg" width="588" height="1024" alt="Generated form, version 2"></li>
+              <li class="frame"><img src="media/nd-frame-3.jpg" width="688" height="1024" alt="Generated form, version 3"></li>
+              <li class="frame"><img src="media/nd-frame-4.jpg" width="601" height="1024" alt="Generated form, version 4"></li>
+              <li class="frame"><img src="media/nd-frame-5.jpg" width="734" height="1024" alt="Generated form, version 5"></li>
+            </ol>
+            <div class="scenes">
+              <figure class="scene"><img src="media/nd-scene-a.jpg" width="1200" height="800" alt="A 3D rendering of a pale blue landscape with bubble clusters and a glass sphere"></figure>
+              <figure class="scene"><img src="media/nd-scene-b.jpg" width="1200" height="800" alt="A 3D rendering of the figure standing beside oversized translucent flowers"></figure>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="case-nav" aria-label="More work">
+    <div class="board">
+      <div class="cn-bar"><p class="cn-k">More work</p></div>
+      <a class="next-case" href="../#work" aria-label="All work">
+        <span class="nc-t" data-text="All work">All work</span>
+        <span class="nc-go" aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </nav>
+</main>
+
+<footer class="foot">
+  <div class="board"><div class="foot-in"><span>© 2026 Tianhao Wang</span><button class="link totop" type="button">Back to top <span aria-hidden="true">↑</span></button></div></div>
+</footer>
+
+<script>
+  // A simple local server can drop one of many parallel image requests. Ask again for any image that failed, up to twice.
+  (function () {
+    function retry(img) {
+      var n = +(img.dataset.retry || 0);
+      if (n >= 2) return;
+      img.dataset.retry = String(n + 1);
+      setTimeout(function () { img.src = img.getAttribute("src").split("?")[0] + "?retry=" + Date.now(); }, 400 * (n + 1));
+    }
+    document.querySelectorAll("img").forEach(function (img) {
+      img.addEventListener("error", function () { retry(img); });
+      if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) retry(img);
+    });
+  })();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const root = document.documentElement;
+  // ?still shows the reduced-motion version, for checking it
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches || new URLSearchParams(location.search).has("still");
+  const WIDE = "(min-width: 901px)";
+  const NS = "http://www.w3.org/2000/svg";
+  const clamp = v => Math.min(1, Math.max(0, v));
+  const smooth = x => x * x * (3 - 2 * x);
+  // seeded random: the scatter and the network come out the same on every visit
+  const rng = seed => () => { seed = (seed + 0x6D2B79F5) >>> 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+
+  // Split: hero letters, headings by word, the big question by word
+  document.querySelectorAll(".hero-title .line").forEach(l => { l.innerHTML = [...l.textContent].map(c => `<span class="ch">${c}</span>`).join(""); });
+  document.querySelectorAll("[data-split]").forEach(el => {
+    el.innerHTML = el.textContent.split(/\s+/).filter(Boolean).map(w => `<span class="wl"><span class="w">${w}</span></span>`).join(" ");
+  });
+  const scatter = document.querySelector("[data-scatter]");
+  scatter.innerHTML = scatter.textContent.split(/(\s+)/).map(w => (!w ? "" : /\s+/.test(w) ? " " : `<span class="sw">${w}</span>`)).join("");
+
+  // Back to top
+  document.querySelector(".totop").addEventListener("click", () => {
+    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.8 });
+    else window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    document.querySelector(".brand").focus({ preventScroll: true });
+  });
+
+  // Material experiment: each day's row of photos grows into its dashed dish, the day label lights up
+  const dayRows = [...document.querySelectorAll(".dayrow")];
+  function setDay(t) { // t runs from 0 (empty dishes) to 5 (all five days shown)
+    dayRows.forEach((row, k) => {
+      const a = smooth(clamp(t - k));
+      row.querySelectorAll("img").forEach((img, j) => {
+        const b = smooth(clamp(a * 1.6 - j * .15));
+        img.style.opacity = String(b);
+        img.style.transform = `scale(${.55 + .45 * b}) rotate(${(1 - b) * -30}deg)`;
+      });
+      row.classList.toggle("is-on", t >= k && t < k + 1.05 || (k === 4 && t >= 4));
+    });
+  }
+
+  // Research: branches from one point to each principle, measured from the real layout
+  const roots = document.querySelector(".roots");
+  const rsvg = roots.querySelector("svg");
+  const prs = [...roots.querySelectorAll(".pr")];
+  let rootPaths = [], rootsP = 0;
+  function drawRoots(p) {
+    rootsP = p;
+    rootPaths.forEach((r, i) => {
+      const k = clamp(p * 1.25 - i * .12);
+      r.path.style.strokeDashoffset = String(r.len * (1 - k));
+      prs[i].classList.toggle("is-on", k > .97);
+    });
+  }
+  function buildRoots() {
+    const rr = roots.getBoundingClientRect();
+    if (!rr.width) return;
+    rsvg.setAttribute("width", rr.width); rsvg.setAttribute("height", rr.height); rsvg.setAttribute("viewBox", `0 0 ${rr.width} ${rr.height}`);
+    rsvg.textContent = "";
+    const wide = matchMedia(WIDE).matches;
+    const n0 = prs[0].querySelector(".node").getBoundingClientRect();
+    const rx = wide ? rr.width / 2 : n0.left + n0.width / 2 - rr.left;
+    rootPaths = prs.map(pr => {
+      const b = pr.querySelector(".node").getBoundingClientRect();
+      const nx = b.left + b.width / 2 - rr.left, ny = b.top + (wide ? 0 : b.height / 2) - rr.top;
+      const path = document.createElementNS(NS, "path");
+      path.setAttribute("class", "rt");
+      path.setAttribute("d", wide ? `M${rx} 0 C${rx} ${ny * .55} ${nx} ${ny * .55} ${nx} ${ny}` : `M${rx} 0 L${nx} ${ny}`);
+      rsvg.appendChild(path);
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = `${len} ${len}`;
+      return { path, len };
+    });
+    drawRoots(rootsP);
+  }
+
+  // Concept: curves from the word TIMELINE out to each milestone
+  const tl = document.querySelector(".tl");
+  const tsvg = tl.querySelector(".tl-links");
+  const tword = tl.querySelector(".tl-word");
+  const tdots = [...tl.querySelectorAll(".tl-dot")];
+  const titems = [...tl.querySelectorAll(".tl-item")];
+  let tlPaths = [], tlP = 0;
+  function drawTl(p) {
+    tlP = p;
+    tlPaths.forEach((r, i) => { const k = clamp(p * 1.32 - i * .08); /* every line reaches its dot when p is 1 */ r.path.style.strokeDashoffset = String(r.len * (1 - k)); titems[i].style.opacity = String(.25 + .75 * smooth(clamp(k * 1.4 - .3))); });
+  }
+  function buildTl() {
+    const tr = tl.getBoundingClientRect();
+    if (!tr.width || !matchMedia(WIDE).matches) { tsvg.textContent = ""; tlPaths = []; titems.forEach(t => { t.style.opacity = ""; }); return; }
+    tsvg.setAttribute("width", tr.width); tsvg.setAttribute("height", tr.height); tsvg.setAttribute("viewBox", `0 0 ${tr.width} ${tr.height}`);
+    tsvg.textContent = "";
+    const w = tword.getBoundingClientRect();
+    const x0 = w.right - tr.left + 10, y0 = w.top + w.height / 2 - tr.top;
+    tlPaths = tdots.map(d => {
+      const b = d.getBoundingClientRect();
+      const x1 = b.left - tr.left, y1 = b.top + b.height / 2 - tr.top, m = (x1 - x0) * .5;
+      const path = document.createElementNS(NS, "path");
+      path.setAttribute("d", `M${x0} ${y0} C${x0 + m} ${y0} ${x1 - m} ${y1} ${x1} ${y1}`);
+      tsvg.appendChild(path);
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = `${len} ${len}`;
+      return { path, len };
+    });
+    drawTl(tlP);
+  }
+
+  // Point to mass: a seeded mycelium that grows with scroll. Tips seek the nearest food,
+  // wander a little, branch now and then, and burst into new tips when they reach food.
+  const net = document.querySelector(".net");
+  const top = document.querySelector(".net-top");
+  const ctx = net.getContext("2d");
+  const tctx = top.getContext("2d");
+  const words = [...document.querySelectorAll(".sw4")];
+  const STAGE = [0, .26, .5, .74];
+  const cssRGB = name => { const v = parseInt(getComputedStyle(root).getPropertyValue(name).trim().slice(1), 16); return `${(v >> 16) & 255}, ${(v >> 8) & 255}, ${v & 255}`; };
+  let NET = null, netP = 0;
+  function buildNet() {
+    const r = net.getBoundingClientRect();
+    if (!r.width) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    [net, top].forEach(c => { c.width = Math.round(r.width * dpr); c.height = Math.round(r.height * dpr); });
+    const W = r.width, H = r.height, U = Math.min(W, H), rnd = rng(23);
+    const food = Array.from({ length: 10 }, () => ({ x: W * (.06 + rnd() * .88), y: H * (.2 + rnd() * .56), at: -1 }));
+    const spores = [[.14, .36], [.84, .3], [.52, .7]].map(([x, y]) => ({ x: W * x, y: H * y }));
+    const tip = (x, y, a) => ({ x, y, a, age: 0, life: 50 + rnd() * 70 });
+    let tips = [];
+    spores.forEach(s => { for (let i = 0; i < 5; i++) tips.push(tip(s.x, s.y, rnd() * Math.PI * 2)); });
+    const segs = [];
+    const STEPS = 190, STEP = U * .012, CAP = 120;
+    for (let t = 0; t < STEPS && tips.length; t++) {
+      const next = [];
+      for (const tp of tips) {
+        if (++tp.age > tp.life) continue;
+        let a = tp.a + (rnd() - .5) * .9, near = null, nd = U * .34;
+        for (const f of food) { if (f.at >= 0) continue; const d = Math.hypot(f.x - tp.x, f.y - tp.y); if (d < nd) { nd = d; near = f; } }
+        if (near) { let da = Math.atan2(near.y - tp.y, near.x - tp.x) - a; da = Math.atan2(Math.sin(da), Math.cos(da)); a += da * .2; }
+        const nx = tp.x + Math.cos(a) * STEP, ny = tp.y + Math.sin(a) * STEP;
+        if (nx < 0 || nx > W || ny < 0 || ny > H) continue;
+        segs.push(tp.x, tp.y, nx, ny, t);
+        tp.x = nx; tp.y = ny; tp.a = a;
+        if (near && nd < STEP * 1.6) {
+          near.at = t;
+          for (let i = 0; i < 4 && next.length < CAP; i++) next.push(tip(nx, ny, rnd() * Math.PI * 2));
+          continue;
+        }
+        next.push(tp);
+        if (next.length < CAP && rnd() < .036) next.push(tip(nx, ny, a + (rnd() < .5 ? -1 : 1) * (.45 + rnd() * .7)));
+      }
+      tips = next;
+    }
+    NET = { W, H, U, dpr, segs, food, spores, steps: STEPS, drawn: -1, line: cssRGB("--cobalt"), soft: cssRGB("--pill") };
+    drawNet(netP, true);
+  }
+  function drawNet(p, force) {
+    netP = p;
+    words.forEach((w, i) => { w.style.setProperty("--p", `${Math.round(100 * clamp((p - STAGE[i]) / .1))}%`); });
+    if (!NET) return;
+    const { W, H, U, dpr, segs, food, spores, steps } = NET;
+    const T = Math.pow(clamp((p - .05) / .72), 1.3) * steps;
+    if (force || T < NET.drawn) { ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H); NET.drawn = -1; }
+    if (T > NET.drawn) {
+      ctx.strokeStyle = `rgba(${NET.line}, .34)`;
+      ctx.lineWidth = .9;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      for (let i = 0; i < segs.length; i += 5) {
+        const t = segs[i + 4];
+        if (t > NET.drawn && t <= T) { ctx.moveTo(segs[i], segs[i + 1]); ctx.lineTo(segs[i + 2], segs[i + 3]); }
+      }
+      ctx.stroke();
+      NET.drawn = Math.floor(T);
+    }
+    tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    tctx.clearRect(0, 0, W, H);
+    const sheet = clamp((p - STAGE[2]) / .3), mass = smooth(clamp((p - STAGE[3]) / .24));
+    if (sheet > 0) {
+      spores.concat(food.filter(f => f.at >= 0 && T >= f.at)).forEach(b => {
+        const rad = U * (.05 + .12 * sheet + .1 * mass);
+        const g = tctx.createRadialGradient(b.x, b.y, 0, b.x, b.y, rad);
+        g.addColorStop(0, `rgba(${NET.soft}, ${.16 + .3 * mass})`);
+        g.addColorStop(.6, `rgba(${NET.soft}, ${.06 + .12 * mass})`);
+        g.addColorStop(1, `rgba(${NET.soft}, 0)`);
+        tctx.fillStyle = g;
+        tctx.beginPath(); tctx.arc(b.x, b.y, rad, 0, Math.PI * 2); tctx.fill();
+      });
+    }
+    const spore = smooth(clamp(p / .08));
+    tctx.fillStyle = `rgba(${NET.line}, ${.95 * spore})`;
+    spores.forEach(s => { tctx.beginPath(); tctx.arc(s.x, s.y, 2 + 3 * spore, 0, Math.PI * 2); tctx.fill(); });
+    food.forEach(f => {
+      const eaten = f.at >= 0 && T >= f.at;
+      tctx.beginPath(); tctx.arc(f.x, f.y, eaten ? 4 : 3, 0, Math.PI * 2);
+      if (eaten) { tctx.fillStyle = `rgba(${NET.line}, .95)`; tctx.fill(); }
+      else { tctx.strokeStyle = `rgba(${NET.line}, ${.55 * spore})`; tctx.lineWidth = 1; tctx.stroke(); }
+    });
+    if (T > 0 && T < steps) {
+      tctx.fillStyle = `rgba(${NET.line}, 1)`;
+      for (let i = 0; i < segs.length; i += 5) if (segs[i + 4] > T - 1.5 && segs[i + 4] <= T) tctx.fillRect(segs[i + 2] - 1, segs[i + 3] - 1, 2, 2);
+    }
+  }
+
+  // Synthetic morphogenesis: a playhead moves along the five generated forms
+  const frames = [...document.querySelectorAll(".frame")];
+  let fOn = -1;
+  function setFrame(i) { if (i === fOn) return; fOn = i; frames.forEach((f, k) => f.classList.toggle("is-on", k === i)); }
+
+  const rebuild = () => { buildRoots(); buildTl(); buildNet(); };
+
+  if (reduce || !window.gsap || !window.ScrollTrigger || !window.Lenis) {
+    root.classList.remove("js-motion");
+    root.classList.add("static");
+    const still = () => { rebuild(); drawRoots(1); drawTl(1); drawNet(1, true); };
+    still();
+    addEventListener("resize", still);
+    if (document.fonts) document.fonts.ready.then(still);
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis = new Lenis({ lerp: .085, wheelMultiplier: 1, smoothWheel: true });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  window.__lenis = lenis; // lets the preview checks jump to a section
+
+  // Title board enters once: three spores grow until they cover the render, then the glass panel arrives
+  const media = document.querySelector(".hero-media");
+  gsap.set(".hero-title .ch", { y: 0, yPercent: 110 });
+  gsap.timeline({ delay: .1 })
+    .to(media, { "--s1": "130%", duration: 2.4, ease: "power2.inOut" }, 0)
+    .to(media, { "--s2": "130%", duration: 2.4, ease: "power2.inOut" }, .2)
+    .to(media, { "--s3": "130%", duration: 2.4, ease: "power2.inOut", onComplete: () => media.classList.add("grown") }, .4)
+    .from(".hero-img", { scale: 1.12, duration: 2.8, ease: "expo.out" }, 0)
+    .from(".glass", { xPercent: -10, opacity: 0, duration: 1.4, ease: "expo.out" }, .5)
+    .to(".hero-title .ch", { yPercent: 0, duration: 1.3, ease: "expo.out", stagger: .04 }, .8)
+    .from(".pill", { scale: .8, opacity: 0, duration: .9, ease: "back.out(1.6)" }, 1.3)
+    .from(".hero-text, .hero-date", { y: 24, opacity: 0, duration: 1, ease: "power3.out", stagger: .1 }, 1.4)
+    .from(".cue", { opacity: 0, duration: .8 }, 1.8);
+  // as the page scrolls, the render drifts slower than the glass panel
+  gsap.to(".hero-move", { yPercent: 12, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+  gsap.to(".glass-in", { y: () => -innerHeight * .1, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true, invalidateOnRefresh: true } });
+
+  // Titles rise word by word
+  document.querySelectorAll("[data-split]").forEach(h => {
+    gsap.from(h.querySelectorAll(".w"), { yPercent: 115, duration: 1.1, ease: "expo.out", stagger: .05, scrollTrigger: { trigger: h, start: "top 86%" } });
+  });
+  gsap.utils.toArray(".h3").forEach(h => { if (h.closest(".sc-heads, .sc-label, .lab")) return; /* the lab animates its own columns */ gsap.from(h, { y: 18, opacity: 0, duration: .9, ease: "power3.out", scrollTrigger: { trigger: h, start: "top 88%" } }); });
+
+  // Inspiration: the text settles, then the scattered words gather into the question
+  gsap.from(".insp-main .body, .ask", { y: 28, opacity: 0, duration: 1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".insp-main", start: "top 78%" } });
+  const sws = [...scatter.querySelectorAll(".sw")];
+  const spot = (i, axis) => { const r = rng(41 + i * 13); const a = r(), b = r(), c = r(); const wide = innerWidth > 900; return axis === "x" ? (a - .5) * innerWidth * (wide ? .6 : .5) : axis === "y" ? (b - .5) * innerHeight * (wide ? .45 : .3) : (c - .5) * 46; };
+  gsap.fromTo(sws,
+    { x: i => spot(i, "x"), y: i => spot(i, "y"), rotation: i => spot(i, "r"), opacity: .12 },
+    { x: 0, y: 0, rotation: 0, opacity: 1, ease: "power2.out", stagger: { each: .03, from: "random" }, scrollTrigger: { trigger: scatter, start: "top 96%", end: "top 40%", scrub: 1, invalidateOnRefresh: true } });
+  gsap.from(".q-sub", { y: 24, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".q-sub", start: "top 92%" } });
+  // Background panel: it opens from the top, the timeline of societies draws down it
+  gsap.fromTo(".bg-panel", { clipPath: "inset(0% 0% 100% 0% round 10px)" }, { clipPath: "inset(0% 0% 0% 0% round 10px)", duration: 1.4, ease: "expo.out", scrollTrigger: { trigger: ".bg-panel", start: "top 82%" } });
+  const stagesEl = document.querySelector(".stages");
+  gsap.fromTo(stagesEl, { "--sg": 0 }, { "--sg": 1, ease: "none", scrollTrigger: { trigger: stagesEl, start: "top 78%", end: "bottom 62%", scrub: true } });
+  gsap.utils.toArray(".stage").forEach((s, i) => gsap.from(s, { x: 24, opacity: 0, duration: .9, ease: "power3.out", scrollTrigger: { trigger: s, start: "top 84%" } }));
+
+  // Research: the key points arrive one by one, then the roots branch out to the three principles
+  gsap.fromTo(".kp-panel", { clipPath: "inset(0% 100% 0% 0% round 18px)" }, { clipPath: "inset(0% 0% 0% 0% round 18px)", duration: 1.4, ease: "expo.out", scrollTrigger: { trigger: ".kp-panel", start: "top 82%" } });
+  gsap.from(".kp", { x: -30, opacity: 0, duration: .9, ease: "power3.out", stagger: .14, delay: .35, scrollTrigger: { trigger: ".kp-panel", start: "top 82%" } });
+  gsap.from(".r-note, .r-right .mark, .r-right .body", { y: 26, opacity: 0, duration: 1, ease: "power3.out", stagger: .08, scrollTrigger: { trigger: ".research", start: "top 60%" } });
+  const rp = { p: 0 };
+  gsap.to(rp, { p: 1, ease: "none", onUpdate: () => drawRoots(rp.p), scrollTrigger: { trigger: ".roots", start: "top 84%", end: "bottom 74%", scrub: 1 } });
+
+  // Concept: the timeline links draw out, the sketches grow in from three points
+  gsap.from(".c-text", { y: 26, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".c-text", start: "top 86%" } });
+  gsap.from(".tl-render", { opacity: 0, duration: 1.4, ease: "power2.out", scrollTrigger: { trigger: ".tl", start: "top 80%" } });
+  // the links draw once, in full, when the timeline comes into view (a scrub left them half drawn)
+  const tp = { p: 0 };
+  const playTl = to => gsap.to(tp, { p: to, duration: to ? 1.8 : .5, ease: to ? "power2.inOut" : "power1.out", overwrite: true, onUpdate: () => drawTl(tp.p) });
+  ScrollTrigger.create({ trigger: ".tl", start: "top 72%", onEnter: () => playTl(1), onLeaveBack: () => playTl(0) });
+  if (window.ResizeObserver) { let raf = 0; new ResizeObserver(() => { cancelAnimationFrame(raf); raf = requestAnimationFrame(buildTl); }).observe(tl); }
+  const sk = document.querySelector(".sk-comp");
+  gsap.timeline({ scrollTrigger: { trigger: sk, start: "top 86%", end: "center 44%", scrub: 1 } })
+    .to(sk, { "--r1": "130%", ease: "none", duration: 1 }, 0)
+    .to(sk, { "--r2": "130%", ease: "none", duration: 1 }, .18)
+    .to(sk, { "--r3": "130%", ease: "none", duration: 1 }, .34);
+  gsap.from(".sk-text", { y: 26, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".s-head", start: "top 84%" } });
+
+  // Working process: the frames open in order, the node graph lifts onto its shadow
+  gsap.utils.toArray(".wp-fig").forEach((f, i) => {
+    gsap.fromTo(f, { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", clearProps: "clipPath", duration: 1.3, ease: "expo.out", delay: (i % 2) * .15, scrollTrigger: { trigger: f, start: "top 88%" } }); // cleared after, so the node graph's shadow shows
+    gsap.from(f.querySelector("img"), { scale: 1.12, duration: 1.8, ease: "expo.out", delay: (i % 2) * .15, scrollTrigger: { trigger: f, start: "top 88%" } });
+  });
+  gsap.fromTo(".wp-nodes", { "--sh": "0px" }, { "--sh": "6px", duration: 1, ease: "power3.out", delay: .6, scrollTrigger: { trigger: ".wp-nodes", start: "top 88%" } });
+  gsap.from(".wp-copy .body", { y: 26, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".wp-copy", start: "top 84%" } });
+
+  // Next
+  gsap.from(".next-case > *", { y: 40, opacity: 0, duration: 1.2, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".case-nav", start: "top 90%" } });
+
+  rebuild();
+  setDay(0);
+  const scItems = gsap.utils.toArray(".sc");
+  const mm = gsap.matchMedia();
+  mm.add(WIDE, () => {
+    // pins refresh first (refreshPriority 1), so every other trigger is measured with their spacing in place
+    // Material experiment: pin the dishes, let five days pass
+    ScrollTrigger.create({ trigger: ".lab-pin", start: "top top", end: () => "+=" + innerHeight * 1.8, pin: true, scrub: true, refreshPriority: 1, onUpdate: s => setDay(s.progress * 5.4) });
+    gsap.from(".lab-copy > *, .obs > *", { y: 24, opacity: 0, duration: .9, ease: "power3.out", stagger: .06, scrollTrigger: { trigger: ".lab", start: "top 70%" } });
+
+    // Point to mass
+    const np = { p: 0 };
+    gsap.to(np, { p: 1, ease: "none", onUpdate: () => drawNet(np.p), scrollTrigger: { trigger: ".morph-pin", start: "top top", end: () => "+=" + innerHeight * 1.7, pin: true, scrub: .6, refreshPriority: 1 } });
+
+    // Final showcase: hold the board, each image grows from its centre in turn
+    gsap.set(scItems, { clipPath: "circle(0% at 50% 50%)" });
+    const sct = gsap.timeline({ scrollTrigger: { trigger: ".sc-pin", start: "top top", end: () => "+=" + innerHeight * 1.3, pin: true, scrub: 1, refreshPriority: 1 } });
+    scItems.forEach((it, i) => {
+      sct.to(it, { clipPath: "circle(75% at 50% 50%)", ease: "power2.inOut", duration: 1 }, i * .7)
+        .from(it.querySelector("img"), { scale: 1.18, ease: "power2.out", duration: 1.2 }, i * .7);
+    });
+    sct.to({}, { duration: .5 });
+
+    // Synthetic morphogenesis: the frames drop in, then a playhead runs across them
+    gsap.set(".frame", { yPercent: -18, opacity: 0 });
+    const mgt = gsap.timeline({ scrollTrigger: { trigger: ".mg-pin", start: "top top", end: () => "+=" + innerHeight * 1.2, pin: true, scrub: 1, refreshPriority: 1, onUpdate: s => setFrame(s.progress < .3 ? -1 : Math.min(4, Math.floor((s.progress - .3) / .6 * 5))) } });
+    mgt.to(".frame", { yPercent: 0, opacity: 1, ease: "power3.out", duration: .5, stagger: .1 }, 0)
+      .from(".scene", { clipPath: "inset(0% 100% 0% 0%)", ease: "power2.inOut", duration: .6, stagger: .15 }, .2)
+      .fromTo(".mg-room img", { scale: 1.15 }, { scale: 1, ease: "none", duration: 1.6 }, 0);
+
+    ScrollTrigger.sort();
+    return () => { setDay(0); setFrame(-1); gsap.set(scItems, { clearProps: "clipPath" }); };
+  });
+  mm.add("(max-width: 900px)", () => {
+    // Phones: nothing pins, every moment plays as it passes
+    dayRows.forEach((row, k) => {
+      const o = { t: 0 };
+      gsap.to(o, { t: 1, ease: "none", onUpdate: () => {
+        const a = o.t;
+        row.querySelectorAll("img").forEach((img, j) => { const b = smooth(clamp(a * 1.6 - j * .15)); img.style.opacity = String(b); img.style.transform = `scale(${.55 + .45 * b})`; });
+        row.classList.toggle("is-on", a > .5);
+      }, scrollTrigger: { trigger: row, start: "top 88%", end: "top 58%", scrub: true } });
+    });
+    const np = { p: 0 };
+    gsap.to(np, { p: 1, ease: "none", onUpdate: () => drawNet(np.p), scrollTrigger: { trigger: ".morph-pin", start: "top 70%", end: "bottom 30%", scrub: .6 } });
+    scItems.forEach(it => gsap.fromTo(it, { clipPath: "inset(12% 12% 12% 12%)", opacity: 0 }, { clipPath: "inset(0% 0% 0% 0%)", opacity: 1, duration: 1.2, ease: "expo.out", scrollTrigger: { trigger: it, start: "top 88%" } }));
+    gsap.from(".frame", { y: -20, opacity: 0, duration: .8, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".frames", start: "top 86%" } });
+    ScrollTrigger.create({ trigger: ".frames", start: "top 70%", end: "bottom 20%", scrub: true, onUpdate: s => setFrame(Math.min(4, Math.floor(s.progress * 5))) });
+    gsap.utils.toArray(".scene, .mg-room").forEach(el => gsap.from(el, { y: 40, opacity: 0, duration: 1.1, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 88%" } }));
+    ScrollTrigger.sort();
+  });
+
+  ScrollTrigger.addEventListener("refresh", rebuild);
+  ScrollTrigger.sort();
+  addEventListener("load", () => ScrollTrigger.refresh());
+  if (document.fonts) document.fonts.ready.then(() => ScrollTrigger.refresh());
+})();
+</script>
+</body>
+</html>

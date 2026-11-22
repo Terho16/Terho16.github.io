@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eunoia · Tianhao Wang</title>
+<meta name="description" content="Eunoia: a screen-free garment designed to ease anxiety in older adults through a guided body scan. A case study by Tianhao Wang.">
+<meta name="theme-color" content="#070709"><!-- ds-allow-hardcode: the theme-color meta needs a literal colour -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Angkor&family=Anton&family=Inter:wght@400;500&family=Julius+Sans+One&family=Outfit:wght@500;600&family=Unbounded:wght@300;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ds-allow-hardcode:start: standalone motion prototype with its own local tokens, not part of the site's design system */
+  @property --p { syntax: "<percentage>"; inherits: true; initial-value: 0%; }
+  @property --sx { syntax: "<percentage>"; inherits: true; initial-value: 100%; }
+  :root {
+    --bg: #070709;
+    --bg-2: #0e0e13;
+    --ink: #f1effa;
+    --muted: #b3b1c3;
+    --dim: #6b697c;
+    --lilac: #b0aaf2;
+    --lilac-deep: #7e72c4;
+    --line: rgba(176, 170, 242, .22);
+    --paper: #ecebf3;
+    --ink-d: #121019;
+    --muted-d: #4d4a5c;
+    --line-d: rgba(18, 16, 25, .16);
+    --violet: #5b4fb0;
+    --gut: clamp(20px, 5vw, 80px);
+    --ease: cubic-bezier(.2, .7, .2, 1);
+    --f-display: "Unbounded", "Arial Black", sans-serif;
+    --f-head: "Outfit", "Helvetica Neue", sans-serif;
+    --f-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --f-quote: "Angkor", Georgia, serif;
+    --f-cap: "Julius Sans One", "Helvetica Neue", sans-serif;
+    --f-num: "Anton", Impact, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 18px/1.6 var(--f-body); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--lilac); color: var(--bg); }
+  main { overflow-x: clip; } /* elements waiting to slide in never widen the page */
+  img, video { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 var(--gut); }
+  .skip { position: absolute; left: 16px; top: -60px; z-index: 100; background: var(--lilac); color: var(--bg); padding: 10px 16px; font: 500 14px var(--f-body); text-decoration: none; }
+  .skip:focus { top: 16px; }
+  :focus-visible { outline: 2px solid var(--lilac); outline-offset: 4px; }
+
+  /* film grain from the boards */
+  .grain { position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: .12; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .85 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+  .eyebrow { margin: 0; font: 400 13px/1.4 var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--lilac); }
+  .h2 { margin: 0; font: 600 clamp(36px, 4.4vw, 72px)/1.02 var(--f-head); letter-spacing: -.02em; }
+  .body { margin: 0; color: var(--muted); font-size: clamp(16px, 1.25vw, 19px); }
+  .wl { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-bottom: -.08em; }
+  .wl > .w { display: inline-block; }
+
+  /* nav */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: 22px var(--gut); mix-blend-mode: difference; color: #fff; }
+  .brand { font: 700 15px var(--f-display); letter-spacing: .02em; text-decoration: none; }
+  .nav nav { display: flex; gap: 28px; }
+  .nav a { font: 500 14px var(--f-body); text-decoration: none; position: relative; padding: 12px 0; }
+  .nav nav a::after, .link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .5s var(--ease); }
+  .nav nav a:hover::after, .link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  /* hero: the cover board, rebuilt for the web. A lilac-grey field, three real studio photos layered as on the
+     board (seated 5S2A5276 at left, the torso 5S2A5291 large, the bowed profile 5S2A5308 bleeding off the
+     bottom right), and the board's type: THE EUNOIA, the dates, the introduction. */
+  .hero { position: relative; height: 100svh; min-height: 640px; overflow: hidden; background: radial-gradient(130% 100% at 88% 0%, #e4e1f0 0%, #c9c5e2 34%, #a39dcc 62%, #5a5391 88%, #3f3972 100%); }
+  .hb-stage { position: absolute; inset: 0; }
+  .hb { position: absolute; margin: 0; overflow: hidden; }
+  .hb img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .hb-torso { left: 32%; top: 0; width: 68%; height: 100%;
+    -webkit-mask-image: linear-gradient(90deg, rgba(0,0,0,0) 0%, #000 16%);
+            mask-image: linear-gradient(90deg, rgba(0,0,0,0) 0%, #000 16%); }
+  .hb-torso img { object-position: 50% 32%; }
+  .hb-shade { position: absolute; inset: 0; z-index: 2; pointer-events: none; background: linear-gradient(90deg, rgba(38,33,74,.82) 0%, rgba(38,33,74,.55) 24%, rgba(38,33,74,0) 44%), linear-gradient(0deg, rgba(38,33,74,.6) 0%, rgba(38,33,74,0) 42%); }
+  .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; height: 30%; pointer-events: none; background: linear-gradient(180deg, rgba(7,7,9,0) 0%, rgba(7,7,9,.55) 55%, var(--bg) 100%); } /* the cover melts into the page */
+  .hb-copy { position: absolute; z-index: 3; left: 0; top: 0; bottom: 0; width: min(40%, 620px); display: flex; flex-direction: column; padding: clamp(96px, 13vh, 136px) 0 clamp(40px, 7vh, 76px) var(--gut); color: var(--ink); }
+  .hero-title { margin: 0; font: 800 clamp(44px, 4.6vw, 90px)/.94 var(--f-display); letter-spacing: -.01em; text-transform: uppercase; white-space: nowrap; }
+  .hero-title .line { display: block; overflow: hidden; padding-top: .06em; }
+  .hero-title .ch { display: inline-block; will-change: transform; }
+  .hb-date { margin: clamp(22px, 3.6vh, 42px) 0 0; font: 600 clamp(22px, 2.2vw, 36px)/1 var(--f-head); letter-spacing: .02em; }
+  .hb-intro { margin-top: auto; }
+  .hb-k { margin: 0 0 12px; font: 600 clamp(18px, 1.55vw, 25px) var(--f-head); }
+  .lede { margin: 0 0 6px; max-width: 30ch; font: 500 clamp(16px, 1.2vw, 20px)/1.5 var(--f-body); color: var(--ink); }
+  .link { position: relative; display: inline-flex; gap: 8px; align-items: center; padding: 12px 0; font: 500 15px var(--f-body); text-decoration: none; color: var(--lilac); }
+  .hero .link { color: var(--ink); }
+  .cue { display: flex; align-items: center; gap: 12px; font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .cue i { display: block; width: 1px; height: 44px; background: var(--line); position: relative; overflow: hidden; }
+  .cue i::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 40%; background: var(--lilac); animation: cue 2.6s var(--ease) infinite; }
+  @keyframes cue { 0% { transform: translateY(-100%); } 100% { transform: translateY(260%); } }
+  .pause { min-height: 44px; padding: 0 16px; border: 1px solid var(--line); border-radius: 99px; background: rgba(7,7,9,.45); color: var(--ink); font: 500 13px var(--f-body); cursor: pointer; transition: background .3s, border-color .3s, transform .15s; }
+  .pause:hover { border-color: var(--lilac); background: var(--lilac); color: var(--bg); }
+  .pause:active { transform: scale(.97); }
+
+  /* facts */
+  .facts { padding: clamp(96px, 14vh, 160px) 0 clamp(64px, 10vh, 120px); }
+  .rule { height: 1px; background: var(--lilac); opacity: .5; transform-origin: left; }
+  .facts-grid { display: grid; grid-template-columns: 1.15fr .8fr .8fr 1fr 1.25fr; margin: 0; }
+  .f { padding: 28px 28px 0 0; }
+  .f + .f { padding-left: 24px; border-left: 1px solid var(--line); }
+  .f dt { font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--lilac); margin-bottom: 12px; }
+  .f dd { margin: 0; font: 400 16px/1.55 var(--f-body); color: var(--ink); }
+
+  /* at a glance: pinned, four steps */
+  .glance-inner { height: 100svh; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 96px); align-items: center; }
+  .glance-copy .h2 { margin: 18px 0 0; max-width: 12ch; }
+  .steps { list-style: none; margin: clamp(28px, 4vh, 48px) 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .step { border-bottom: 1px solid var(--line); }
+  .step button { width: 100%; display: grid; grid-template-columns: 56px 1fr; gap: 14px; padding: 16px 0; background: none; border: 0; color: inherit; text-align: left; cursor: pointer; opacity: .38; transition: opacity .6s var(--ease); }
+  .step button:hover { opacity: .7; }
+  .step.is-on button { opacity: 1; }
+  .step .n { font: 400 26px/1 var(--f-num); color: var(--lilac); padding-top: 2px; }
+  .step h3 { margin: 0; font: 600 22px/1.2 var(--f-head); }
+  .step p { margin: 0; font-size: 16px; line-height: 1.55; color: var(--muted); display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .7s var(--ease), opacity .7s var(--ease), margin .7s var(--ease); }
+  .step p > span { overflow: hidden; }
+  .step.is-on p { grid-template-rows: 1fr; opacity: 1; margin-top: 8px; }
+  .stage { position: relative; }
+  .stage-frame { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 4px; background: var(--bg-2); }
+  .stage-frame .m { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.07); transition: opacity 1s var(--ease), transform 1.6s var(--ease); }
+  .stage-frame .m.is-on { opacity: 1; transform: scale(1); }
+  .stage-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; gap: 24px; }
+  .stage-bar { flex: 1; height: 2px; background: var(--line); }
+  .stage-bar i { display: block; height: 100%; background: var(--lilac); transform-origin: left; transform: scaleX(0); }
+  .stage-count { margin: 0; font: 400 18px var(--f-num); letter-spacing: .04em; color: var(--muted); }
+  .stage-count .cur { color: var(--ink); }
+
+  /* 01 problem */
+  .problem { position: relative; overflow: hidden; padding: clamp(120px, 18vh, 220px) 0 clamp(96px, 14vh, 180px); }
+  .bigidx { position: absolute; left: -.06em; top: 6vh; z-index: 0; font: 800 clamp(240px, 34vw, 620px)/.8 var(--f-display); letter-spacing: -.06em; color: var(--bg); -webkit-text-stroke: 2px rgba(176,170,242,.28); paint-order: stroke fill; pointer-events: none; user-select: none; }
+  .problem .wrap { position: relative; z-index: 1; }
+  .statement { margin: 22px 0 0; max-width: 11.5ch; font: 600 clamp(48px, 7vw, 124px)/.98 var(--f-head); letter-spacing: -.03em; }
+  .statement em { font-style: normal; color: var(--lilac); }
+  .problem-body { max-width: 560px; margin: clamp(48px, 8vh, 96px) 0 0 auto; padding: 32px 36px; border: 1px dashed rgba(176,170,242,.6); }
+  .problem-body p { margin: 0; color: var(--muted); font-size: clamp(16px, 1.25vw, 19px); }
+  .bigquote { margin: clamp(96px, 16vh, 180px) 0 0; padding: 0; max-width: 1180px; }
+  .bigquote p { margin: 0; font: 400 clamp(30px, 4.2vw, 68px)/1.16 var(--f-quote); color: var(--ink); }
+  .bigquote p .q { color: var(--lilac); }
+  .bigquote footer { margin-top: 28px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--lilac); }
+
+  /* 02 research */
+  .research { padding: clamp(96px, 14vh, 180px) 0; background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 18%, var(--bg-2) 82%, var(--bg) 100%); }
+  .r-head { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 96px); align-items: end; }
+  .count { line-height: .78; }
+  .count .num { display: block; font: 400 clamp(200px, 25vw, 420px)/.78 var(--f-num); color: var(--lilac); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+  .count .lbl { display: block; margin-top: 22px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .r-copy .h2 { margin: 18px 0 24px; }
+  .r-copy .body { max-width: 560px; }
+  .r-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 112px); margin-top: clamp(80px, 12vh, 140px); align-items: center; }
+  .survey { margin: 0; max-width: 560px; }
+  .survey img { width: 100%; height: auto; mix-blend-mode: lighten; }
+  .found h3 { margin: 0 0 8px; font: 600 26px var(--f-head); color: var(--lilac); }
+  .found ol { list-style: none; margin: 0; padding: 0; }
+  .found li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 22px 0; border-bottom: 1px solid var(--line); }
+  .found li .n { font: 400 44px/1 var(--f-num); color: var(--lilac); }
+  .found li p { margin: 0; font-size: clamp(17px, 1.35vw, 21px); line-height: 1.5; color: var(--ink); }
+  /* face-to-face interviews: the board's two cut-outs at full resolution, each with its own quote */
+  .interviews { position: relative; margin: clamp(96px, 16vh, 180px) 0 0; }
+  .iv-k, .calls-k { margin: 0 0 clamp(26px, 4vh, 44px); font: 600 clamp(22px, 2vw, 32px) var(--f-head); color: var(--lilac); }
+  .iv-pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: clamp(28px, 5vw, 96px); align-items: end; }
+  .iv { position: relative; margin: 0; padding-top: clamp(96px, 11vw, 170px); }
+  .iv-img { position: relative; }
+  .iv-img::before { content: ""; position: absolute; left: 4%; right: 4%; bottom: 0; height: 72%; background: radial-gradient(60% 70% at 50% 100%, rgba(126,114,196,.34), rgba(126,114,196,0) 72%); }
+  .iv-img img { position: relative; width: 100%; height: auto; filter: grayscale(1) contrast(1.08); }
+  .iv-floor { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line); }
+  .bubble { position: absolute; z-index: 2; top: 0; width: min(80%, 430px); margin: 0; padding: 20px 24px 18px; background: var(--lilac); color: var(--bg); border-radius: 18px 18px 18px 4px; transform-origin: 14% 100%; box-shadow: 0 24px 60px rgba(0,0,0,.35); }
+  .bubble::after { content: ""; position: absolute; top: 100%; left: 18%; border: 12px solid transparent; border-top-color: var(--lilac); border-bottom: 0; }
+  .iv-a .bubble { left: 0; }
+  .iv-b .bubble { right: 0; border-radius: 18px 18px 4px 18px; transform-origin: 86% 100%; }
+  .iv-b .bubble::after { left: auto; right: 18%; }
+  .bubble p { margin: 0; font: 400 clamp(16px, 1.3vw, 20px)/1.34 var(--f-quote); }
+  .bubble footer { margin-top: 12px; font: 400 11px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: rgba(7,7,9,.7); }
+  .interviews figcaption, .iv-cap { margin-top: 18px; font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+
+  /* telephone interviews: the board's four cards, without the stock portraits */
+  .calls { margin-top: clamp(80px, 12vh, 140px); }
+  .calls-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+  .call { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(18px, 2vw, 32px); padding: clamp(22px, 2.2vw, 32px); border: 1px solid var(--line); border-radius: 6px; background: linear-gradient(105deg, rgba(126,114,196,.03) 0%, rgba(126,114,196,.14) 55%, rgba(126,114,196,.3) 100%); }
+  .call-who { display: flex; flex-direction: column; gap: 8px; }
+  .call-name { margin: 0; font: 400 clamp(20px, 1.6vw, 26px)/1.15 var(--f-quote); color: var(--ink); }
+  .call-age { margin: auto 0 0; display: flex; align-items: baseline; gap: 8px; }
+  .call-age b { font: 400 clamp(52px, 4.6vw, 80px)/.9 var(--f-num); color: var(--lilac); }
+  .call-age span, .call-onset { font: 400 12px/1.5 var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .call-onset { margin: 0; }
+  .call dl { margin: 0; display: grid; gap: 14px; align-content: start; }
+  .call dt { font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--lilac); }
+  .call dd { margin: 4px 0 0; color: var(--ink); font-size: 16px; line-height: 1.45; }
+
+  /* the nav steps out of the way while reading down, and comes back on the way up */
+  .nav { transition: transform .55s var(--ease); }
+  .nav.is-hidden { transform: translateY(-115%); }
+
+  /* 03 insight */
+  .insight { padding: clamp(120px, 18vh, 220px) 0 clamp(80px, 12vh, 140px); }
+  .insight .h2 { margin: 18px 0 28px; max-width: 17ch; font-size: clamp(40px, 5vw, 84px); }
+  .insight .body { max-width: 560px; }
+  .goals { list-style: none; margin: clamp(80px, 12vh, 140px) 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .goals li { border-bottom: 1px solid var(--line); }
+  .goals .row { max-width: 1440px; margin: 0 auto; padding: clamp(14px, 2.4vh, 28px) var(--gut); display: grid; grid-template-columns: clamp(56px, 8vw, 140px) 1fr; align-items: baseline; }
+  .goals .n { font: 400 clamp(22px, 2.4vw, 40px)/1 var(--f-num); color: var(--lilac); }
+  .goals .g { position: relative; display: inline-block; font: 800 clamp(34px, 7.2vw, 128px)/1 var(--f-display); letter-spacing: -.035em; text-transform: uppercase; color: var(--bg); -webkit-text-stroke: 2px rgba(176,170,242,.6); paint-order: stroke fill; --p: 0%; }
+  .goals .g::after { content: attr(data-text); position: absolute; inset: 0; color: var(--ink); -webkit-text-stroke: 0; clip-path: inset(0 calc(100% - var(--p)) 0 0); }
+
+  /* 04 key decisions */
+  .decisions { padding: clamp(120px, 18vh, 220px) 0 clamp(40px, 6vh, 80px); }
+  .d-head .statement { max-width: 16ch; }
+  .d { margin-top: clamp(120px, 20vh, 240px); }
+  .d-row { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 5vw, 96px); align-items: end; }
+  .d-row.flip { grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); }
+  .d-row.flip .d-num { order: 2; text-align: right; }
+  .dn { position: relative; display: inline-block; font: 400 clamp(150px, 18vw, 300px)/.8 var(--f-num); color: var(--bg); -webkit-text-stroke: 2px rgba(176,170,242,.55); paint-order: stroke fill; --p: 0%; }
+  .dn::after { content: attr(data-text); position: absolute; inset: 0; color: var(--lilac); -webkit-text-stroke: 0; clip-path: inset(calc(100% - var(--p)) 0 0 0); }
+  .d-of { display: block; margin-top: 18px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .d-title { margin: 0 0 22px; max-width: 19ch; font: 600 clamp(30px, 3.4vw, 56px)/1.06 var(--f-head); letter-spacing: -.02em; }
+  .d-copy .body { max-width: 620px; }
+  .cap { margin: 18px 0 0; font: 400 12px/1.5 var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .scan { max-width: 1280px; margin: clamp(56px, 9vh, 110px) auto 0; padding: 0 var(--gut); }
+  .scan-frame { position: relative; --sx: 100%; }
+  .scan-frame img { width: 100%; height: auto; }
+  .scan-base { opacity: .24; mix-blend-mode: lighten; }
+  .scan-lit { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--sx)) 0 0); mix-blend-mode: lighten; }
+  .scan-line { position: absolute; top: -6%; bottom: -6%; left: var(--sx); width: 1px; background: var(--lilac); box-shadow: 0 0 12px 2px rgba(176,170,242,.85), 0 0 70px 10px rgba(176,170,242,.22); pointer-events: none; }
+  .scan-line::before { content: ""; position: absolute; top: 6%; bottom: 6%; right: 1px; width: clamp(60px, 10vw, 160px); background: linear-gradient(90deg, rgba(176,170,242,0), rgba(176,170,242,.14)); }
+  .channels { list-style: none; margin: clamp(56px, 9vh, 110px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 2vw, 28px); }
+  .ch-card h4 { margin: 24px 0 8px; font: 600 26px/1.2 var(--f-head); }
+  .ch-card p { margin: 0; max-width: 34ch; color: var(--muted); font-size: 17px; line-height: 1.55; }
+  .glyph { position: relative; aspect-ratio: 4 / 3; overflow: hidden; border: 1px solid var(--line); border-radius: 4px; background: radial-gradient(120% 90% at 50% 100%, rgba(126,114,196,.18), rgba(126,114,196,0) 62%), var(--bg-2); }
+  .glyph .gt { position: absolute; left: 0; right: 0; bottom: 9%; text-align: center; font: 400 11px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .g-light .gt.top { top: 9%; bottom: auto; }
+  .g-light .seg { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column-reverse; gap: 7px; }
+  .g-light .seg i { display: block; width: 7px; height: clamp(11px, 1.4vw, 18px); border-radius: 4px; background: rgba(176,170,242,.16); transform: translateX(var(--x)) rotate(var(--r)); animation: seg 3.2s ease-out infinite; animation-delay: calc(var(--k) * .2s); }
+  @keyframes seg { 0%, 100% { background: rgba(176,170,242,.16); box-shadow: none; } 5% { background: var(--lilac); box-shadow: 0 0 14px 2px rgba(176,170,242,.8); } 32% { background: rgba(176,170,242,.42); box-shadow: none; } 60% { background: rgba(176,170,242,.16); } }
+  .g-air b { position: absolute; left: 50%; top: 46%; width: 42%; aspect-ratio: 1.2; border: 1.5px solid var(--lilac); border-radius: 48% 52% 46% 54% / 56% 50% 50% 44%; background: radial-gradient(circle at 50% 42%, rgba(176,170,242,.45), rgba(176,170,242,.06) 72%); transform: translate(-50%, -50%) scale(.7); animation: breathe 6s ease-in-out infinite; }
+  @keyframes breathe { 0%, 100% { transform: translate(-50%, -50%) scale(.7); opacity: .6; } 45%, 55% { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+  .g-air .bi { animation: bin 6s linear infinite; }
+  .g-air .bo { opacity: 0; animation: bout 6s linear infinite; }
+  @keyframes bin { 0%, 44% { opacity: 1; } 50%, 95% { opacity: 0; } 100% { opacity: 1; } }
+  @keyframes bout { 0%, 44% { opacity: 0; } 50%, 95% { opacity: 1; } 100% { opacity: 0; } }
+  .g-vib svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .g-vib path { fill: none; stroke: rgba(176,170,242,.4); stroke-width: 1.5; stroke-dasharray: 3 7; vector-effect: non-scaling-stroke; }
+  .g-vib i { position: absolute; left: var(--x); top: var(--y); width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--lilac); animation: dotp 3s ease-out infinite; animation-delay: var(--d); }
+  .g-vib i::before, .g-vib i::after { content: ""; position: absolute; inset: 0; border: 1px solid var(--lilac); border-radius: 50%; opacity: 0; animation: ripple 3s ease-out infinite; animation-delay: var(--d); }
+  .g-vib i::after { animation-delay: calc(var(--d) + .3s); }
+  @keyframes ripple { 0% { transform: scale(1); opacity: .9; } 32%, 100% { transform: scale(4.4); opacity: 0; } }
+  @keyframes dotp { 0% { box-shadow: 0 0 16px 4px rgba(176,170,242,.85); } 30%, 100% { box-shadow: 0 0 0 0 rgba(176,170,242,0); } }
+  .clo { margin: clamp(56px, 9vh, 110px) 0 0; }
+  .clo-track { overflow: hidden; }
+  .clo-track img { width: auto; max-width: none; height: clamp(230px, 26vw, 400px); margin: 0 auto; mix-blend-mode: lighten; }
+  .clo .cap { margin: 18px auto 0; }
+  .specs { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 96px); margin-top: clamp(64px, 10vh, 120px); }
+  .spec { padding-top: 24px; border-top: 1px solid var(--line); }
+  .spec-k { margin: 0 0 22px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--lilac); }
+  .mix { display: grid; grid-template-columns: 66fr 34fr; gap: 6px; height: clamp(40px, 4.4vw, 60px); }
+  .mix i { display: block; border-radius: 2px; transform-origin: left center; }
+  .mix .ny { background: var(--lilac); }
+  .mix .sp { border: 1px solid var(--lilac); background: repeating-linear-gradient(135deg, rgba(176,170,242,.3) 0 1px, rgba(176,170,242,0) 1px 9px); }
+  .mix-l { display: grid; grid-template-columns: 66fr 34fr; gap: 6px; margin: 16px 0 0; color: var(--muted); font-size: 16px; }
+  .mix-l b { display: block; margin-bottom: 4px; font: 400 clamp(40px, 4.2vw, 68px)/1 var(--f-num); color: var(--ink); }
+  .spec-v { margin: 0; font: 600 clamp(28px, 2.9vw, 46px)/1.08 var(--f-head); letter-spacing: -.01em; }
+
+  /* 05 prototype and test: the lab chapter on paper */
+  .lab { position: relative; margin-top: clamp(100px, 16vh, 180px); padding: clamp(110px, 16vh, 200px) 0; background: var(--paper); color: var(--ink-d); }
+  .lab .eyebrow, .lab .k { color: var(--violet); }
+  .lab .h2 { margin-top: 18px; max-width: 22ch; }
+  .lab .k { margin: 0 0 18px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; }
+  .lab .cap { color: var(--muted-d); }
+  .how { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 5vw, 96px); margin-top: clamp(72px, 11vh, 130px); }
+  .how p { margin: 0; max-width: 780px; font: 400 clamp(19px, 1.6vw, 25px)/1.5 var(--f-body); }
+  .parts { width: min(100%, 62vh, 580px); margin: clamp(64px, 10vh, 120px) auto 0; --reach: clamp(36px, 6vw, 110px); }
+  .parts-img { position: relative; }
+  .parts-img img { width: 100%; height: auto; mix-blend-mode: multiply; }
+  .parts .cap { text-align: center; }
+  .pins, .legend { list-style: none; margin: 0; padding: 0; counter-reset: pin; }
+  .pin { position: absolute; top: var(--y); height: 1px; counter-increment: pin; }
+  .pin.l { left: calc(-1 * var(--reach)); width: calc(var(--x) + var(--reach)); }
+  .pin.r { left: var(--x); right: calc(-1 * var(--reach)); }
+  .pin .ln { position: absolute; inset: 0; background: var(--ink-d); opacity: .5; }
+  .pin.l .ln { transform-origin: right center; }
+  .pin.r .ln { transform-origin: left center; }
+  .pin .dot { position: absolute; top: -6px; width: 13px; height: 13px; border-radius: 50%; background: var(--violet); box-shadow: 0 0 0 5px rgba(91,79,176,.16); }
+  .pin.l .dot { right: -6px; }
+  .pin.r .dot { left: -6px; }
+  .pin .pl { position: absolute; top: -.72em; padding: 0 10px; white-space: nowrap; font: 600 15px/1.4 var(--f-head); color: var(--ink-d); }
+  .pin.l .pl { right: 100%; }
+  .pin.r .pl { left: 100%; }
+  .legend { display: none; }
+  .flow-wrap { padding-top: clamp(100px, 15vh, 180px); }
+  .flow { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr) minmax(0, 1.15fr); gap: clamp(28px, 3.2vw, 56px); align-items: center; margin-top: 32px; }
+  .flow-lines { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  .flow-lines .bl { fill: none; stroke: var(--line-d); stroke-width: 1.5; }
+  .flow-lines .lv { fill: none; stroke: var(--violet); stroke-width: 2; stroke-linecap: round; }
+  .flow-lines .hd { fill: var(--violet); opacity: 0; filter: drop-shadow(0 0 6px rgba(91,79,176,.7)); }
+  .fn { position: relative; z-index: 1; padding: 18px 18px 20px; border: 1px solid var(--line-d); border-radius: 12px; background: var(--paper); transition: background .5s var(--ease), color .5s var(--ease), border-color .5s var(--ease); }
+  .fn .fi { display: block; margin-bottom: 10px; font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--violet); transition: color .5s var(--ease); }
+  .fn p { margin: 0; font: 600 clamp(16px, 1.25vw, 20px)/1.3 var(--f-head); }
+  .fn.is-on { background: var(--ink-d); border-color: var(--ink-d); color: var(--paper); }
+  .fn.is-on .fi { color: var(--lilac); }
+  .fn.end.is-on { background: var(--violet); border-color: var(--violet); }
+  .fn.end.is-on .fi { color: var(--paper); }
+  .lanes { display: grid; gap: 14px; margin: 0 clamp(8px, 1.6vw, 28px); }
+  .lanes .fn { padding: 14px 16px 16px; }
+  .test { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 112px); align-items: center; margin-top: clamp(120px, 18vh, 220px); }
+  .fit { margin: 0; }
+  .fit-img { overflow: hidden; }
+  .fit-img img { width: 100%; height: auto; mix-blend-mode: multiply; }
+  .lead { margin: 0 0 clamp(36px, 6vh, 56px); max-width: 26ch; font: 600 clamp(26px, 2.6vw, 42px)/1.15 var(--f-head); letter-spacing: -.015em; }
+  .finds { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-d); }
+  .finds li { display: grid; grid-template-columns: 104px 1fr; gap: 16px; align-items: center; padding: 22px 0; border-bottom: 1px solid var(--line-d); }
+  .finds p { margin: 0; font: 500 clamp(18px, 1.6vw, 24px)/1.35 var(--f-body); }
+  .tag { justify-self: start; padding: 6px 12px; border: 1px solid var(--ink-d); border-radius: 99px; font: 500 12px/1.2 var(--f-body); letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+  .finds .ok .tag { background: var(--violet); border-color: var(--violet); color: var(--paper); }
+  .note { margin: clamp(32px, 5vh, 48px) 0 0; padding: 24px 28px; border: 1px dashed rgba(18,16,25,.42); color: var(--muted-d); font-size: 17px; }
+
+  /* 06 result */
+  .result { padding: clamp(130px, 20vh, 240px) 0 clamp(80px, 12vh, 140px); }
+  .res-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 112px); align-items: start; }
+  .final { position: sticky; top: 9vh; margin: 0; }
+  .final-img { overflow: hidden; border-radius: 4px; background: var(--bg-2); }
+  .final-img img { width: 100%; height: min(82vh, 150vw); object-fit: cover; object-position: 50% 62%; }
+  .res-copy { padding-top: 14vh; }
+  .res-copy .statement { max-width: none; font-size: clamp(48px, 5.6vw, 100px); }
+  .made { list-style: none; margin: clamp(40px, 6vh, 64px) 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .made li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: baseline; padding: 24px 0; border-bottom: 1px solid var(--line); }
+  .made .n { font: 400 36px/1 var(--f-num); color: var(--lilac); }
+  .made p { margin: 0; font: 500 clamp(18px, 1.5vw, 23px)/1.45 var(--f-body); }
+  .learned { margin-top: clamp(64px, 10vh, 110px); }
+  .learned .k { margin: 0 0 18px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--lilac); }
+  .lq { margin: 0; font: 400 clamp(26px, 2.5vw, 40px)/1.24 var(--f-quote); }
+  .btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; margin-top: clamp(40px, 6vh, 56px); padding: 0 26px; border: 1px solid var(--lilac); border-radius: 99px; color: var(--lilac); font: 500 15px var(--f-body); text-decoration: none; transition: background .35s var(--ease), color .35s var(--ease), transform .15s; }
+  .btn:hover { background: var(--lilac); color: var(--bg); }
+  .btn:active { transform: scale(.97); }
+
+  /* 07 next */
+  .nextstep { position: relative; overflow: hidden; padding: clamp(120px, 18vh, 220px) 0 clamp(100px, 15vh, 180px); }
+  .bigidx.b7 { left: auto; right: -.04em; top: 4vh; }
+  .nextstep .wrap { position: relative; z-index: 1; }
+  .changes { list-style: none; margin: clamp(56px, 9vh, 100px) 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .changes li { position: relative; display: grid; grid-template-columns: clamp(56px, 8vw, 140px) 1fr; align-items: baseline; padding: clamp(22px, 3.4vh, 38px) 0; }
+  .changes .ln { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line); transform-origin: left center; }
+  .changes .n { font: 400 clamp(22px, 2.4vw, 40px)/1 var(--f-num); color: var(--lilac); }
+  .changes p { margin: 0; max-width: 26ch; font: 600 clamp(26px, 3.3vw, 54px)/1.1 var(--f-head); letter-spacing: -.02em; }
+
+  /* final: the FINAL board rebuilt. Product showcase, three features, the video link and the cut-out portrait,
+     on the board's faint grid */
+  .finals { position: relative; overflow: hidden; padding: clamp(80px, 12vh, 140px) 0 0;
+    background: linear-gradient(rgba(176,170,242,.05) 1px, rgba(176,170,242,0) 1px) 0 0 / 28px 28px,
+                linear-gradient(90deg, rgba(176,170,242,.05) 1px, rgba(176,170,242,0) 1px) 0 0 / 28px 28px, var(--bg); }
+  .finals .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 7.2fr) minmax(0, 4.8fr); gap: clamp(32px, 4vw, 72px); }
+  .final-title { margin: 0 0 clamp(16px, 2.4vh, 26px); font: 800 clamp(28px, 2.6vw, 44px)/1 var(--f-display); letter-spacing: -.01em; text-transform: uppercase; color: var(--lilac); }
+  .fk { display: flex; align-items: center; gap: 12px; margin: 0 0 18px; font: 600 clamp(22px, 2vw, 32px)/1.1 var(--f-head); color: var(--lilac); }
+  .fk::before { content: ""; flex: none; width: 16px; height: 12px; border-radius: 3px 8px 8px 3px; background: var(--lilac); }
+  .showcase { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, .8fr) minmax(0, 1.3fr); gap: 12px; margin-bottom: clamp(36px, 6vh, 64px); }
+  .fx { position: relative; margin: 0; overflow: hidden; border-radius: 3px; background: var(--bg-2); }
+  .fx img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .showcase .fx { min-height: clamp(210px, 27vh, 300px); } /* the photos stretch to the text card, so the row ends level */
+  .fx-text { margin: 0; padding: 18px 20px; border: 1px solid var(--line); border-radius: 3px; background: rgba(176,170,242,.07); color: var(--ink); font-size: clamp(14px, 1.05vw, 16px); line-height: 1.55; }
+  .features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .features .fx { height: clamp(170px, 22vh, 250px); }
+  .fx-l { position: absolute; left: 0; right: 0; bottom: 0; padding: 30px 14px 12px; text-align: center; font: 600 clamp(14px, 1.15vw, 17px) var(--f-head); color: var(--ink); background: linear-gradient(180deg, rgba(14,14,19,0), rgba(14,14,19,.84)); }
+  .ring { position: absolute; left: 34%; top: 52%; width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; background: var(--lilac); animation: dotp 3s ease-out infinite; }
+  .ring::before, .ring::after { content: ""; position: absolute; inset: 0; border: 1.5px solid var(--lilac); border-radius: 50%; opacity: 0; animation: ripple 3s ease-out infinite; }
+  .ring::after { animation-delay: .4s; }
+  .features-text { margin: 18px 0 clamp(80px, 12vh, 140px); max-width: 64ch; color: var(--muted); font-size: clamp(15px, 1.1vw, 17px); line-height: 1.6; }
+  .final-side { display: flex; flex-direction: column; }
+  .final-side .btn { align-self: flex-start; margin-top: 4px; }
+  .video-text { margin: 22px 0 32px; max-width: 34ch; color: var(--muted); font-size: clamp(15px, 1.1vw, 17px); line-height: 1.6; }
+  .final-portrait { margin: auto 0 0; align-self: flex-end; width: min(100%, 520px); }
+  .final-portrait img { display: block; width: 100%; height: auto; }
+
+  /* next case + footer */
+  .case-nav { padding: clamp(40px, 6vh, 72px) 0 clamp(64px, 10vh, 110px); }
+  .cn-bar { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .next-case { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 38%); column-gap: clamp(24px, 4vw, 72px); row-gap: clamp(28px, 5vh, 48px); align-items: end; padding: 28px 0 8px; color: var(--ink); text-decoration: none; }
+  .nc-text { display: block; }
+  .nc-t { grid-column: 1 / -1; position: relative; display: block; --p: 0%; font: 800 clamp(32px, 10vw, 150px)/.86 var(--f-display); letter-spacing: -.045em; text-transform: uppercase; color: var(--bg); -webkit-text-stroke: 2px rgba(241,239,250,.6); paint-order: stroke fill; white-space: nowrap; transition: --p .9s var(--ease); }
+  .nc-t::after { content: attr(data-text); position: absolute; inset: 0; color: var(--ink); -webkit-text-stroke: 0; clip-path: inset(0 calc(100% - var(--p)) 0 0); }
+  .nc-sub { display: block; max-width: 44ch; margin-top: 22px; color: var(--muted); font-size: 17px; line-height: 1.5; }
+  .nc-go { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; color: var(--lilac); font: 500 15px var(--f-body); }
+  .nc-go i { font-style: normal; transition: transform .5s var(--ease); }
+  .nc-media { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 4px; background: var(--bg-2); }
+  .nc-media img, .nc-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease), opacity .6s var(--ease); }
+  .nc-media video { opacity: 0; }
+  .next-case:hover .nc-t, .next-case:focus-visible .nc-t { --p: 100%; }
+  .next-case:hover .nc-media img, .next-case:hover .nc-media video { transform: scale(1.03); }
+  .next-case:hover .nc-go i { transform: translateX(6px); }
+  .next-case.is-playing .nc-media video { opacity: 1; }
+  .foot-in { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 12px 0 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  .totop { background: none; border: 0; cursor: pointer; }
+
+  @media (max-width: 900px) {
+    .nav { mix-blend-mode: normal; background: rgba(7,7,9,.82); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding-top: 8px; padding-bottom: 8px; }
+    .nav nav { gap: 18px; }
+    .facts-grid { grid-template-columns: 1fr 1fr; }
+    .f, .f + .f { padding: 22px 16px 22px 0; border-left: 0; border-bottom: 1px solid var(--line); }
+    .f:last-child { grid-column: 1 / -1; }
+    .glance-inner { grid-template-columns: 1fr; align-content: center; gap: 24px; }
+    .glance-copy .h2 { max-width: none; font-size: clamp(28px, 7vw, 40px); }
+    .stage { order: -1; }
+    .steps { margin-top: 20px; }
+    .step button { padding: 11px 0; }
+    .step h3 { font-size: 18px; }
+    .step p { font-size: 15px; }
+    .r-head, .r-grid { grid-template-columns: 1fr; }
+    .count .num { font-size: 44vw; }
+    .hero { height: auto; min-height: 0; display: flex; flex-direction: column; }
+    .hb-stage { position: relative; inset: auto; height: 64svh; min-height: 380px; overflow: hidden; }
+    .hb-torso { left: 0; width: 100%; height: 100%; -webkit-mask-image: none; mask-image: none; }
+    .hb-shade { display: none; }
+    .hb-copy { position: relative; width: auto; padding: 30px var(--gut) 52px; background: linear-gradient(180deg, #4f4886 0%, #2f2a58 100%); }
+    .hero-title { font-size: clamp(44px, 14.5vw, 84px); }
+    .hb-intro { margin-top: 30px; }
+    .iv-pair { grid-template-columns: 1fr; gap: 56px; }
+    .iv { padding-top: 0; }
+    .bubble { position: relative; top: auto; left: auto; right: auto; width: auto; margin: 0 0 22px; }
+    .iv-b .bubble { margin-left: 12%; }
+    .calls-grid, .call { grid-template-columns: 1fr; }
+    .finals .wrap, .showcase, .features { grid-template-columns: 1fr; }
+    .call-age { margin-top: 6px; }
+    .problem-body { margin-left: 0; }
+    .d-row, .d-row.flip { grid-template-columns: 1fr; gap: 18px; }
+    .d-row.flip .d-num { order: 0; text-align: left; }
+    .d-num { display: flex; align-items: flex-end; gap: 16px; }
+    .dn { font-size: 112px; }
+    .d-of { margin: 0 0 10px; }
+    .channels, .specs, .how, .test, .res-grid, .next-case { grid-template-columns: 1fr; }
+    .how { gap: 4px; }
+    .parts { --reach: 0px; }
+    .pin .ln, .pin .pl { display: none; }
+    .pin .dot { top: -11px; width: 22px; height: 22px; display: grid; place-items: center; color: var(--paper); font: 600 12px/1 var(--f-body); box-shadow: 0 0 0 4px rgba(91,79,176,.18); }
+    .pin.l .dot { right: -11px; }
+    .pin.r .dot { left: -11px; }
+    .pin .dot::after { content: counter(pin); }
+    .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin-top: 22px; font: 500 15px var(--f-body); }
+    .legend li { display: flex; align-items: center; gap: 10px; counter-increment: pin; }
+    .legend li::before { content: counter(pin); flex: none; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--violet); color: var(--paper); font: 600 12px/1 var(--f-body); }
+    .flow { grid-template-columns: 1fr; gap: 28px; }
+    .lanes { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 0; }
+    .lanes .fn { padding: 12px 10px 14px; }
+    .lanes .fn p { font-size: 14px; }
+    .lanes .fn .fi { font-size: 10px; letter-spacing: .14em; }
+    .finds li { grid-template-columns: 1fr; gap: 10px; }
+    .final { position: relative; top: auto; }
+    .res-copy { padding-top: 0; }
+    .nc-media { order: -1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cue i::after { animation: none; }
+    .stage-frame .m, .step button, .step p { transition: none; }
+    .g-light .seg i, .g-air b, .g-air .bi, .g-air .bo, .g-vib i, .g-vib i::before, .g-vib i::after { animation: none; }
+    .g-light .seg i { background: rgba(176,170,242,.6); }
+    .g-air b { transform: translate(-50%, -50%) scale(.9); opacity: 1; }
+    .fn, .fn .fi, .nc-t, .nc-media img, .nc-media video, .btn, .nav { transition: none; }
+    .ring, .ring::before, .ring::after { animation: none; }
+  }
+  /* without the motion layer every step stays readable */
+  .static .step button { opacity: 1; }
+  .static .step p { grid-template-rows: 1fr; opacity: 1; margin-top: 8px; }
+  .static .goals .g { --p: 100%; }
+  .static .dn { --p: 100%; }
+  .static .scan-line { display: none; }
+  /* ds-allow-hardcode:end */
+</style>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a2bc3'/%3E%3Cpath d='M7 8h18v4h-7v12h-4V12H7z' fill='%23f6f5f1'/%3E%3C/svg%3E" />
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="../">Tianhao Wang</a>
+  <nav aria-label="Main">
+    <a href="../#work">Work</a>
+    <a href="../#about">About</a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- Cover: the cover board, keeping only its torso photo (studio original 5S2A5291, resized only) -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hb-stage">
+      <figure class="hb hb-torso"><img src="media/eunoia-cover-torso.jpg" width="2000" height="1333" fetchpriority="high" alt="The Eunoia garment up close: glowing light lines run over the shoulders and around the soft air chamber at the waist"></figure>
+    </div>
+    <div class="hb-shade" aria-hidden="true"></div>
+    <div class="hb-copy">
+      <h1 id="hero-title" class="hero-title" aria-label="The Eunoia"><span class="line" aria-hidden="true">The</span><span class="line" aria-hidden="true">Eunoia</span></h1>
+      <p class="hb-date">Jan to Jul 2025</p>
+      <div class="hb-intro">
+        <p class="hb-k">Introduction</p>
+        <p class="lede">A screen-free garment designed to ease anxiety in older adults through a guided body scan</p>
+        <a class="link" href="https://www.youtube.com/watch?v=WlQs1hbSqt8" target="_blank" rel="noopener">Watch the demo <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="facts" aria-label="Project facts">
+    <div class="wrap">
+      <div class="rule"></div>
+      <dl class="facts-grid">
+        <div class="f"><dt>Role</dt><dd>Research, garment design, electronics, coding, and testing</dd></div>
+        <div class="f"><dt>Team</dt><dd>Solo project</dd></div>
+        <div class="f"><dt>Timeline</dt><dd>Jan to Jul 2025</dd></div>
+        <div class="f"><dt>Tools</dt><dd>CLO 3D, Arduino, GSR sensor</dd></div>
+        <div class="f"><dt>Result</dt><dd>A working prototype, tested with an older adult living with anxiety, plus a demo video</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- At a glance: pinned, one real clip per step -->
+  <section class="glance" aria-labelledby="glance-title">
+    <div class="glance-inner wrap">
+      <div class="glance-copy">
+        <p class="eyebrow">At a glance</p>
+        <h2 id="glance-title" class="h2" data-split>A garment that guides a body scan without a screen</h2>
+        <ol class="steps">
+          <li class="step"><button type="button"><span class="n">01</span><span><h3>Sense</h3><p><span>When a skin sensor reads signs of stress, the garment starts a body scan.</span></p></span></button></li>
+          <li class="step"><button type="button"><span class="n">02</span><span><h3>Light</h3><p><span>Light moves from the feet to the head to show where to focus.</span></p></span></button></li>
+          <li class="step"><button type="button"><span class="n">03</span><span><h3>Air</h3><p><span>An air chamber fills and empties to set the pace of breathing.</span></p></span></button></li>
+          <li class="step"><button type="button"><span class="n">04</span><span><h3>Vibration</h3><p><span>Soft vibration marks key points along the way.</span></p></span></button></li>
+        </ol>
+      </div>
+      <div class="stage">
+        <div class="stage-frame">
+          <video class="m" src="media/eunoia-sensor.mp4" poster="media/eunoia-sensor.jpg" muted loop playsinline preload="auto" aria-label="The skin sensor on the sleeve"></video>
+          <video class="m" src="media/eunoia-scan.mp4" poster="media/eunoia-scan.jpg" muted loop playsinline preload="metadata" aria-label="Light moving along the seams of the leg"></video>
+          <video class="m" src="media/eunoia-air.mp4" poster="media/eunoia-air.jpg" muted loop playsinline preload="metadata" aria-label="The air chamber at the waist, with the light line glowing"></video>
+          <video class="m" src="media/eunoia-profile.mp4" poster="media/eunoia-profile.jpg" muted loop playsinline preload="metadata" aria-label="The wearer in profile, the collar lit"></video>
+        </div>
+        <div class="stage-meta">
+          <div class="stage-bar" aria-hidden="true"><i></i></div>
+          <p class="stage-count" aria-hidden="true"><span class="cur">01</span> / 04</p>
+          <button class="pause" type="button" aria-pressed="false">Pause video</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="bigidx" aria-hidden="true">01</div>
+    <div class="wrap">
+      <p class="eyebrow">01 · Problem</p>
+      <h2 id="problem-title" class="statement" data-split>Anxiety in older adults often goes <em>unnoticed</em></h2>
+      <div class="problem-body">
+        <p>Anti-anxiety drugs can cause dizziness and falls at this age. Memory loss and mistrust also make it harder to accept therapy. So I asked: can a gentle, drug-free object help them calm down on their own?</p>
+      </div>
+      <blockquote class="bigquote">
+        <p data-words><span class="q">“</span>My racing heart and health worries keep me awake, yet I avoid going to the hospital.<span class="q">”</span></p>
+        <footer>Interview participant</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="research" aria-labelledby="research-title">
+    <div class="wrap">
+      <div class="r-head">
+        <div class="count" aria-hidden="true"><span class="num">30</span><span class="lbl">Older adults surveyed</span></div>
+        <div class="r-copy">
+          <p class="eyebrow">02 · Research</p>
+          <h2 id="research-title" class="h2" data-split>I surveyed 30 older adults, then interviewed some of them</h2>
+          <p class="body">I started with a questionnaire for 30 older adults. Then I talked with some of them face to face and by phone.</p>
+        </div>
+      </div>
+      <div class="r-grid">
+        <figure class="survey"><img src="media/survey@2x.png" width="560" height="760" alt="Four questionnaire charts: how often they feel worried, what helps them calm down, what their worries come from, and whether they would wear a device"></figure>
+        <div class="found">
+          <h3>What I found</h3>
+          <ol>
+            <li><span class="n">1</span><p>Their worries came from health, money, family, and loneliness.</p></li>
+            <li><span class="n">2</span><p>They calmed down by walking, talking with family or friends, listening to music, or praying.</p></li>
+            <li><span class="n">3</span><p>Many avoided medication.</p></li>
+            <li><span class="n">4</span><p>Most were open to wearing a device.</p></li>
+          </ol>
+        </div>
+      </div>
+      <div class="interviews">
+        <h3 class="iv-k">Face-to-face interviews</h3>
+        <div class="iv-pair">
+          <!-- the board's original photos from Figma, at full resolution; black and white as on the board -->
+          <figure class="iv iv-a">
+            <blockquote class="bubble"><p>“My racing heart and health worries keep me awake, yet I avoid going to the hospital.”</p><footer>Interview participant</footer></blockquote>
+            <div class="iv-img"><img src="media/eunoia-iv-hands.webp" width="1200" height="901" alt="During a face-to-face interview, I hold an older woman's hand"></div>
+            <i class="iv-floor" aria-hidden="true"></i>
+          </figure>
+          <figure class="iv iv-b">
+            <blockquote class="bubble"><p>“Walking or talking helps, but when I’m alone I overthink and grow more anxious.”</p><footer>Interview participant</footer></blockquote>
+            <div class="iv-img"><img src="media/eunoia-iv-table.webp" width="1200" height="901" alt="An older woman and I talk at a small table during a face-to-face interview"></div>
+            <i class="iv-floor" aria-hidden="true"></i>
+          </figure>
+        </div>
+        <p class="iv-cap">Face-to-face interviews with older adults</p>
+      </div>
+
+      <!-- telephone interviews: the four cards from the board. The board's portraits are stock photos, so they are left out -->
+      <div class="calls">
+        <h3 class="calls-k">Telephone interviews</h3>
+        <ul class="calls-grid">
+          <li class="call">
+            <div class="call-who"><p class="call-name">Mrs. Wang</p><p class="call-age"><b>70</b><span>Years old</span></p><p class="call-onset">Onset 2 years ago</p></div>
+            <dl>
+              <div><dt>About</dt><dd>Sensitive and easily affected by family tension</dd></div>
+              <div><dt>Symptoms</dt><dd>Insomnia, night sweats, high blood pressure</dd></div>
+              <div><dt>Coping</dt><dd>Avoids medication and prefers dancing or walking</dd></div>
+            </dl>
+          </li>
+          <li class="call">
+            <div class="call-who"><p class="call-name">Mr. Li</p><p class="call-age"><b>68</b><span>Years old</span></p><p class="call-onset">Onset 6 months ago</p></div>
+            <dl>
+              <div><dt>About</dt><dd>Worries about memory loss and declining focus</dd></div>
+              <div><dt>Symptoms</dt><dd>Insomnia, high blood pressure, trouble focusing</dd></div>
+              <div><dt>Coping</dt><dd>No medication; walks and plays chess to ease stress</dd></div>
+            </dl>
+          </li>
+          <li class="call">
+            <div class="call-who"><p class="call-name">Mr. Zhou</p><p class="call-age"><b>63</b><span>Years old</span></p><p class="call-onset">Onset 1 year ago</p></div>
+            <dl>
+              <div><dt>About</dt><dd>Gentle, but keeps his anxiety in and rarely shares his feelings</dd></div>
+              <div><dt>Symptoms</dt><dd>Insomnia, high blood pressure, trouble focusing</dd></div>
+              <div><dt>Coping</dt><dd>No medication; walks and plays chess</dd></div>
+            </dl>
+          </li>
+          <li class="call">
+            <div class="call-who"><p class="call-name">Mrs. Zhang</p><p class="call-age"><b>63</b><span>Years old</span></p><p class="call-onset">Onset 2 years ago</p></div>
+            <dl>
+              <div><dt>About</dt><dd>Fears aging and depending on others, and feels insecure</dd></div>
+              <div><dt>Symptoms</dt><dd>Insomnia, high blood pressure, trouble focusing</dd></div>
+              <div><dt>Coping</dt><dd>No medication; walks and plays chess to ease stress</dd></div>
+            </dl>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="insight" aria-labelledby="insight-title">
+    <div class="wrap">
+      <p class="eyebrow">03 · Insight</p>
+      <h2 id="insight-title" class="h2" data-split>They needed a sense of calm they could feel, even when alone</h2>
+      <p class="body">Walking and talking helped. But when they were alone, the worry grew, and many didn’t want pills. So the design had to work without a pill and without another person.</p>
+    </div>
+    <ol class="goals" aria-label="Design goals">
+      <li><div class="row"><span class="n">01</span><span class="g" data-text="Drug-free">Drug-free</span></div></li>
+      <li><div class="row"><span class="n">02</span><span class="g" data-text="Works when alone">Works when alone</span></div></li>
+      <li><div class="row"><span class="n">03</span><span class="g" data-text="Guided by the body">Guided by the body</span></div></li>
+      <li><div class="row"><span class="n">04</span><span class="g" data-text="Simple to follow">Simple to follow</span></div></li>
+    </ol>
+  </section>
+
+  <!-- 04 Key decisions -->
+  <section class="decisions" aria-labelledby="decisions-title">
+    <div class="wrap d-head">
+      <p class="eyebrow">04 · Key decisions</p>
+      <h2 id="decisions-title" class="statement" data-split>Three decisions that shaped the design</h2>
+    </div>
+
+    <article class="d" aria-labelledby="d1-title">
+      <div class="wrap d-row">
+        <div class="d-num" aria-hidden="true"><span class="dn" data-text="1">1</span><span class="d-of">Decision 1 of 3</span></div>
+        <div class="d-copy">
+          <h3 id="d1-title" class="d-title">A full-body scan, not a single breathing exercise</h3>
+          <p class="body">A body scan is a mindfulness exercise. It moves your attention step by step from your feet to your head. I chose it because it works with the whole body. A breathing or vibration exercise on its own uses only one channel.</p>
+        </div>
+      </div>
+      <!-- body-scan diagram from the board, its text box cropped off -->
+      <figure class="scan">
+        <div class="scan-frame">
+          <img class="scan-base" src="media/eunoia-bodyscan.jpg" width="1145" height="498" alt="">
+          <div class="scan-lit"><img src="media/eunoia-bodyscan.jpg" width="1145" height="498" alt="Diagram of a body seen from above, with dotted arrows that run from the feet up the body and out along the arms"></div>
+          <i class="scan-line" aria-hidden="true"></i>
+        </div>
+        <figcaption class="cap">The light follows the body scan path</figcaption>
+      </figure>
+    </article>
+
+    <article class="d" aria-labelledby="d2-title">
+      <div class="wrap d-row flip">
+        <div class="d-num" aria-hidden="true"><span class="dn" data-text="2">2</span><span class="d-of">Decision 2 of 3</span></div>
+        <div class="d-copy">
+          <h3 id="d2-title" class="d-title">Light, air, and vibration, each with one job</h3>
+          <p class="body">With no screen, the garment itself has to lead the exercise. So I gave each channel one job:</p>
+        </div>
+      </div>
+      <div class="wrap">
+        <ul class="channels">
+          <li class="ch-card">
+            <div class="glyph g-light" aria-hidden="true">
+              <span class="gt top">Head</span>
+              <span class="seg"><i style="--k:0;--x:0px;--r:12deg"></i><i style="--k:1;--x:6px;--r:11deg"></i><i style="--k:2;--x:10px;--r:8deg"></i><i style="--k:3;--x:13px;--r:3deg"></i><i style="--k:4;--x:13px;--r:-3deg"></i><i style="--k:5;--x:10px;--r:-8deg"></i><i style="--k:6;--x:6px;--r:-11deg"></i><i style="--k:7;--x:0px;--r:-12deg"></i></span>
+              <span class="gt">Feet</span>
+            </div>
+            <h4>Light</h4>
+            <p>Light flows along the garment and shows where to focus.</p>
+          </li>
+          <li class="ch-card">
+            <div class="glyph g-air" aria-hidden="true"><b></b><span class="gt bi">Breathe in</span><span class="gt bo">Breathe out</span></div>
+            <h4>Air</h4>
+            <p>Air fills and empties a soft chamber to set the breathing rhythm.</p>
+          </li>
+          <li class="ch-card">
+            <div class="glyph g-vib" aria-hidden="true">
+              <svg viewBox="0 0 400 300" preserveAspectRatio="none"><path d="M96 192 C 140 120 170 108 200 108 S 262 146 304 174"/></svg>
+              <i style="--x:24%;--y:64%;--d:0s"></i><i style="--x:50%;--y:36%;--d:1s"></i><i style="--x:76%;--y:58%;--d:2s"></i>
+              <span class="gt">Key points</span>
+            </div>
+            <h4>Vibration</h4>
+            <p>Vibration gives a gentle cue at key points.</p>
+          </li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="d" aria-labelledby="d3-title">
+      <div class="wrap d-row">
+        <div class="d-num" aria-hidden="true"><span class="dn" data-text="3">3</span><span class="d-of">Decision 3 of 3</span></div>
+        <div class="d-copy">
+          <h3 id="d3-title" class="d-title">A close fit that still lets you move</h3>
+          <p class="body">The cues follow the path of the body scan, so they have to sit close to the body. But the garment also has to let people move. I drafted 2D patterns, refined the fit in CLO 3D, and made mock-ups.</p>
+        </div>
+      </div>
+      <figure class="clo">
+        <div class="clo-track"><img src="media/eunoia-clo3d.jpg" width="1500" height="350" alt="Six views of the garment on a 3D body in CLO 3D: side, front, three-quarter and back views"></div>
+        <figcaption class="cap wrap">Refining the fit in CLO 3D</figcaption>
+      </figure>
+      <div class="wrap">
+        <div class="specs">
+          <div class="spec">
+            <p class="spec-k">For stretch</p>
+            <div class="mix" aria-hidden="true"><i class="ny"></i><i class="sp"></i></div>
+            <p class="mix-l"><span><b>66%</b> nylon</span><span><b>34%</b> spandex</span></p>
+          </div>
+          <div class="spec">
+            <p class="spec-k">For the air chamber</p>
+            <p class="spec-v">PVC inflatable composite</p>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- 05 Prototype and test: the page turns to paper for the lab chapter -->
+  <section class="lab" aria-labelledby="lab-title">
+    <div class="wrap">
+      <p class="eyebrow">05 · Prototype and test</p>
+      <h2 id="lab-title" class="h2" data-split>I built a working prototype and tested it with an older adult living with anxiety</h2>
+      <div class="how">
+        <h3 class="k">How it works</h3>
+        <p>A GSR sensor picks up tiny changes in skin sweat, which tend to rise with stress. When the reading passes a threshold, an Arduino starts the body scan. The light moves through eight segments on the garment. I wrote the code that keeps the air pump and the light in step with a breathing rhythm. When it’s time to breathe out, the light dims and the pump stops.</p>
+      </div>
+      <!-- real photo IMG_5433, labels are live text -->
+      <figure class="parts">
+        <div class="parts-img">
+          <img src="media/eunoia-parts-IMG_5433.jpg" width="1200" height="1600" alt="The electronics laid out flat: a GSR sensor board, a ring of lights, a vibration motor module, an Arduino Uno, a clear air chamber with a tube, and a small air pump">
+          <ol class="pins" aria-hidden="true">
+            <li class="pin l" style="--x:13.6%;--y:40.5%"><i class="ln"></i><span class="dot"></span><span class="pl">Light</span></li>
+            <li class="pin l" style="--x:25%;--y:56.6%"><i class="ln"></i><span class="dot"></span><span class="pl">GSR sensor</span></li>
+            <li class="pin l" style="--x:23.3%;--y:65%"><i class="ln"></i><span class="dot"></span><span class="pl">Vibration motor</span></li>
+            <li class="pin l" style="--x:27.5%;--y:79.4%"><i class="ln"></i><span class="dot"></span><span class="pl">Arduino</span></li>
+            <li class="pin r" style="--x:49.2%;--y:50%"><i class="ln"></i><span class="dot"></span><span class="pl">Air chamber</span></li>
+            <li class="pin r" style="--x:79.6%;--y:60%"><i class="ln"></i><span class="dot"></span><span class="pl">Air pump</span></li>
+          </ol>
+        </div>
+        <ol class="legend" aria-hidden="true"><li>Light</li><li>GSR sensor</li><li>Vibration motor</li><li>Arduino</li><li>Air chamber</li><li>Air pump</li></ol>
+        <figcaption class="cap">The parts: GSR sensor, Arduino, light, vibration motor, and air pump</figcaption>
+      </figure>
+    </div>
+
+    <!-- N2: how the garment responds, drawn as a live flow -->
+    <div class="flow-wrap">
+      <div class="wrap">
+        <h3 class="k">How the garment responds</h3>
+        <div class="flow" data-flow>
+          <svg class="flow-lines" aria-hidden="true"></svg>
+          <div class="fn"><span class="fi">01</span><p>Stress rises</p></div>
+          <div class="fn"><span class="fi">02</span><p>GSR passes the threshold</p></div>
+          <div class="fn"><span class="fi">03</span><p>Arduino starts the scan</p></div>
+          <div class="lanes">
+            <div class="fn"><span class="fi">Light</span><p>Moves from feet to head</p></div>
+            <div class="fn"><span class="fi">Air</span><p>Sets the breath</p></div>
+            <div class="fn"><span class="fi">Vibration</span><p>Cues key points</p></div>
+          </div>
+          <div class="fn end"><span class="fi">Breathe out</span><p>The light dims and the pump stops</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap test">
+      <!-- real photo IMG_4406 -->
+      <figure class="fit">
+        <div class="fit-img"><img src="media/eunoia-fitting-IMG_4406.jpg" width="1200" height="1600" alt="I adjust the electronics on the sleeve while an older adult wears the prototype, with code open on a laptop"></div>
+        <figcaption class="cap">Fitting and testing the prototype</figcaption>
+      </figure>
+      <div class="test-copy">
+        <p class="lead">Then I ran a fitting and test session with an older adult living with anxiety.</p>
+        <h3 class="k">What the test showed</h3>
+        <ul class="finds">
+          <li class="ok"><span class="tag">Worked</span><p>The light flow felt calming and easy to follow.</p></li>
+          <li><span class="tag">To fix</span><p>The vibration was too soft.</p></li>
+          <li><span class="tag">To fix</span><p>The breathing cue had no clear start.</p></li>
+        </ul>
+        <p class="note">It was a small test: one person, one session. But it showed me what to fix first.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 Result -->
+  <section class="result" aria-labelledby="result-title">
+    <div class="wrap res-grid">
+      <figure class="final">
+        <div class="final-img"><img src="media/eunoia-final-5S2A5337.jpg" width="1067" height="1600" alt="The finished garment up close: glowing light lines run over the shoulders and around the soft air chamber at the waist"></div>
+        <figcaption class="cap">The finished garment</figcaption>
+      </figure>
+      <div class="res-copy">
+        <p class="eyebrow">06 · Result</p>
+        <h2 id="result-title" class="statement" data-split>What I made</h2>
+        <ol class="made">
+          <li><span class="n">01</span><p>A working prototype: the garment, sensor, light, air chamber, and vibration</p></li>
+          <li><span class="n">02</span><p>A demo video</p></li>
+          <li><span class="n">03</span><p>Three clear findings for the next version</p></li>
+        </ol>
+        <div class="learned">
+          <p class="k">What I learned</p>
+          <p class="lq" data-words>Even one session changed my plan. The light worked, but the vibration and the breathing cue needed more work.</p>
+        </div>
+        <a class="btn" href="https://www.youtube.com/watch?v=WlQs1hbSqt8" target="_blank" rel="noopener">Watch the demo <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 Next -->
+  <section class="nextstep" aria-labelledby="next-title">
+    <div class="bigidx b7" aria-hidden="true">07</div>
+    <div class="wrap">
+      <p class="eyebrow">07 · Next</p>
+      <h2 id="next-title" class="statement" data-split>What I’d change next</h2>
+      <ol class="changes">
+        <li><span class="n">01</span><p>Make the vibration stronger, and let people adjust it.</p><i class="ln" aria-hidden="true"></i></li>
+        <li><span class="n">02</span><p>Add a clear signal before each breath begins.</p><i class="ln" aria-hidden="true"></i></li>
+        <li><span class="n">03</span><p>Test with more older adults, at home, over several days.</p><i class="ln" aria-hidden="true"></i></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Final: the FINAL board rebuilt. Studio originals 5S2A5312, 5388, 5346 and 5309, a frame from the final video
+       (the rack), and 5S2A5341 lifted off its studio backdrop for the portrait. Nothing flipped or retouched. -->
+  <section class="finals" aria-labelledby="finals-title">
+    <div class="wrap">
+      <div class="final-main">
+        <h2 id="finals-title" class="final-title">Final</h2>
+        <h3 class="fk">Product showcase</h3>
+        <div class="showcase">
+          <figure class="fx"><img src="media/eunoia-final-rack.jpg" width="1600" height="898" alt="The garment hanging on a rack, its light lines glowing"></figure>
+          <figure class="fx"><img src="media/eunoia-final-walk.jpg" width="900" height="1350" alt="Walking in the garment, seen from the side"></figure>
+          <p class="fx-text">The garment offers a form-fitting silhouette that hugs the body's contours and is both structured and futuristic. It fits closely to the torso and limbs, outlining natural body lines while leaving enough stretch for movement.</p>
+        </div>
+        <h3 class="fk">Product features</h3>
+        <div class="features">
+          <figure class="fx"><img src="media/eunoia-final-haptic.jpg" width="1200" height="800" alt="Lying down in the garment with eyes closed"><i class="ring" aria-hidden="true"></i><figcaption class="fx-l">Haptic feedback</figcaption></figure>
+          <figure class="fx"><img src="media/eunoia-final-breath.jpg" width="1200" height="800" alt="The soft air chamber at the waist, edged by the light lines"><figcaption class="fx-l">Adjust breathing rhythm</figcaption></figure>
+          <figure class="fx"><img src="media/eunoia-final-beam.jpg" width="1000" height="930" alt="A light line running over the shoulder"><figcaption class="fx-l">Flowing light beam</figcaption></figure>
+        </div>
+        <p class="features-text">A flowing light beam sets a calming visual rhythm, breathing cues guide the pace, and haptic feedback adds gentle tactile signals. Together they create a clear, intuitive multisensory experience.</p>
+      </div>
+      <div class="final-side">
+        <h3 class="fk">Video link</h3>
+        <a class="btn" href="https://www.youtube.com/watch?v=WlQs1hbSqt8" target="_blank" rel="noopener">Watch the demo <span aria-hidden="true">↗</span></a>
+        <p class="video-text">The core aim of this project is to ease anxiety in older adults through breathing exercises and body awareness. The video shows a full demonstration.</p>
+        <figure class="final-portrait"><img src="media/eunoia-final-portrait.webp" width="985" height="1500" alt="Eyes closed, wearing the garment with its light lines glowing pink and white"></figure>
+      </div>
+    </div>
+  </section>
+
+  <nav class="case-nav" aria-label="More work">
+    <div class="wrap">
+      <div class="cn-bar">
+        <p class="eyebrow">Next case</p>
+        <a class="link" href="../#work">All work</a>
+      </div>
+      <a class="next-case" href="../?project=wonderorb" aria-label="Next case: Wonderorb">
+        <span class="nc-t" data-text="Wonderorb">Wonderorb</span>
+        <span class="nc-text">
+          <span class="nc-sub">A soft play orb that helps children with touch sensitivity get used to new textures, at home and while they wait for treatment</span>
+          <span class="nc-go">Next: Wonderorb <i aria-hidden="true">→</i></span>
+        </span>
+        <span class="nc-media" aria-hidden="true">
+          <img src="media/wonderorb-cover.jpg" width="1200" height="475" alt="">
+          <!-- plays on hover: real footage, hands only -->
+          <video src="media/wonderorb-explore.mp4" poster="media/wonderorb-explore.jpg" muted loop playsinline preload="none"></video>
+        </span>
+      </a>
+    </div>
+  </nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap"><div class="foot-in"><span>© 2026 Tianhao Wang</span><button class="link totop" type="button">Back to top <span aria-hidden="true">↑</span></button></div></div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const root = document.documentElement;
+  // ?still shows the reduced-motion version, for checking it
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches || new URLSearchParams(location.search).has("still");
+
+  // Split headings into words, the hero title into letters, the quote into words
+  document.querySelectorAll(".hero-title .line").forEach(l => { l.innerHTML = [...l.textContent].map(c => `<span class="ch">${c}</span>`).join(""); });
+  document.querySelectorAll("[data-split]").forEach(el => {
+    const parts = [];
+    el.childNodes.forEach(n => {
+      const wrapWords = (text, cls) => text.split(/(\s+)/).forEach(w => {
+        if (!w) return;
+        parts.push(/\s+/.test(w) ? " " : `<span class="wl"><span class="w${cls ? " " + cls : ""}">${w}</span></span>`);
+      });
+      if (n.nodeType === 3) wrapWords(n.textContent);
+      else if (n.nodeType === 1) parts.push(`<em>${n.textContent.split(/\s+/).map(w => `<span class="wl"><span class="w">${w}</span></span>`).join(" ")}</em>`);
+    });
+    el.innerHTML = parts.join("");
+  });
+  document.querySelectorAll("[data-words]").forEach(el => {
+    const out = [];
+    el.childNodes.forEach(n => {
+      if (n.nodeType === 1) { out.push(n.outerHTML); return; }
+      n.textContent.split(/(\s+)/).forEach(w => { if (w) out.push(/\s+/.test(w) ? w : `<span class="w">${w}</span>`); });
+    });
+    el.innerHTML = out.join("");
+  });
+
+  // Video: play only what is on screen, one button pauses all
+  const videos = [...document.querySelectorAll("video")];
+  const btn = document.querySelector(".pause");
+  let paused = reduce;
+  let activeClip = null;
+  const visible = new Set();
+  const extra = new Set(); // clips started by hover, like the next-case preview
+  const want = v => !paused && (extra.has(v) || (visible.has(v) && v === activeClip));
+  const sync = () => videos.forEach(v => { if (want(v)) v.play().catch(() => {}); else v.pause(); });
+  const io = new IntersectionObserver(es => { es.forEach(e => e.isIntersecting ? visible.add(e.target) : visible.delete(e.target)); sync(); }, { threshold: .2 });
+  videos.forEach(v => io.observe(v));
+  const setBtn = () => { btn.setAttribute("aria-pressed", String(paused)); btn.textContent = paused ? "Play video" : "Pause video"; };
+  btn.addEventListener("click", () => { paused = !paused; setBtn(); sync(); });
+  setBtn();
+
+  // Steps
+  const steps = [...document.querySelectorAll(".step")];
+  const clips = [...document.querySelectorAll(".stage-frame .m")];
+  const cur = document.querySelector(".stage-count .cur");
+  let active = -1;
+  function setStep(i) {
+    if (i === active) return;
+    active = i;
+    steps.forEach((s, k) => s.classList.toggle("is-on", k === i));
+    clips.forEach((m, k) => m.classList.toggle("is-on", k === i));
+    activeClip = clips[i];
+    cur.textContent = String(i + 1).padStart(2, "0");
+    sync();
+  }
+  setStep(0);
+
+  // Next case: the Wonderorb clip plays while the card is hovered
+  const nc = document.querySelector(".next-case");
+  const ncVideo = nc.querySelector("video");
+  if (matchMedia("(hover: hover)").matches) {
+    nc.addEventListener("mouseenter", () => { ncVideo.preload = "auto"; extra.add(ncVideo); nc.classList.toggle("is-playing", !paused); sync(); });
+    nc.addEventListener("mouseleave", () => { extra.delete(ncVideo); nc.classList.remove("is-playing"); sync(); });
+  }
+
+  // Back to top
+  document.querySelector(".totop").addEventListener("click", () => {
+    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.8 });
+    else window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    document.querySelector(".brand").focus({ preventScroll: true });
+  });
+
+  // 05 flow: wires are drawn between the real boxes, so they follow any layout
+  const flow = document.querySelector("[data-flow]");
+  const svg = flow.querySelector(".flow-lines");
+  const fns = [...flow.querySelectorAll(".fn")];
+  const EDGES = [[0, 1, 0], [1, 2, 1], [2, 3, 2], [2, 4, 2], [2, 5, 2], [3, 6, 3], [4, 6, 3], [5, 6, 3]]; // from, to, step
+  const SEG = [[.04, .24], [.24, .44], [.44, .66], [.66, .88]]; // where each step runs in the scroll
+  const LIT = [.02, .24, .44, .66, .66, .66, .88]; // when each box lights
+  let wires = [];
+  let flowP = 0;
+  function renderFlow(p) {
+    flowP = p;
+    wires.forEach(w => {
+      const [s, e] = SEG[w.step];
+      const k = Math.min(1, Math.max(0, (p - s) / (e - s)));
+      w.live.style.strokeDashoffset = String(w.len * (1 - k));
+      const moving = k > 0 && k < 1;
+      w.head.style.opacity = moving ? "1" : "0";
+      if (moving) { const at = w.live.getPointAtLength(w.len * k); w.head.setAttribute("cx", at.x); w.head.setAttribute("cy", at.y); }
+    });
+    fns.forEach((n, i) => n.classList.toggle("is-on", p >= LIT[i]));
+  }
+  function buildFlow() {
+    const fr = flow.getBoundingClientRect();
+    if (!fr.width) return;
+    svg.setAttribute("width", fr.width);
+    svg.setAttribute("height", fr.height);
+    svg.setAttribute("viewBox", `0 0 ${fr.width} ${fr.height}`);
+    svg.textContent = "";
+    const box = n => { const r = n.getBoundingClientRect(); return { l: r.left - fr.left, t: r.top - fr.top, r: r.right - fr.left, b: r.bottom - fr.top }; };
+    const NS = "http://www.w3.org/2000/svg";
+    const make = (tag, cls) => { const el = document.createElementNS(NS, tag); el.setAttribute("class", cls); svg.appendChild(el); return el; };
+    wires = EDGES.map(([a, b, step]) => {
+      const A = box(fns[a]), B = box(fns[b]);
+      let d;
+      if (B.l >= A.r - 2) { // the next box sits to the right
+        const x0 = A.r, y0 = (A.t + A.b) / 2, x1 = B.l, y1 = (B.t + B.b) / 2, m = (x1 - x0) / 2;
+        d = `M${x0} ${y0} C${x0 + m} ${y0} ${x1 - m} ${y1} ${x1} ${y1}`;
+      } else { // the next box sits below
+        const x0 = (A.l + A.r) / 2, y0 = A.b, x1 = (B.l + B.r) / 2, y1 = B.t, m = (y1 - y0) / 2;
+        d = `M${x0} ${y0} C${x0} ${y0 + m} ${x1} ${y1 - m} ${x1} ${y1}`;
+      }
+      make("path", "bl").setAttribute("d", d);
+      const live = make("path", "lv");
+      live.setAttribute("d", d);
+      const head = make("circle", "hd");
+      head.setAttribute("r", "4.5");
+      const len = live.getTotalLength();
+      live.style.strokeDasharray = `${len} ${len}`;
+      return { live, head, len, step };
+    });
+    renderFlow(flowP);
+  }
+
+  // The nav steps out of the way while reading down and comes back on the way up (or on keyboard focus)
+  const navBar = document.querySelector(".nav");
+  let lastY = scrollY;
+  addEventListener("scroll", () => {
+    const y = scrollY;
+    if (Math.abs(y - lastY) < 6) return;
+    navBar.classList.toggle("is-hidden", y > lastY && y > 160);
+    lastY = y;
+  }, { passive: true });
+  navBar.addEventListener("focusin", () => navBar.classList.remove("is-hidden"));
+
+  if (reduce || !window.gsap || !window.ScrollTrigger || !window.Lenis) {
+    root.classList.add("static");
+    steps.forEach((s, i) => s.querySelector("button").addEventListener("click", () => setStep(i)));
+    flowP = 1;
+    buildFlow();
+    addEventListener("resize", buildFlow);
+    document.fonts && document.fonts.ready.then(buildFlow);
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis = new Lenis({ lerp: .085, wheelMultiplier: 1, smoothWheel: true });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  window.__lenis = lenis; // lets the preview checks jump to a section
+
+  // Cover enters once: the torso wipes in, the seated figure and the profile follow, the title rises
+  gsap.set(".hero-title .ch", { yPercent: 108 });
+  gsap.timeline({ delay: .1 })
+    .fromTo(".hb-torso", { clipPath: "inset(0% 0% 0% 100%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.7, ease: "expo.inOut" }, 0)
+    .from(".hb-torso img", { scale: 1.16, duration: 2.6, ease: "expo.out" }, .15)
+    .to(".hero-title .ch", { yPercent: 0, duration: 1.4, ease: "expo.out", stagger: .05 }, .35)
+    .from(".hb-date, .hb-intro > *", { y: 22, opacity: 0, duration: 1.05, ease: "power3.out", stagger: .08 }, .85);
+
+  // Scrolling away, the photo and the type part at different speeds
+  const heroMM = gsap.matchMedia();
+  heroMM.add("(min-width: 901px)", () => {
+    const away = { trigger: ".hero", start: "top top", end: "bottom top", scrub: true };
+    gsap.to(".hb-torso img", { yPercent: 8, ease: "none", scrollTrigger: away });
+    gsap.to(".hb-copy", { yPercent: -16, ease: "none", scrollTrigger: away });
+  });
+  heroMM.add("(max-width: 900px)", () => {
+    gsap.to(".hb-torso img", { yPercent: 8, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: true } });
+  });
+
+  // Facts: the rule draws, the columns follow
+  const ft = { trigger: ".facts", start: "top 78%" };
+  gsap.from(".facts .rule", { scaleX: 0, duration: 1.4, ease: "expo.out", scrollTrigger: ft });
+  gsap.from(".facts .f", { y: 32, opacity: 0, duration: 1, ease: "power3.out", stagger: .08, delay: .15, scrollTrigger: ft });
+
+  // Headings rise word by word
+  document.querySelectorAll("[data-split]").forEach(h => {
+    gsap.from(h.querySelectorAll(".w"), { yPercent: 115, duration: 1.2, ease: "expo.out", stagger: .045, scrollTrigger: { trigger: h, start: "top 82%" } });
+  });
+
+  // At a glance: pin the stage, step through four clips
+  const st = ScrollTrigger.create({
+    trigger: ".glance", start: "top top", end: () => "+=" + innerHeight * 3.2, pin: ".glance-inner", scrub: true,
+    onUpdate: self => {
+      setStep(Math.min(steps.length - 1, Math.floor(self.progress * steps.length * .9999)));
+      gsap.set(".stage-bar i", { scaleX: self.progress });
+    }
+  });
+  steps.forEach((s, i) => s.querySelector("button").addEventListener("click", () => {
+    lenis.scrollTo(st.start + (st.end - st.start) * ((i + .5) / steps.length), { duration: 1.4 });
+  }));
+  gsap.fromTo(".stage-frame", { clipPath: "inset(14% 10% 14% 10% round 4px)" }, { clipPath: "inset(0% 0% 0% 0% round 4px)", ease: "none", scrollTrigger: { trigger: ".glance", start: "top 90%", end: "top top", scrub: 1 } });
+  gsap.from(".steps .step", { x: -24, opacity: 0, duration: .9, ease: "power3.out", stagger: .08, scrollTrigger: { trigger: ".glance", start: "top 55%" } });
+
+  // 01 Problem: the big index drifts, the quote lights up word by word
+  gsap.to(".problem .bigidx", { yPercent: -38, ease: "none", scrollTrigger: { trigger: ".problem", start: "top bottom", end: "bottom top", scrub: true } });
+  gsap.from(".problem-body", { y: 48, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: ".problem-body", start: "top 86%" } });
+  gsap.fromTo(".bigquote .w", { opacity: .45 }, { opacity: 1, stagger: .1, ease: "none", scrollTrigger: { trigger: ".bigquote", start: "top 78%", end: "bottom 48%", scrub: true } });
+
+  // 02 Research: count to 30, wipe in the survey, pop the bubble
+  const num = document.querySelector(".count .num");
+  const o = { v: 0 };
+  gsap.to(o, { v: 30, duration: 1.9, ease: "power3.out", onUpdate: () => { num.textContent = Math.round(o.v); }, scrollTrigger: { trigger: ".count", start: "top 82%" } });
+  gsap.fromTo(".survey", { clipPath: "inset(0 0 100% 0)" }, { clipPath: "inset(0 0 0% 0)", duration: 1.7, ease: "expo.out", scrollTrigger: { trigger: ".survey", start: "top 80%" } });
+  gsap.from(".found li", { y: 34, opacity: 0, duration: .95, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".found", start: "top 76%" } });
+  // the two interviews rise into view on their lilac glow, then each quote pops out of its photo
+  gsap.utils.toArray(".iv").forEach(iv => {
+    const at = { trigger: iv, start: "top 76%" };
+    gsap.fromTo(iv.querySelector(".iv-img img"), { clipPath: "inset(100% 0% 0% 0%)", y: 40 }, { clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 1.6, ease: "expo.out", scrollTrigger: at });
+    gsap.from(iv.querySelector(".iv-floor"), { scaleX: 0, duration: 1.4, ease: "expo.out", scrollTrigger: at });
+    gsap.from(iv.querySelector(".bubble"), { scale: .55, opacity: 0, duration: 1.1, ease: "back.out(1.7)", delay: .45, scrollTrigger: at });
+  });
+  gsap.from(".call", { y: 50, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".calls-grid", start: "top 82%" } });
+
+  // 03 Insight: each goal fills from outline to solid as it passes
+  document.querySelectorAll(".goals .g").forEach(g => {
+    gsap.fromTo(g, { "--p": "0%" }, { "--p": "100%", ease: "none", scrollTrigger: { trigger: g, start: "top 88%", end: "top 42%", scrub: true } });
+  });
+  gsap.from(".goals .n", { opacity: 0, x: -16, duration: .8, stagger: .1, ease: "power3.out", scrollTrigger: { trigger: ".goals", start: "top 80%" } });
+
+  // 04 Key decisions: the numbers fill, the body scan sweeps from feet to head
+  document.querySelectorAll(".dn").forEach(n => gsap.fromTo(n, { "--p": "0%" }, { "--p": "100%", ease: "none", scrollTrigger: { trigger: n, start: "top 85%", end: "top 35%", scrub: true } }));
+  gsap.utils.toArray(".d-copy").forEach(c => gsap.from(c.children, { y: 36, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: c, start: "top 84%" } }));
+  gsap.fromTo(".scan-frame", { "--sx": "0%" }, { "--sx": "100%", ease: "none", scrollTrigger: { trigger: ".scan", start: "top 72%", end: "bottom 38%", scrub: 1 } });
+  gsap.fromTo(".scan-line", { opacity: 1 }, { opacity: 0, ease: "none", scrollTrigger: { trigger: ".scan", start: "bottom 44%", end: "bottom 34%", scrub: true } });
+  gsap.from(".ch-card", { y: 60, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".channels", start: "top 82%" } });
+  const cloImg = document.querySelector(".clo-track img");
+  gsap.fromTo(cloImg, { clipPath: "inset(0% 0% 0% 100%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.8, ease: "expo.inOut", scrollTrigger: { trigger: ".clo", start: "top 80%" } });
+  gsap.to(cloImg, { x: () => -Math.max(0, cloImg.offsetWidth - cloImg.parentNode.offsetWidth), ease: "none", scrollTrigger: { trigger: ".clo", start: "top bottom", end: "bottom top", scrub: true, invalidateOnRefresh: true } });
+  gsap.from(".mix i", { scaleX: 0, duration: 1.4, ease: "expo.out", stagger: .18, scrollTrigger: { trigger: ".specs", start: "top 84%" } });
+  gsap.from(".mix-l > span, .spec-v", { y: 24, opacity: 0, duration: 1, ease: "power3.out", stagger: .1, delay: .3, scrollTrigger: { trigger: ".specs", start: "top 84%" } });
+
+  // 05 Prototype and test: the page turns to paper
+  gsap.fromTo(".lab", { clipPath: "inset(0% 3% 0% 3% round 40px)" }, { clipPath: "inset(0% 0% 0% 0% round 0px)", ease: "none", scrollTrigger: { trigger: ".lab", start: "top bottom", end: "top 12%", scrub: true } });
+  gsap.from(".how > *", { y: 36, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".how", start: "top 84%" } });
+  const partsIn = { trigger: ".parts", start: "top 70%" };
+  gsap.fromTo(".parts-img img", { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.6, ease: "expo.out", scrollTrigger: partsIn });
+  gsap.from(".pin .dot", { scale: 0, duration: .6, ease: "back.out(2)", stagger: .08, delay: .5, scrollTrigger: partsIn });
+  gsap.from(".pin .ln", { scaleX: 0, duration: 1, ease: "expo.out", stagger: .08, delay: .65, scrollTrigger: partsIn });
+  gsap.from(".pin .pl", { opacity: 0, x: (i, el) => el.closest(".l") ? 14 : -14, duration: .8, ease: "power3.out", stagger: .08, delay: .9, scrollTrigger: partsIn });
+  buildFlow();
+  ScrollTrigger.addEventListener("refresh", buildFlow);
+  const fp = { p: 0 };
+  const mm = gsap.matchMedia();
+  mm.add("(min-width: 901px)", () => {
+    fp.p = 0;
+    gsap.to(fp, { p: 1, ease: "none", onUpdate: () => renderFlow(fp.p), scrollTrigger: { trigger: ".flow-wrap", start: "center center", end: () => "+=" + innerHeight * 1.3, pin: true, scrub: 1, anticipatePin: 1 } });
+    ScrollTrigger.sort();
+  });
+  mm.add("(max-width: 900px)", () => {
+    fp.p = 0;
+    gsap.to(fp, { p: 1, ease: "none", onUpdate: () => renderFlow(fp.p), scrollTrigger: { trigger: ".flow", start: "top 78%", end: "bottom 42%", scrub: 1 } });
+    ScrollTrigger.sort();
+  });
+  gsap.fromTo(".fit-img img", { clipPath: "inset(0% 0% 100% 0%)", scale: 1.08 }, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: 1.8, ease: "expo.out", scrollTrigger: { trigger: ".fit", start: "top 75%" } });
+  gsap.from(".lead", { y: 40, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: ".lead", start: "top 86%" } });
+  gsap.from(".finds li", { x: 48, opacity: 0, duration: 1, ease: "power3.out", stagger: .14, scrollTrigger: { trigger: ".finds", start: "top 82%" } });
+  gsap.from(".finds .tag", { scale: .6, opacity: 0, duration: .7, ease: "back.out(2)", stagger: .14, delay: .25, scrollTrigger: { trigger: ".finds", start: "top 82%" } });
+  gsap.from(".note", { y: 30, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".note", start: "top 92%" } });
+  gsap.fromTo(".lab", { clipPath: "inset(0% 0% 0% 0% round 0px)" }, { clipPath: "inset(0% 3% 0% 3% round 40px)", ease: "none", immediateRender: false, scrollTrigger: { trigger: ".lab", start: "bottom 80%", end: "bottom top", scrub: true } });
+
+  // 06 Result: the finished garment lights up
+  gsap.fromTo(".final-img", { clipPath: "inset(14% 22% 14% 22% round 4px)" }, { clipPath: "inset(0% 0% 0% 0% round 4px)", ease: "none", scrollTrigger: { trigger: ".result", start: "top 85%", end: "top 10%", scrub: 1 } });
+  gsap.fromTo(".final-img img", { scale: 1.22, filter: "brightness(.28) saturate(.4)" }, { scale: 1, filter: "brightness(1) saturate(1)", ease: "none", scrollTrigger: { trigger: ".result", start: "top 85%", end: "top 10%", scrub: 1 } });
+  gsap.from(".made li", { y: 34, opacity: 0, duration: .95, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".made", start: "top 82%" } });
+  gsap.fromTo(".lq .w", { opacity: .5 }, { opacity: 1, stagger: .1, ease: "none", scrollTrigger: { trigger: ".lq", start: "top 82%", end: "bottom 55%", scrub: true } });
+  gsap.from(".result .btn", { y: 24, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".result .btn", start: "top 94%" } });
+
+  // 07 Next: the big 07 drifts, each change draws its own line
+  gsap.to(".nextstep .bigidx", { yPercent: -30, ease: "none", scrollTrigger: { trigger: ".nextstep", start: "top bottom", end: "bottom top", scrub: true } });
+  gsap.from(".changes .ln", { scaleX: 0, duration: 1.4, ease: "expo.out", stagger: .15, scrollTrigger: { trigger: ".changes", start: "top 82%" } });
+  gsap.from(".changes .n, .changes p", { y: 40, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .08, scrollTrigger: { trigger: ".changes", start: "top 82%" } });
+  // Final: the board's pieces arrive in order and the portrait rises last
+  gsap.from(".final-title, .final-main .fk", { y: 30, opacity: 0, duration: 1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".finals", start: "top 70%" } });
+  gsap.utils.toArray(".finals .fx img").forEach(img => gsap.fromTo(img, { clipPath: "inset(100% 0% 0% 0%)", scale: 1.1 }, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: 1.5, ease: "expo.out", scrollTrigger: { trigger: img.closest(".fx"), start: "top 88%" } }));
+  gsap.from(".fx-text, .features-text, .final-side .fk, .final-side .btn, .video-text", { y: 26, opacity: 0, duration: 1, ease: "power3.out", stagger: .08, scrollTrigger: { trigger: ".finals", start: "top 60%" } });
+  gsap.fromTo(".final-portrait", { yPercent: 14, opacity: 0 }, { yPercent: 0, opacity: 1, duration: 1.8, ease: "expo.out", scrollTrigger: { trigger: ".final-portrait", start: "top 94%" } });
+
+  gsap.from(".next-case > *", { y: 40, opacity: 0, duration: 1.2, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".case-nav", start: "top 88%" } });
+
+  ScrollTrigger.sort();
+  addEventListener("load", () => ScrollTrigger.refresh());
+  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+})();
+</script>
+</body>
+</html>

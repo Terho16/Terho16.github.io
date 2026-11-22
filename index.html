@@ -1,25 +1,334 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Tianhao Wang — interaction, wearable and fashion design portfolio." />
-    <title>TIANHAO WANG.COM</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23101116'/%3E%3Cpath d='M7 8h18v4h-7v12h-4V12H7z' fill='%23b5a3ff'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="clarity.css?v=12" />
-  </head>
-  <body>
-    <header class="topbar">
-      <a class="brand" href="./">TIANHAO WANG.COM</a>
-      <p>Fashion · Wearables · Interaction</p>
-      <a class="mail" href="mailto:isaac1616@163.com">Contact ↗</a>
-    </header>
-    <main id="app"></main>
-    <footer class="footer"><span>© 2026 Tianhao Wang</span><a href="mailto:isaac1616@163.com">isaac1616@163.com</a></footer>
-    <script src="app.js?v=12"></script>
-  </body>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tianhao Wang | Product &amp; Experience Designer</title>
+<meta name="description" content="Tianhao Wang designs AI hardware and wearables. Fashion-trained product and experience designer, M.S. in Experience Design at Northeastern University.">
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Tianhao Wang | Product &amp; Experience Designer" />
+  <meta property="og:description" content="AI hardware and wearables, designed from the body out." />
+  <meta property="og:url" content="https://terho16.github.io/" />
+  <meta property="og:image" content="https://terho16.github.io/assets/opt/cover-eunola-clean.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <script>
+    // Old ?project= links (printed resumes, shared URLs) land on their new pages
+    (function () {
+      var p = new URLSearchParams(location.search).get('project');
+      if (!p) return;
+      var to = { eunoia: 'eunoia/', eunola: 'eunoia/', wonderorb: 'wonderorb/', fadence: 'fadence/',
+        'nature-designer': 'nature-designer/', symbiotic: 'nature-designer/', jovision: 'project.html?project=jovision',
+        fashion: './#about', oracle: './#about', ornament: './#about' }[p];
+      location.replace(to || './');
+    })();
+  </script>
+<meta name="theme-color" content="#f7f4ee"><!-- ds-allow-hardcode: the theme-color meta needs a literal colour -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a2bc3'/%3E%3Cpath d='M7 8h18v4h-7v12h-4V12H7z' fill='%23f6f5f1'/%3E%3C/svg%3E" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Instrument+Serif&display=swap" rel="stylesheet">
+<style>
+  /* ds-allow-hardcode:start: standalone homepage prototype with its own local tokens, not part of the site's design system */
+  /* Direction (unslop pass, 2026-11-22)
+     Product: the portfolio of a fashion-trained designer of hardware and wearables people wear and touch.
+     Character: tactile, quiet, exact.
+     World: a pattern-cutting studio. Warm paper, fabric, soft fitting-room light; cobalt from the resume and the site icon.
+     Moments: the Eunoia studio photo in the hero; the work index told in real photographs.
+     Signature: the stitch, a running dashed line, used only for dividers and link underlines. */
+  :root {
+    --paper: #f7f4ee;
+    --raised: #efe9df;
+    --ink: #1f1b16;
+    --ink-2: #5e554a;
+    --ink-3: #74695c;          /* muted: meta and captions, about 4.9:1 on paper */
+    --line: rgba(31, 27, 22, .1);
+    --stitch: rgba(116, 105, 92, .55);
+    --accent: #1a2bc3;         /* cobalt, the resume's and the site icon's colour */
+    --accent-press: #1522a0;
+    --on-accent: #ffffff;
+    --dark: #161513;
+    --on-dark: #efe9de;
+    --on-dark-2: #aaa398;
+    --dark-line: rgba(239, 233, 222, .1);
+    --f-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
+    --f-serif: "Instrument Serif", Georgia, serif;
+    --ease: cubic-bezier(.22, 1, .36, 1);
+    --gut: clamp(24px, 4.4vw, 64px);
+    --max: 1344px;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--paper); scroll-behavior: smooth; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 400 16px/1.6 var(--f-sans); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  img { display: block; max-width: 100%; height: auto; }
+  i { font-style: normal; color: var(--ink); }
+  .nb { white-space: nowrap; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gut); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+  .skip { position: absolute; left: 16px; top: -56px; z-index: 10; padding: 8px 12px; border-radius: 8px; background: var(--ink); color: var(--paper); font-size: 14px; text-decoration: none; }
+  .skip:focus { top: 12px; }
+
+  /* the stitch: a running dashed line, the page's one signature detail */
+  .stitched { position: relative; }
+  .stitched::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background: repeating-linear-gradient(90deg, var(--stitch) 0 6px, rgba(0, 0, 0, 0) 6px 12px); }
+  .sew { position: relative; text-decoration: none; }
+  .sew::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: repeating-linear-gradient(90deg, currentColor 0 4px, rgba(0, 0, 0, 0) 4px 8px); transform: scaleX(0); transform-origin: left center; transition: transform .45s var(--ease); }
+  .sew:hover::after, .sew:focus-visible::after, a:hover .sew::after, a:focus-visible .sew::after { transform: scaleX(1); }
+
+  /* nav */
+  .nav { height: 64px; display: flex; align-items: center; justify-content: space-between; }
+  .brand { font: 500 16px/1 var(--f-sans); text-decoration: none; }
+  .nav ul { display: flex; gap: 28px; margin: 0; padding: 0; list-style: none; }
+  .nav ul a { font-size: 14px; color: var(--ink-2); transition: color .15s var(--ease); }
+  .nav ul a:hover { color: var(--ink); }
+
+  /* hero: an asymmetric split, the words on the calm side, the photograph carrying the colour */
+  /* a short hero with no picture: one line on calm paper, then the work begins on the same screen */
+  .hero { padding-top: clamp(120px, 22vh, 220px); padding-bottom: clamp(40px, 6vh, 64px); } /* top and bottom only, so the side gutter of .wrap stays */
+  .hero + .section { padding-top: 48px; }
+  .hero h1 { margin: 0; font: 400 clamp(36px, 3.2vw, 48px)/1.1 var(--f-serif); letter-spacing: -.01em; }
+  .actions { display: flex; align-items: center; gap: 28px; margin-top: 32px; }
+  .btn { display: inline-flex; align-items: center; height: 48px; padding: 0 20px; border-radius: 10px; background: var(--accent); color: var(--on-accent); font: 500 15px/1 var(--f-sans); text-decoration: none; transition: background-color .15s var(--ease), transform .12s var(--ease); }
+  .btn:hover { background: var(--accent-press); }
+  .btn:active { transform: scale(.98); }
+  .text-link { font: 500 15px/1 var(--f-sans); color: var(--ink); }
+
+  /* one entrance on load: the hero rises a few pixels, with a short stagger */
+  @keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  .enter > * { animation: rise .5s var(--ease) both; }
+  .enter > *:nth-child(2) { animation-delay: .05s; }
+  .enter > *:nth-child(3) { animation-delay: .1s; }
+  .enter > *:nth-child(4) { animation-delay: .15s; }
+  .enter > *:nth-child(5) { animation-delay: .2s; }
+
+  /* sections */
+  .section { padding-top: 112px; }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; padding-bottom: 24px; }
+  .sec-head h2 { margin: 0; font: 400 clamp(32px, 2.6vw, 38px)/1.1 var(--f-serif); letter-spacing: -.01em; } /* a step below the greeting, which stays the largest line */
+  .sec-head p { margin: 0; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+  /* selected work: an index in photographs, sizes deliberately unequal */
+  .work { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 88px; padding-top: 48px; }
+  .item { display: grid; align-content: start; gap: 20px; color: inherit; text-decoration: none; }
+  .item-img { margin: 0; overflow: hidden; border-radius: 16px; background: var(--raised); }
+  .item-img img { width: 100%; height: 100%; object-fit: cover; }
+  .item-meta { display: flex; gap: 16px; margin: 0; font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .item h3 { margin: 8px 0 0; font: 400 40px/1.08 var(--f-serif); letter-spacing: -.02em; transition: color .15s var(--ease); }
+  .item:hover h3 { color: var(--accent); }
+  .item-line { margin: 12px 0 0; max-width: 34rem; font-size: 17px; line-height: 1.5; color: var(--ink-2); }
+  .item-proof { margin: 8px 0 0; max-width: 34rem; font-size: 15px; line-height: 1.55; color: var(--ink-3); }
+  .item-more { display: inline-block; margin-top: 20px; color: var(--accent); font: 500 15px/1 var(--f-sans); }
+  .i-eunoia { grid-column: 1 / -1; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); column-gap: 24px; align-items: end; }
+  .i-eunoia .item-img { aspect-ratio: 3 / 2; }
+  .i-wonderorb { grid-column: 1 / span 7; }
+  .i-wonderorb .item-img { aspect-ratio: 16 / 9; }
+  .i-fadence { grid-column: 8 / span 5; }
+  .i-fadence .item-img { aspect-ratio: 4 / 3; background: linear-gradient(180deg, #dfe1e3 0%, #c3c7cc 100%); }
+  .i-fadence .item-img img { object-position: 50% 18%; }
+  .i-nature { grid-column: 1 / -1; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: 24px; align-items: end; }
+  .i-nature .item-img { order: 2; aspect-ratio: 9 / 4; }
+
+  /* experience */
+  .xp { list-style: none; margin: 0; padding: 0; }
+  .xp li { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 24px; padding: 28px 0; }
+  .xp .org { margin: 0; font: 500 17px/1.4 var(--f-sans); }
+  .xp .role { margin: 4px 0 0; font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+  .xp .when { margin: 4px 0 0; font-size: 14px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .xp .what { margin: 0; max-width: 44rem; font-size: 16px; line-height: 1.6; color: var(--ink-2); }
+  .xp .text-link { display: inline-block; margin-top: 14px; color: var(--accent); }
+  .after-list { padding: 28px 0 0; }
+
+  /* about */
+  .about { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; align-items: start; padding-top: 24px; }
+  .about-lead { margin: 0; max-width: 40rem; font: 400 32px/1.25 var(--f-serif); letter-spacing: -.01em; }
+  .about-text p:not(.about-lead) { margin: 20px 0 0; max-width: 40rem; font-size: 17px; line-height: 1.65; color: var(--ink-2); }
+  .awards { margin-top: 48px; }
+  .awards h3 { margin: 0 0 8px; font: 500 15px/1.4 var(--f-sans); }
+  .awards ul { list-style: none; margin: 0; padding: 0; }
+  .awards li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; padding: 14px 0; font-size: 15px; line-height: 1.5; color: var(--ink-2); }
+  .awards .yr { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+  .about-photo { margin: 0; }
+  .about-photo img { width: 100%; border-radius: 16px; }
+  .about-photo figcaption { margin-top: 12px; font-size: 13px; color: var(--ink-3); }
+
+  /* fashion and craft */
+  .craft-k { margin: 0 0 8px; font-size: 14px; color: var(--ink-3); }
+  .craft-title { margin: 0; font: 400 clamp(32px, 2.6vw, 38px)/1.1 var(--f-serif); letter-spacing: -.01em; }
+  .craft-lede { margin: 12px 0 0; max-width: 36rem; font-size: 17px; line-height: 1.6; color: var(--ink-2); }
+  .craft-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 24px; align-items: end; margin-top: 48px; }
+  .craft figure { margin: 0; }
+  .craft img { width: 100%; object-fit: cover; border-radius: 16px; background: var(--raised); }
+  .craft .c1 img { aspect-ratio: 5 / 6; }
+  .craft .c2 img { aspect-ratio: 3 / 4; }
+  .craft figcaption { margin-top: 16px; }
+  .craft .t { margin: 0; font: 500 16px/1.4 var(--f-sans); }
+  .craft .m { margin: 2px 0 0; font-size: 13px; color: var(--ink-3); }
+  .craft figcaption p:last-child { margin: 8px 0 0; max-width: 32rem; font-size: 15px; line-height: 1.55; color: var(--ink-2); }
+
+  /* contact: the page closes on the dark of the studio after hours */
+  .contact { margin-top: 144px; background: var(--dark); color: var(--on-dark); }
+  .contact .wrap { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 64px; align-items: end; padding-top: 112px; padding-bottom: 112px; }
+  .contact-k { margin: 0 0 20px; font-size: 14px; color: var(--on-dark-2); }
+  .contact h2 { margin: 0; max-width: 16ch; font: 400 clamp(48px, 4.6vw, 72px)/1.05 var(--f-serif); letter-spacing: -.02em; }
+  .contact-side p { margin: 0 0 28px; font-size: 17px; line-height: 1.6; color: var(--on-dark-2); }
+  .contact .btn { background: var(--on-dark); color: var(--dark); }
+  .contact .btn:hover { background: var(--on-accent); }
+  .contact .text-link { color: var(--on-dark); }
+  .contact-mail { margin: 24px 0 0 !important; font-size: 15px !important; }
+  .contact-mail a { color: var(--on-dark); }
+  .foot { background: var(--dark); color: var(--on-dark-2); }
+  .foot .wrap { display: flex; justify-content: space-between; padding-top: 20px; padding-bottom: 28px; border-top: 1px solid var(--dark-line); font-size: 13px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .enter > * { animation: none; }
+    .sew::after, .btn, .item h3, .nav ul a { transition: none; }
+  }
+  /* ds-allow-hardcode:end */
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="wrap nav">
+  <a class="brand" href="./">Tianhao Wang</a>
+  <nav aria-label="Main">
+    <ul>
+      <li><a class="sew" href="#work">Work</a></li>
+      <li><a class="sew" href="#about">About</a></li>
+      <li><a class="sew" href="mailto:wang.t14@northeastern.edu">Email</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+  <section class="wrap hero" aria-labelledby="hero-title">
+    <div class="enter">
+      <h1 id="hero-title">Hi, I’m Tianhao Wang.</h1>
+    </div>
+  </section>
+
+  <section class="wrap section" id="work" aria-labelledby="work-title">
+    <div class="sec-head"><h2 id="work-title">Selected work</h2><p>Four projects, 2025</p></div>
+    <div class="work stitched">
+      <a class="item i-eunoia" href="eunoia/">
+        <figure class="item-img"><img src="media/eunoia-cover-torso.jpg" width="2000" height="1333" alt="The Eunoia garment up close: glowing light lines run over the shoulders and around the soft air chamber at the waist"></figure>
+        <div>
+          <p class="item-meta"><span>01</span><span>2025</span></p>
+          <h3>Eunoia</h3>
+          <p class="item-line">A screen-free garment designed to ease anxiety in older adults</p>
+          <p class="item-proof">I surveyed 30 older adults, then built a working garment that guides a body scan with light, air, and vibration.</p>
+          <span class="item-more sew">Read the case</span>
+        </div>
+      </a>
+      <a class="item i-wonderorb" href="wonderorb/">
+        <figure class="item-img"><img src="media/cover-wonderorb-clean.jpg" width="1200" height="475" alt="A child playing with the soft, textured Wonderorb"></figure>
+        <div>
+          <p class="item-meta"><span>02</span><span>2025</span></p>
+          <h3>Wonderorb</h3>
+          <p class="item-line">A soft play orb for children with touch sensitivity</p>
+          <p class="item-proof">Task success dropped from 60% in a simple room to 40% in a home-like room. The room itself seemed to get in the way.</p>
+          <span class="item-more sew">Read the case</span>
+        </div>
+      </a>
+      <a class="item i-fadence" href="fadence/">
+        <!-- the Fadence page's own cut-out of a real studio photo, on a quiet silver ground (the old card image carried a downloaded gradient) -->
+        <figure class="item-img"><img src="media/fadence-cutout.webp" width="1320" height="1800" alt="The wearer seen from behind, head bowed, the Fadence shell resting on her neck and shoulders"></figure>
+        <div>
+          <p class="item-meta"><span>03</span><span>2025</span></p>
+          <h3>Fadence</h3>
+          <p class="item-line">A bedtime wearable that answers racing thoughts with warmth, then a soft pulse</p>
+          <span class="item-more sew">See the project</span>
+        </div>
+      </a>
+      <a class="item i-nature" href="nature-designer/">
+        <figure class="item-img"><img src="media/cover-nature-designer.jpg" width="1800" height="800" alt="A 3D rendering of a figure in translucent blue clothing built from plant-like forms, in an icy blue landscape"></figure>
+        <div>
+          <p class="item-meta"><span>04</span><span>Virtual clothing design, 2025</span></p>
+          <h3>Nature Designer</h3>
+          <p class="item-line">Exploring how mycelium and slime molds can generate form and structure</p>
+          <span class="item-more sew">See the project</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="wrap section" id="experience" aria-labelledby="xp-title">
+    <div class="sec-head"><h2 id="xp-title">Experience</h2></div>
+    <ol class="xp">
+      <li class="stitched">
+        <div><p class="org">Shandong Jovision Technology</p><p class="role">Interaction Design Intern, AI Companion Robot</p><p class="when">Jun to Sep 2025</p></div>
+        <div><p class="what">Designed the look and feel of an AI companion robot for children: form, color, materials, and surface details. Worked with engineers on sensor and speaker placement, and took the design from sketches to 3D models to a working prototype.</p><a class="text-link sew" href="project.html?project=jovision">Read the summary</a></div>
+      </li>
+      <li class="stitched">
+        <div><p class="org">MIAMING DESIGN</p><p class="role">Racing Visual Design Intern</p><p class="when">Jan to Mar 2026</p></div>
+        <div><p class="what">Created visual concepts for 10 racing helmets and 2 vehicle liveries for racing clients.</p></div>
+      </li>
+      <li class="stitched">
+        <div><p class="org">Independent Fashion Studio, Beijing</p><p class="role">Design Assistant</p><p class="when">Jul to Oct 2023</p></div>
+        <div><p class="what">Built mood boards, sketched garments, sampled fabrics and trims, and helped make patterns and samples for a collection.</p></div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="wrap section" id="about" aria-labelledby="about-title">
+    <div class="sec-head"><h2 id="about-title">About</h2></div>
+    <div class="about stitched">
+      <div class="about-text">
+        <p class="about-lead">I'm a first-year M.S. student in Experience Design at Northeastern University in Boston.</p>
+        <p>Before that, I studied fashion design at Wuhan Textile University for four years. Fashion taught me how materials feel and how things sit on the body. Now I design products that people wear and touch, and I build prototypes with sensors and code to test my ideas.</p>
+        <div class="awards">
+          <h3>Awards</h3>
+          <ul>
+            <li class="stitched"><span>Excellence Award, Hempel Award: 32nd China International Young Fashion Designers Contest (<i>Reconstruction of Oracle Bone</i>)</span><span class="yr">2024</span></li>
+            <li class="stitched"><span>Bronze Award (Provincial), “Internet+” College Students’ Innovation and Entrepreneurship Competition (<i>Smart Pregnancy Care</i>)</span><span class="yr">2025</span></li>
+            <li class="stitched"><span>Best Color Coordination Award, Huanghelou Cup Fashion Design Competition</span><span class="yr">2024</span></li>
+            <li class="stitched"><span>Excellence Award, Beijing Qipao Design Competition</span><span class="yr">2021</span></li>
+          </ul>
+        </div>
+      </div>
+      <figure class="about-photo">
+        <img src="media/home-studio.jpg" width="1600" height="1067" alt="Tianhao working in the studio">
+        <figcaption>In the studio</figcaption>
+      </figure>
+    </div>
+
+    <div class="craft section">
+      <p class="craft-k">Before product design</p>
+      <h2 class="craft-title">Fashion and craft</h2>
+      <p class="craft-lede">Four years of fashion training shaped how I see material, color, and the body.</p>
+      <div class="craft-grid">
+        <figure class="c1">
+          <img src="media/oracle-editorial-02.jpg" width="1600" height="2240" alt="Editorial photo of one look from Reconstruction of Oracle Bone">
+          <figcaption><p class="t">Reconstruction of Oracle Bone</p><p class="m">Excellence Award, Hempel Award 2024</p><p>A four-look collection that turns oracle-bone script into modular structures and Klein blue.</p></figcaption>
+        </figure>
+        <figure class="c2">
+          <img src="media/jade-necklace-still.jpg" width="1059" height="1400" alt="A jade necklace with metal and beads">
+          <figcaption><p class="t">Ornament as Memory Device</p><p class="m">Jewelry, 2023</p><p>Jade, metal, and beads, made to be worn close to the face and body.</p></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact" id="contact" aria-labelledby="contact-title">
+    <div class="wrap">
+      <div>
+        <p class="contact-k">Contact</p>
+        <h2 id="contact-title">Open to Summer 2027 internships and <span class="nb">6-month</span> co-ops</h2>
+      </div>
+      <div class="contact-side">
+        <p>Product design, available from May to December 2027.</p>
+        <div class="actions">
+          <a class="btn" href="mailto:wang.t14@northeastern.edu">Email me</a>
+        </div>
+        <p class="contact-mail"><a class="sew" href="mailto:wang.t14@northeastern.edu">wang.t14@northeastern.edu</a></p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap"><span>© 2026 Tianhao Wang</span><span>wang.t14@northeastern.edu</span></div>
+</footer>
+</body>
 </html>

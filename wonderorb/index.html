@@ -1,0 +1,1704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wonderorb · Tianhao Wang</title>
+<meta name="description" content="Wonderorb: a soft play orb that helps children with touch sensitivity get used to new textures. A case study by Tianhao Wang.">
+<meta name="theme-color" content="#f3f0e8"><!-- ds-allow-hardcode: the theme-color meta needs a literal colour -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231a2bc3'/%3E%3Cpath d='M7 8h18v4h-7v12h-4V12H7z' fill='%23f6f5f1'/%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Angkor&family=Anton&family=Inter:wght@400;500&family=Julius+Sans+One&family=Outfit:wght@500;600&family=Unbounded:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  /* ds-allow-hardcode:start: standalone motion prototype with its own local tokens, not part of the site's design system */
+  @property --p { syntax: "<percentage>"; inherits: true; initial-value: 0%; }
+  :root {
+    /* white boards, lilac / butter / mint ribbons, photocopy greys: taken from the Wonderorb boards */
+    --bg: #f3f0e8;
+    --bg-2: #e9e5da;
+    --ink: #16141b;
+    --muted: #55515e;
+    --dim: #8a8693;
+    --lilac: #b3a8f2;
+    --violet: #5b4fb0;
+    --butter: #f5d67a;
+    --mint: #a7dfb3;
+    --peach: #f9c79c;
+    --swatch: #e2e1e7;
+    --line: rgba(22, 20, 27, .14);
+    --night: #121016;
+    --night-2: #1c1922;
+    --ink-n: #f1effa;
+    --muted-n: #b3b1c3;
+    --line-n: rgba(179, 168, 242, .24);
+    --gut: clamp(20px, 5vw, 80px);
+    --ease: cubic-bezier(.2, .7, .2, 1);
+    --f-display: "Unbounded", "Arial Black", sans-serif;
+    --f-head: "Outfit", "Helvetica Neue", sans-serif;
+    --f-body: "Inter", "Helvetica Neue", Arial, sans-serif;
+    --f-quote: "Angkor", Georgia, serif;
+    --f-cap: "Julius Sans One", "Helvetica Neue", sans-serif;
+    --f-num: "Anton", Impact, sans-serif;
+    --f-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html { background: var(--bg); }
+  html.lenis, html.lenis body { height: auto; }
+  .lenis.lenis-smooth { scroll-behavior: auto !important; }
+  .lenis.lenis-stopped { overflow: hidden; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 400 18px/1.6 var(--f-body); -webkit-font-smoothing: antialiased; }
+  ::selection { background: var(--lilac); color: var(--ink); }
+  main { overflow-x: clip; } /* elements waiting to slide in never widen the page */
+  img, video { display: block; max-width: 100%; }
+  a { color: inherit; }
+  .wrap { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 var(--gut); }
+  .skip { position: absolute; left: 16px; top: -60px; z-index: 100; background: var(--ink); color: var(--bg); padding: 10px 16px; font: 500 14px var(--f-body); text-decoration: none; }
+  .skip:focus { top: 16px; }
+  :focus-visible { outline: 2px solid var(--violet); outline-offset: 4px; }
+  .sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* paper grain, like the photocopied cut-outs on the boards */
+  .grain { position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: .55; mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .32  0 0 0 0 .3  0 0 0 0 .36  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+
+  .eyebrow { margin: 0; font: 400 13px/1.4 var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--violet); }
+  .h2 { margin: 0; font: 600 clamp(36px, 4.4vw, 72px)/1.02 var(--f-head); letter-spacing: -.02em; }
+  .statement { margin: 22px 0 0; font: 600 clamp(48px, 7vw, 124px)/.98 var(--f-head); letter-spacing: -.03em; }
+  .statement em, .h2 em { font-style: normal; color: var(--violet); }
+  .body { margin: 0; color: var(--muted); font-size: clamp(16px, 1.25vw, 19px); }
+  .cap { margin: 18px 0 0; font: 400 12px/1.5 var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  .k { margin: 0 0 18px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--violet); }
+  .wl { display: inline-block; overflow: hidden; vertical-align: top; padding-bottom: .08em; margin-bottom: -.08em; }
+  .wl > .w { display: inline-block; }
+  .link { position: relative; display: inline-flex; gap: 8px; align-items: center; padding: 12px 0; font: 500 15px var(--f-body); text-decoration: none; color: var(--violet); }
+
+  /* nav: same as Eunoia. Inverted, then blended by difference, so it reads dark on paper and light on photos */
+  .nav { position: fixed; top: 0; left: 0; right: 0; z-index: 40; display: flex; justify-content: space-between; align-items: center; padding: 22px var(--gut); color: var(--ink); filter: invert(1); mix-blend-mode: difference; }
+  .brand { font: 700 15px var(--f-display); letter-spacing: .02em; text-decoration: none; }
+  .nav nav { display: flex; gap: 28px; }
+  .nav a { font: 500 14px var(--f-body); text-decoration: none; position: relative; padding: 12px 0; }
+  .nav nav a::after, .link::after { content: ""; position: absolute; left: 0; right: 0; bottom: 8px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .5s var(--ease); }
+  .nav nav a:hover::after, .link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  /* hero: an editorial page first, then the photo opens out to the whole screen */
+  .hero { position: relative; height: 100svh; min-height: 640px; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto minmax(0, 1fr); padding-top: clamp(84px, 11vh, 120px); overflow: hidden; background: var(--bg); }
+  .hero-media { position: absolute; inset: 0; z-index: 0; pointer-events: none; --ct: 58%; --cr: var(--gut); --cb: var(--gut); --cl: var(--gut); --rad: 6px; }
+  .hero-frame { position: absolute; top: var(--ct); right: var(--cr); bottom: var(--cb); left: var(--cl); overflow: hidden; border-radius: var(--rad); background: var(--bg-2); }
+  .hero-img { width: 100%; height: 100%; object-fit: cover; object-position: 60% 40%; }
+  /* bold rules of different lengths, after the index bars on the final board. The three round the photo ride its edges, so they leave the screen as it opens */
+  .hb { position: absolute; display: block; background: var(--ink); pointer-events: none; }
+  .hb-a { left: var(--cl); bottom: calc(var(--cb) - 20px); width: calc((100% - var(--cl) - var(--cr)) * .32); height: 9px; transform-origin: left center; }
+  .hb-r { right: calc(var(--cr) - 20px); top: var(--ct); width: 9px; height: calc((100% - var(--ct) - var(--cb)) * .46); transform-origin: center top; }
+  .hb-c { right: var(--cr); bottom: calc(var(--cb) - 20px); width: calc((100% - var(--cl) - var(--cr)) * .09); height: 9px; transform-origin: right center; }
+  .hb-m { left: var(--gut); top: 46px; width: 260px; height: 9px; transform-origin: left center; }
+  .hb-v { left: -36px; top: 6px; width: 9px; height: calc(100% - 12px); transform-origin: center top; }
+  /* the same bars as a small index in front of each section label */
+  .ix { display: flex; align-items: center; gap: 10px; height: 9px; margin: 0 0 20px; }
+  .ix i { display: block; flex: none; width: var(--w); height: 100%; background: var(--ink); transform-origin: left center; }
+  .hero-head { position: relative; z-index: 1; display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; }
+  .meta { margin: 0; display: flex; flex-wrap: wrap; gap: 10px 28px; padding-top: 4px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--violet); }
+  .hero-side { position: relative; max-width: 400px; }
+  .lede { margin: 0 0 8px; font: 500 clamp(18px, 1.45vw, 22px)/1.42 var(--f-body); color: var(--ink); }
+  .hero-title { position: relative; z-index: 1; margin: clamp(10px, 2.4vh, 28px) 0 0; padding: 0 var(--gut); font: 800 calc((100vw - 2 * var(--gut)) / 8.45)/.8 var(--f-display); letter-spacing: -.05em; text-transform: uppercase; white-space: nowrap; color: var(--ink); }
+  .hero-title .line { display: block; overflow: hidden; padding: .07em 0 .03em; margin-left: -.04em; }
+  .hero-title .ch { display: inline-block; will-change: transform; }
+  .hero-slot { margin: clamp(18px, 3vh, 34px) var(--gut) var(--gut); }
+  .cue { position: absolute; z-index: 2; left: calc(var(--gut) + 20px); bottom: calc(var(--gut) + 20px); }
+  .cue-in { display: flex; align-items: center; gap: 12px; padding: 9px 16px; border-radius: 99px; background: rgba(22, 20, 27, .72); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--bg); }
+  .cue i { display: block; width: 30px; height: 1px; position: relative; overflow: hidden; background: rgba(243, 240, 232, .35); }
+  .cue i::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 40%; background: var(--bg); animation: cue 2.6s var(--ease) infinite; }
+  @keyframes cue { 0% { transform: translateX(-100%); } 100% { transform: translateX(260%); } }
+
+  /* facts: a spec sheet, the role set larger */
+  .facts { padding: clamp(96px, 14vh, 160px) 0 clamp(56px, 9vh, 110px); }
+  .rule { position: relative; height: 1px; background: var(--line); transform-origin: left; }
+  .rule i { position: absolute; left: 0; top: -8px; width: 36%; height: 9px; background: var(--ink); transform-origin: left; }
+  .facts-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(20px, 2.4vw, 40px); margin: 0; }
+  .f { padding: 26px 0 30px; }
+  .f dt { margin-bottom: 12px; font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--violet); }
+  .f dd { margin: 0; font: 400 16px/1.55 var(--f-body); color: var(--ink); }
+  .f-team { grid-column: span 3; }
+  .f-time { grid-column: span 2; }
+  .f-built { grid-column: span 4; }
+  .f-links { grid-column: span 3; }
+  .f-links dd { display: flex; flex-direction: column; align-items: flex-start; }
+  .f-links .link { padding: 3px 0; }
+  .f-part { grid-column: span 7; border-top: 1px solid var(--line); }
+  .f-result { grid-column: span 5; border-top: 1px solid var(--line); }
+  .f-part dd { max-width: 34ch; font: 500 clamp(20px, 1.75vw, 27px)/1.36 var(--f-head); letter-spacing: -.005em; }
+
+  /* at a glance: the copy on one side, the photo on the other; each line is tied to the spot in the photo it talks about */
+  .glance { position: relative; padding: clamp(40px, 7vh, 80px) 0 clamp(80px, 12vh, 140px); }
+  .g-copy { padding: 0 var(--gut); }
+  .g-copy .h2 { margin-top: 18px; max-width: 14ch; }
+  .lines { list-style: none; margin: clamp(32px, 5vh, 52px) 0 0; padding: 0; }
+  .lines li { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; padding: 16px 0; border-top: 1px solid var(--line); }
+  .lines li:last-child { border-bottom: 1px solid var(--line); }
+  .lines .n { font: 400 22px/1.15 var(--f-num); color: var(--violet); }
+  .lines p { margin: 0; max-width: 40ch; font: 500 clamp(17px, 1.3vw, 21px)/1.42 var(--f-body); }
+  .g-fig { position: relative; margin: clamp(28px, 4vh, 40px) 0 0; }
+  .g-frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: var(--bg-2); --cx: 47%; }
+  /* the photo keeps its own shape so the numbered spots stay put; the frame only decides how much of it shows */
+  .g-img { position: absolute; top: 0; left: 50%; height: 100%; aspect-ratio: 3000 / 1665; transform: translateX(calc(-1 * var(--cx))); }
+  .g-img img { width: 100%; height: 100%; }
+  .g-pins { list-style: none; margin: 0; padding: 0; }
+  .g-pins li { position: absolute; left: var(--x); top: var(--y); display: grid; place-items: center; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: var(--violet); color: var(--bg); font: 400 15px/1 var(--f-num); box-shadow: 0 0 0 6px rgba(243, 240, 232, .55); }
+  .g-cap { padding: 0 var(--gut); }
+  .g-links { position: absolute; left: 0; top: 0; z-index: 3; overflow: visible; pointer-events: none; }
+  .g-links path { fill: none; stroke: var(--violet); stroke-width: 2; stroke-linecap: round; }
+  .g-links circle { fill: var(--violet); }
+  /* a computer: one screen, the copy on the left, the photo running off the right edge */
+  @media (min-width: 901px) {
+    .glance { padding: 0; }
+    .glance-pin { position: relative; height: 100svh; min-height: 620px; overflow: hidden; }
+    .g-copy { position: absolute; z-index: 2; top: 0; bottom: 0; left: 0; width: 47vw; display: flex; flex-direction: column; justify-content: center; padding: 56px 40px 0 max(var(--gut), calc((100vw - 1440px) / 2 + var(--gut))); }
+    .g-copy .h2 { max-width: 12ch; font-size: clamp(40px, 4.4vw, 76px); }
+    .g-fig { position: absolute; z-index: 1; top: 0; right: 0; bottom: 0; left: 50vw; margin: 0; }
+    .g-frame { position: absolute; inset: 0; aspect-ratio: auto; --cx: 40%; }
+    .g-cap { position: absolute; left: 24px; bottom: 24px; margin: 0; padding: 8px 14px; border-radius: 99px; background: rgba(18, 16, 22, .55); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: var(--ink-n); }
+  }
+  /* with motion on, the lines start dim and the spots appear one by one */
+  .m-desk .lines li { opacity: .62; transition: opacity .5s var(--ease); }
+  .m-desk .lines li.is-on { opacity: 1; }
+  .m-desk .g-pins li { transform: scale(0); transition: transform .55s cubic-bezier(.34, 1.56, .64, 1); }
+  .m-desk .g-pins li.is-on { transform: scale(1); }
+
+  /* 01 problem */
+  .problem { position: relative; overflow: hidden; padding: clamp(120px, 18vh, 220px) 0 clamp(96px, 14vh, 170px); }
+  .bigidx { position: absolute; right: -.04em; top: 4vh; z-index: 0; font: 800 clamp(240px, 34vw, 620px)/.8 var(--f-display); letter-spacing: -.06em; color: var(--bg); -webkit-text-stroke: 2px rgba(91, 79, 176, .32); paint-order: stroke fill; pointer-events: none; user-select: none; }
+  .problem .wrap { position: relative; z-index: 1; }
+  .problem .statement { max-width: 11ch; }
+  .pbody { max-width: 30ch; margin: clamp(56px, 9vh, 110px) 0 0 auto; font: 400 clamp(22px, 2.15vw, 36px)/1.42 var(--f-body); letter-spacing: -.01em; color: var(--ink); }
+  .hl { color: inherit; padding: 0 .04em; background: linear-gradient(var(--hc), var(--hc)) no-repeat 0 90% / 100% 42%; }
+  .hl-1 { --hc: var(--lilac); }
+  .hl-2 { --hc: var(--butter); }
+  .hl-3 { --hc: var(--mint); }
+  .wait { display: flex; align-items: center; gap: 18px; max-width: none; margin: clamp(28px, 4vh, 44px) 0 0; font: 500 clamp(17px, 1.35vw, 21px)/1.4 var(--f-body); color: var(--muted); }
+  .wait span { flex: none; }
+  .wait-line { position: relative; flex: 1; height: 1px; background: var(--ink); opacity: .4; transform-origin: left; }
+  .wait-line::after { content: ""; position: absolute; right: -4px; top: -4px; width: 9px; height: 9px; border-radius: 50%; background: var(--ink); }
+
+  /* 02 research: four pain points pair up with four answers */
+  .research { padding: clamp(96px, 14vh, 170px) 0 clamp(96px, 14vh, 170px); background: linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 16%, var(--bg-2) 84%, var(--bg) 100%); }
+  .r-head { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 96px); align-items: end; }
+  .r-head .h2 { margin-top: 18px; max-width: 15ch; }
+  .r-head .body { max-width: 34ch; }
+  .pairs { margin: clamp(64px, 10vh, 120px) 0 0; }
+  .pt { width: 100%; border-collapse: collapse; }
+  .pt th { padding: 0 0 16px; text-align: left; font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--violet); border-bottom: 1px solid var(--ink); }
+  .pt td { padding: clamp(18px, 2.6vh, 28px) 0; vertical-align: middle; border-bottom: 1px solid var(--line); }
+  .pt .c-n { width: clamp(52px, 7vw, 112px); font: 400 clamp(26px, 2.6vw, 40px)/1 var(--f-num); color: var(--violet); }
+  .pt .c-pain { width: 42%; padding-right: clamp(24px, 4vw, 64px); font: 600 clamp(20px, 1.9vw, 30px)/1.22 var(--f-head); letter-spacing: -.01em; }
+  .pt .c-pain > span, .pt .c-ans > span { display: block; }
+  .pt .c-ans { position: relative; padding-left: clamp(36px, 5vw, 80px); }
+  .pt .con { position: absolute; left: 0; top: 50%; width: clamp(24px, 3.6vw, 60px); height: 1px; background: var(--violet); transform-origin: left; }
+  .pt .con::after { content: ""; position: absolute; right: -1px; top: -4px; border-left: 8px solid var(--violet); border-top: 4.5px solid transparent; border-bottom: 4.5px solid transparent; }
+  .pt .chip { display: inline-block; padding: 12px 18px 13px; border-radius: 14px; background: var(--lilac); font: 500 clamp(16px, 1.35vw, 21px)/1.35 var(--f-body); color: var(--ink); }
+  .pt tr:nth-child(2) .chip { background: var(--butter); }
+  .pt tr:nth-child(3) .chip { background: var(--mint); }
+  .pt tr:nth-child(4) .chip { background: var(--peach); }
+  .pairs .cap { margin-top: 20px; }
+
+  /* 03 insight: several senses come together in one toy */
+  .insight { padding: clamp(120px, 18vh, 220px) 0 clamp(80px, 12vh, 140px); }
+  .in-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 112px); align-items: center; }
+  .insight .statement { max-width: 9ch; }
+  .insight .body { max-width: 40ch; margin-top: clamp(28px, 4vh, 44px); }
+  .senses { position: relative; width: min(100%, 560px); aspect-ratio: 1; margin-left: auto; }
+  .sense { position: absolute; left: 50%; top: 50%; width: 40%; aspect-ratio: 1; margin: -20% 0 0 -20%; border-radius: 50%; background: var(--sc); mix-blend-mode: multiply; }
+  .sense b { position: absolute; font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--ink); }
+  .s-touch { --sc: var(--lilac); }
+  .s-light { --sc: var(--butter); }
+  .s-sound { --sc: var(--mint); }
+  .s-scent { --sc: var(--peach); }
+  .s-touch b { left: 16%; top: 20%; }
+  .s-light b { right: 16%; top: 20%; }
+  .s-sound b { left: 16%; bottom: 20%; }
+  .s-scent b { right: 16%; bottom: 20%; }
+  .ring { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .ring circle { fill: none; stroke: var(--ink); stroke-width: .32; }
+
+  /* 04 key decisions */
+  .decisions { padding: clamp(120px, 18vh, 220px) 0 clamp(40px, 6vh, 80px); }
+  .d-head .statement { max-width: 15ch; }
+  .d { margin-top: clamp(120px, 20vh, 240px); }
+  .d-num { display: flex; align-items: flex-end; gap: 18px; margin-bottom: clamp(24px, 4vh, 40px); }
+  .dn { position: relative; display: inline-block; font: 400 clamp(130px, 14vw, 240px)/.8 var(--f-num); color: var(--bg); -webkit-text-stroke: 2px rgba(91, 79, 176, .5); paint-order: stroke fill; --p: 0%; }
+  .dn::after { content: attr(data-text); position: absolute; inset: 0; color: var(--violet); -webkit-text-stroke: 0; clip-path: inset(calc(100% - var(--p)) 0 0 0); }
+  .d-of { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; margin-bottom: 10px; font: 400 13px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+  /* four bars of different lengths; the ones already covered are inked */
+  .d-track { display: flex; gap: 6px; }
+  .d-track i { display: block; height: 9px; background: var(--line); transform-origin: left center; }
+  .d-track i:nth-child(1) { width: 56px; }
+  .d-track i:nth-child(2) { width: 22px; }
+  .d-track i:nth-child(3) { width: 88px; }
+  .d-track i:nth-child(4) { width: 34px; }
+  .d-track i.on { background: var(--ink); }
+  .d-title { margin: 0 0 22px; max-width: 17ch; font: 600 clamp(30px, 3.4vw, 56px)/1.06 var(--f-head); letter-spacing: -.02em; }
+  .own { display: inline-block; margin-left: .3em; padding: 7px 13px 8px; border-radius: 99px; background: var(--ink); color: var(--bg); font: 500 13px/1 var(--f-body); letter-spacing: .02em; vertical-align: .55em; white-space: nowrap; }
+  .d-copy .body { max-width: 46ch; }
+  /* 1 a simple ball */
+  .d1-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 96px); align-items: center; }
+  /* the drawings sit straight on the page, labelled the way the board labels them */
+  .sk-label { display: flex; align-items: center; gap: 12px; margin: 0; font: 400 12px/1.4 var(--f-cap); letter-spacing: .2em; text-transform: uppercase; color: var(--violet); }
+  .sk-label::before { content: ""; flex: none; width: 28px; height: 1px; background: currentColor; }
+  .sk-ball { display: flex; flex-direction: column; gap: 18px; justify-self: center; width: min(100%, 500px); margin: 0; }
+  .sk-ball .sk-label { order: -1; }
+  .sk-ball img { width: 100%; height: auto; }
+  .sk-sheet { margin-top: clamp(72px, 11vh, 130px); }
+  .sk-row { display: grid; grid-template-columns: minmax(0, 5.4fr) minmax(0, 2.3fr) minmax(0, 4.3fr); column-gap: clamp(28px, 4vw, 72px); border-top: 1px solid var(--line); border-bottom: 1px solid var(--ink); }
+  .sk-g { display: grid; grid-template-rows: auto 1fr; row-gap: 28px; padding-top: 18px; }
+  .sk-g > :last-child { align-self: end; }
+  .sk-pair { display: flex; align-items: flex-end; }
+  .sk-pair img { width: 52%; height: auto; }
+  .sk-half { margin-left: -4%; }
+  /* one drawing cut into three bands along its empty rows, so the module can come apart */
+  .sk-mod { position: relative; aspect-ratio: 700 / 1379; }
+  .ly { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ly-1 { clip-path: inset(0 0 83.4% 0); }
+  .ly-2 { clip-path: inset(16.6% 0 48.6% 0); }
+  .ly-3 { clip-path: inset(51.4% 0 0 0); }
+  .sk-child { width: 100%; height: auto; }
+  .sk-sheet .cap { margin-top: 20px; }
+  /* 2 fabric modules */
+  .d2-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 112px); align-items: center; }
+  .swap { position: relative; margin: 0; }
+  .vframe { position: relative; overflow: hidden; border-radius: 6px; background: var(--bg-2); }
+  .vframe img { width: 100%; height: auto; }
+  .scale { margin: clamp(96px, 14vh, 160px) 0 0; }
+  .scale-top .cap { margin: 0; }
+  .rows { display: grid; gap: clamp(28px, 4vh, 44px); max-width: 1440px; margin: 26px auto 0; padding: 0 var(--gut); }
+  .row { display: grid; grid-template-columns: clamp(88px, 8vw, 132px) minmax(0, 1fr); align-items: start; gap: 16px; }
+  .row-k { margin: 0; padding-top: 6px; font: 700 clamp(18px, 1.6vw, 26px)/1 var(--f-display); letter-spacing: -.01em; text-transform: uppercase; color: var(--violet); }
+  .tiles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 12px; }
+  .sw { position: relative; margin: 0; }
+  .sw-img { position: relative; aspect-ratio: 1; overflow: hidden; border-radius: 6px; background: var(--swatch); }
+  .sw-img img { width: 100%; height: 100%; object-fit: contain; }
+  .sw-n { position: absolute; left: 10px; top: 9px; font: 400 14px/1 var(--f-num); letter-spacing: .04em; color: var(--ink); }
+  .scale-bar { display: none; }
+  .m-desk .scale-pin { height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+  .m-desk .rows { display: flex; flex-direction: column; gap: clamp(20px, 3.2vh, 34px); width: max-content; max-width: none; margin: clamp(22px, 3.6vh, 38px) 0 0; }
+  .m-desk .row { display: flex; align-items: center; gap: clamp(16px, 1.8vw, 28px); }
+  .m-desk .row + .row { padding-left: 12vw; }
+  .m-desk .row-k { flex: none; width: clamp(96px, 8vw, 132px); padding: 0; }
+  .m-desk .tiles { display: flex; gap: clamp(14px, 1.6vw, 24px); }
+  .m-desk .sw-img { aspect-ratio: auto; height: min(30vh, 300px); background: none; }
+  .m-desk .sw-img img { width: auto; height: 100%; object-fit: initial; }
+  .m-desk .scale-bar { display: block; margin-top: clamp(30px, 5vh, 52px); }
+  .scale-bar i { position: relative; display: block; height: 2px; background: var(--line); }
+  .scale-bar b { position: absolute; inset: 0; background: var(--violet); transform-origin: left; }
+  /* 3 light and sound */
+  .d3-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 6vw, 112px); align-items: center; }
+  .build { margin: 0; }
+  .build-img { overflow: hidden; border-radius: 6px; background: var(--bg-2); }
+  .build-img img { width: 100%; height: auto; }
+  .story { margin: clamp(96px, 15vh, 170px) 0 0; }
+  .story-grid { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: clamp(28px, 4vw, 72px); row-gap: clamp(64px, 10vh, 120px); }
+  .story-path { position: absolute; left: 0; top: 0; z-index: 0; overflow: visible; pointer-events: none; }
+  .story-path .sb { fill: none; stroke: var(--line); stroke-width: 2; stroke-dasharray: 2 8; stroke-linecap: round; }
+  .story-path .sl { fill: none; stroke: url(#rib); stroke-width: 16; stroke-linecap: round; opacity: .9; }
+  .story-path .sd { fill: var(--bg); stroke: var(--line); stroke-width: 2; transition: fill .4s, stroke .4s; }
+  .story-path .sd.is-on { fill: var(--violet); stroke: var(--violet); }
+  .rib-a { stop-color: var(--lilac); }
+  .rib-b { stop-color: var(--peach); }
+  .rib-c { stop-color: var(--butter); }
+  .st { position: relative; z-index: 1; margin: 0; }
+  .st-1 { grid-area: 1 / 1; }
+  .st-2 { grid-area: 1 / 2; margin-top: 7vh; }
+  .st-3 { grid-area: 1 / 3; margin-top: 14vh; }
+  .st-4 { grid-area: 2 / 3; }
+  .st-5 { grid-area: 2 / 2; margin-top: 7vh; }
+  .st-6 { grid-area: 2 / 1; margin-top: 14vh; }
+  /* the frame stays opaque so the ribbon only shows between panels; the drawing inside fades */
+  .st-frame { position: relative; overflow: hidden; border-radius: 12px; background: var(--bg); box-shadow: 0 0 0 1px var(--line); transition: box-shadow .7s var(--ease); }
+  .st-frame img { width: 100%; height: auto; mix-blend-mode: multiply; filter: grayscale(1); opacity: .36; transition: filter .7s var(--ease), opacity .7s var(--ease); }
+  .st-n { position: absolute; left: 12px; top: 12px; z-index: 1; display: grid; place-items: center; min-width: 34px; height: 34px; padding: 0 8px; border-radius: 99px; background: var(--bg); box-shadow: 0 0 0 1px var(--line); font: 400 16px/1 var(--f-num); color: var(--ink); transition: background .5s, color .5s; }
+  .st.is-on .st-frame { box-shadow: 0 0 0 2px var(--lilac), 0 22px 60px rgba(91, 79, 176, .16); }
+  .st.is-on .st-frame img { filter: none; opacity: 1; }
+  .st.is-on .st-n { background: var(--violet); color: var(--bg); box-shadow: none; }
+  .story .cap { margin-top: clamp(40px, 6vh, 64px); }
+  /* 4 the motion model */
+  .d4-grid { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 6vw, 112px); align-items: center; }
+  .d-copy .body + .body { margin-top: 16px; }
+  /* 4: the model's steps, then the real recorded data */
+  .pipe { position: relative; list-style: none; margin: 0; padding: 0; }
+  .pipe::before { content: ""; position: absolute; left: 21px; top: 30px; bottom: 30px; width: 1px; background: var(--line); }
+  .pipe li { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 18px; align-items: center; padding: 9px 0; opacity: .62; transition: opacity .5s var(--ease); }
+  .pipe li.is-on { opacity: 1; }
+  .pipe .pi { position: relative; z-index: 1; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--bg); box-shadow: 0 0 0 1px var(--line); font: 400 15px/1 var(--f-num); transition: background .5s var(--ease), color .5s var(--ease), box-shadow .5s var(--ease); }
+  .pipe li.is-on .pi { background: var(--violet); color: var(--bg); box-shadow: none; }
+  .pipe p { margin: 0; font: 600 clamp(18px, 1.5vw, 24px)/1.25 var(--f-head); }
+  .data { margin-top: clamp(64px, 10vh, 110px); }
+  .plots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(14px, 1.8vw, 28px); }
+  /* only the chart dims while it waits; its label keeps full contrast */
+  .plot .pl-img { opacity: .45; transition: opacity .6s var(--ease); }
+  .plot.is-on .pl-img { opacity: 1; }
+  .pl-img { position: relative; aspect-ratio: 800 / 452; overflow: hidden; border-radius: 8px; background: var(--night); }
+  .pl-img img { width: 100%; height: 100%; object-fit: cover; }
+  .scan { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; background: var(--lilac); box-shadow: 0 0 14px 3px rgba(179, 168, 242, .7); opacity: 0; }
+  .pl-k { display: block; margin-top: 14px; font: 400 12px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); transition: color .5s; }
+  .plot.is-on .pl-k { color: var(--violet); }
+  /* 4: the parent app, from the board's final app output */
+  .app { margin-top: clamp(96px, 15vh, 170px); }
+  .app-top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(32px, 5vw, 96px); align-items: end; }
+  .app-copy .body { max-width: 44ch; }
+  .app-hand { margin: 0; }
+  .ah-img { overflow: hidden; border-radius: 6px; background: var(--bg-2); }
+  .ah-img img { width: 100%; height: auto; }
+  .ph-grid { position: relative; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); column-gap: clamp(12px, 1.4vw, 22px); row-gap: 26px; margin-top: clamp(64px, 10vh, 110px); }
+  /* the board's three groups of screens, each under a bar as long as the group */
+  .ph-g { grid-row: 1; display: flex; flex-direction: column; gap: 12px; }
+  .ph-g i { display: block; height: 9px; background: var(--ink); transform-origin: left center; }
+  .ph-g span { font: 400 12px/1.4 var(--f-cap); letter-spacing: .2em; text-transform: uppercase; color: var(--violet); }
+  .ph-g1 { grid-column: 1 / span 2; }
+  .ph-g2 { grid-column: 3 / span 2; }
+  .ph-g3 { grid-column: 5 / span 3; }
+  .ph { grid-row: 2; margin: 0; }
+  .ph img { width: 100%; height: auto; filter: drop-shadow(0 18px 26px rgba(22, 20, 27, .16)); }
+  .ph-k { display: block; margin-top: 14px; font: 400 11px/1.4 var(--f-cap); letter-spacing: .14em; text-transform: uppercase; color: var(--muted); text-align: center; }
+  .app .cap { margin-top: clamp(28px, 4vh, 40px); }
+  /* 1: the render, with numbered parts */
+  .layers { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 112px); align-items: center; margin-top: clamp(96px, 15vh, 170px); }
+  .layers-fig { margin: 0; }
+  .layers-img { position: relative; width: min(100%, 540px); margin: 0 auto; }
+  .layers-img img { width: 100%; height: auto; mix-blend-mode: multiply; }
+  .dots { list-style: none; margin: 0; padding: 0; }
+  .dots li { position: absolute; left: var(--x); top: var(--y); display: grid; place-items: center; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; background: var(--violet); color: var(--bg); font: 400 15px/1 var(--f-num); box-shadow: 0 0 0 6px rgba(91, 79, 176, .2); }
+  .layers-fig .cap { text-align: center; }
+  .built { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .built li { display: grid; grid-template-columns: 46px minmax(0, 1fr); gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+  .built .n { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--violet); color: var(--bg); font: 400 15px/1 var(--f-num); }
+  .built b { display: block; margin-bottom: 4px; font: 600 clamp(18px, 1.45vw, 22px)/1.25 var(--f-head); }
+  .built p { margin: 0; color: var(--muted); font-size: clamp(15px, 1.15vw, 17px); line-height: 1.55; }
+  /* 3: the circuit, rebuilt from the board as a live diagram */
+  .sys { margin-top: clamp(96px, 15vh, 170px); }
+  .sys-copy, .code { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 5vw, 96px); align-items: start; }
+  .sys-copy .k { margin-top: 5px; }
+  .sys-copy .body { max-width: 62ch; }
+  .circuit { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2.6vh, 30px) clamp(56px, 9vw, 160px); align-items: center; margin-top: clamp(48px, 8vh, 88px); }
+  .c-wires { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; }
+  .c-wires .bw { fill: none; stroke: var(--line); stroke-width: 1.5; }
+  .c-wires .lw { fill: none; stroke-width: 3; stroke-linecap: round; }
+  .c-wires .w-in { stroke: var(--mint); }
+  .c-wires .w-out { stroke: var(--lilac); }
+  .c-wires .w-pow { stroke: var(--butter); }
+  .cn { position: relative; z-index: 1; padding: 15px 18px 17px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg); transition: background .5s var(--ease), color .5s var(--ease), border-color .5s var(--ease); }
+  .cn .ci { display: block; margin-bottom: 7px; font: 400 11px var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--violet); transition: color .5s var(--ease); }
+  .cn p { margin: 0; font: 600 clamp(15px, 1.2vw, 19px)/1.3 var(--f-head); }
+  .cn.is-on { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .cn.is-on .ci { color: var(--lilac); }
+  .c-hub.is-on { background: var(--violet); border-color: var(--violet); }
+  .c-hub.is-on .ci { color: var(--bg); }
+  .c-a { grid-area: 1 / 1; }
+  .c-b { grid-area: 3 / 1; }
+  .c-hub { grid-area: 2 / 2; }
+  .c-c { grid-area: 1 / 3; }
+  .c-d { grid-area: 2 / 3; }
+  .c-e { grid-area: 3 / 3; }
+  .c-f { grid-area: 4 / 2; }
+  .tests { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(16px, 2.4vw, 40px); align-items: end; margin-top: clamp(64px, 10vh, 110px); }
+  .tests figure { margin: 0; }
+  .t-img { overflow: hidden; border-radius: 6px; background: var(--bg-2); }
+  .t-img img { width: 100%; height: auto; }
+  /* 3: the state machine from my code */
+  .code { align-items: center; margin-top: clamp(96px, 15vh, 170px); }
+  .code-copy .body { max-width: 46ch; }
+  .sm { display: grid; gap: 16px; }
+  .codebox { padding: 20px 0; border-radius: 12px; background: var(--night); color: var(--muted-n); font: 400 clamp(13px, 1.05vw, 16px)/1.75 var(--f-mono); overflow-x: auto; }
+  .codebox code { display: block; font: inherit; }
+  .cl { display: block; padding: 0 24px; white-space: pre; transition: background .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease); }
+  .cl.is-on { background: rgba(179, 168, 242, .16); color: var(--ink-n); box-shadow: inset 3px 0 0 var(--lilac); }
+  .stages { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+  .stages li { padding: 14px 14px 16px; border: 1px solid var(--line); border-radius: 12px; transition: background .5s var(--ease), color .5s var(--ease), border-color .5s var(--ease); }
+  .stages b { display: block; font: 600 clamp(15px, 1.2vw, 18px)/1.2 var(--f-head); }
+  .stages span { display: block; margin-top: 6px; font-size: 14px; line-height: 1.4; color: var(--muted); transition: color .5s var(--ease); }
+  .stages li.is-on { background: var(--ink); border-color: var(--ink); color: var(--bg); }
+  .stages li.is-on span { color: var(--muted-n); }
+  /* making the prototype: a strip of frames that drifts sideways as you scroll */
+  .make { margin-top: clamp(120px, 18vh, 220px); }
+  .make-head .k { margin: 0; }
+  .make-strip { margin-top: clamp(26px, 4vh, 40px); overflow: hidden; }
+  .make-row { list-style: none; margin: 0; padding: 0 var(--gut); display: flex; gap: clamp(14px, 1.6vw, 24px); width: max-content; }
+  .mk { flex: none; margin: 0; }
+  .mk-img { height: min(46vh, 440px); overflow: hidden; border-radius: 6px; background: var(--bg-2); }
+  .mk-img img { width: auto; height: 100%; }
+  .mk-cap { display: block; margin-top: 14px; font: 400 12px/1.5 var(--f-cap); letter-spacing: .22em; text-transform: uppercase; color: var(--muted); }
+
+  /* 05 prototype and test: the lab chapter turns to night */
+  .lab { position: relative; margin-top: clamp(100px, 16vh, 180px); padding: clamp(110px, 16vh, 200px) 0; background: var(--night); color: var(--ink-n); }
+  .lab .eyebrow, .lab .k { color: var(--lilac); }
+  .lab .ix i, .play .ix i { background: var(--lilac); }
+  .lab .h2 { margin-top: 18px; max-width: 17ch; }
+  .lab .cap { color: var(--muted-n); }
+  .lab-lead { max-width: 44ch; margin: clamp(28px, 4vh, 44px) 0 0; font: 400 clamp(19px, 1.6vw, 25px)/1.5 var(--f-body); color: var(--muted-n); }
+  .t-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: clamp(32px, 6vw, 112px); align-items: end; margin-top: clamp(72px, 11vh, 130px); }
+  .chart { margin: 0; }
+  .bars { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: clamp(24px, 4vw, 72px); height: clamp(320px, 54vh, 540px); padding: 0 0 0 clamp(44px, 4vw, 60px); }
+  .grid-l { position: absolute; left: 0; right: 0; height: 1px; background: var(--line-n); }
+  .grid-l span { position: absolute; left: 0; top: -.75em; font: 400 12px var(--f-cap); letter-spacing: .1em; color: var(--muted-n); }
+  .grid-l.g0 { bottom: 0; background: rgba(241, 239, 250, .5); }
+  .grid-l.g50 { bottom: 50%; }
+  .grid-l.g100 { bottom: 100%; }
+  .bar { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; --h: 0; }
+  .bar i { display: block; height: calc(var(--h) * 1%); border-radius: 8px 8px 0 0; background: var(--lilac); }
+  .bar .val { display: block; margin-bottom: 14px; font: 400 clamp(48px, 5.4vw, 92px)/.9 var(--f-num); color: var(--ink-n); font-variant-numeric: tabular-nums; }
+  .bar .bl { position: absolute; left: 0; top: 100%; margin-top: 16px; font: 600 clamp(16px, 1.3vw, 20px)/1.2 var(--f-head); color: var(--ink-n); white-space: nowrap; }
+  .chart .cap { margin-top: 68px; }
+  .room { margin: 0; }
+  .room-img { overflow: hidden; border-radius: 6px; background: var(--night-2); }
+  .room-img img { width: 100%; height: auto; }
+  .t-more { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(16px, 2.4vw, 40px); align-items: end; margin-top: clamp(48px, 8vh, 90px); }
+  .t-more figure { margin: 0; }
+  .showed-side .k { margin-bottom: 24px; }
+  .mod-fig { margin: 0; }
+  .showed { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 5vw, 96px); margin-top: clamp(96px, 14vh, 170px); }
+  .finds { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line-n); }
+  .finds li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 22px 0; border-bottom: 1px solid var(--line-n); }
+  .finds .n { font: 400 28px/1 var(--f-num); color: var(--lilac); }
+  .finds p { margin: 0; font: 500 clamp(18px, 1.5vw, 23px)/1.42 var(--f-body); }
+  .note { margin: clamp(32px, 5vh, 48px) 0 0; padding: 24px 28px; border: 1px dashed rgba(179, 168, 242, .55); color: var(--muted-n); font-size: 17px; }
+
+  /* 06 result */
+  .result { padding: clamp(130px, 20vh, 240px) 0 clamp(60px, 9vh, 110px); }
+  .res-grid { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: clamp(32px, 6vw, 112px); align-items: center; }
+  .res-copy .statement { font-size: clamp(48px, 5.6vw, 100px); }
+  .made { list-style: none; margin: clamp(40px, 6vh, 64px) 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .made li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 24px 0; border-bottom: 1px solid var(--line); }
+  .made .n { font: 400 36px/1 var(--f-num); color: var(--violet); }
+  .made p { margin: 0; font: 500 clamp(18px, 1.5vw, 23px)/1.45 var(--f-body); }
+  .final { margin: 0; }
+  .final-img { overflow: hidden; border-radius: 6px; background: var(--bg-2); }
+  .final-img img { width: 100%; height: min(84vh, 150vw); object-fit: cover; object-position: 50% 52%; }
+  /* the final output board: a line of text, a numbered key with bars, then the photos at one height */
+  .fo { margin-top: clamp(96px, 15vh, 170px); }
+  .fo-top { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: clamp(32px, 5vw, 96px); align-items: end; }
+  .fo-line { margin: 0; max-width: 30ch; font: 600 clamp(26px, 2.6vw, 42px)/1.18 var(--f-head); letter-spacing: -.015em; }
+  .fo-key { display: flex; align-items: flex-end; justify-content: flex-end; gap: 22px; }
+  .fo-legend { list-style: none; margin: 0; padding: 0; text-align: right; font-size: 13px; line-height: 1.6; color: var(--muted); }
+  .fo-idx { display: grid; grid-template-columns: auto 9px auto 9px auto; grid-template-rows: auto 9px; column-gap: 12px; row-gap: 8px; align-items: end; font: 800 40px/.9 var(--f-display); }
+  .fo-idx i { display: block; background: var(--ink); }
+  .fo-idx .fv { width: 9px; height: 100%; transform-origin: center bottom; }
+  .fo-idx i:nth-of-type(2) { height: 58%; align-self: end; }
+  .fo-idx .fh { grid-column: 1 / -1; height: 9px; transform-origin: left center; }
+  .fo-row { display: flex; gap: clamp(14px, 1.6vw, 24px); margin-top: clamp(32px, 5vh, 52px); }
+  .fo-row figure { position: relative; flex: var(--a) 1 0; min-width: 0; margin: 0; }
+  .fo-img { overflow: hidden; border-radius: 4px; background: var(--bg-2); }
+  .fo-img img { width: 100%; height: auto; }
+  .fo-n { position: absolute; left: 0; top: 0; display: grid; place-items: center; min-width: 40px; height: 40px; padding: 0 10px; background: var(--bg); font: 800 20px/1 var(--f-display); }
+  .wide { margin-top: clamp(80px, 12vh, 140px); }
+  .wide-img { overflow: hidden; border-radius: 6px; background: var(--bg-2); }
+  .wide-img img { width: 100%; height: auto; }
+  .learned { margin-top: clamp(96px, 15vh, 170px); }
+  .lq { margin: 0; max-width: 26ch; font: 400 clamp(30px, 3.7vw, 62px)/1.18 var(--f-quote); }
+  .btns { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(40px, 6vh, 56px); }
+  .btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 26px; border: 1px solid var(--violet); border-radius: 99px; color: var(--violet); font: 500 15px var(--f-body); text-decoration: none; transition: background .35s var(--ease), color .35s var(--ease), transform .15s; }
+  .btn:hover { background: var(--violet); color: var(--bg); }
+  .btn:active { transform: scale(.97); }
+
+  /* 07 next: the orb gets smaller, warmer, and closer to the app */
+  .nextstep { position: relative; padding: clamp(120px, 18vh, 220px) 0 clamp(100px, 15vh, 180px); }
+  .ns-grid { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 96px); }
+  .changes { list-style: none; margin: clamp(56px, 9vh, 100px) 0 0; padding: 0; border-top: 1px solid var(--line); }
+  .changes li { position: relative; display: grid; grid-template-columns: clamp(56px, 7vw, 110px) minmax(0, 1fr); align-items: baseline; padding: clamp(24px, 3.8vh, 42px) 0; }
+  .changes .ln { position: absolute; left: 0; right: 0; bottom: 0; height: 1px; background: var(--line); transform-origin: left center; }
+  .changes .n { font: 400 clamp(22px, 2.4vw, 40px)/1 var(--f-num); color: var(--violet); }
+  .changes p { margin: 0; max-width: 24ch; font: 600 clamp(26px, 3vw, 50px)/1.1 var(--f-head); letter-spacing: -.02em; }
+  .shape { position: sticky; top: 16vh; height: 68vh; display: grid; place-items: center; }
+  .shape svg { width: 100%; max-width: 460px; height: auto; overflow: visible; }
+  .shape .o-fill { fill: var(--lilac); opacity: 0; }
+  .shape .o-ring { fill: none; stroke: var(--ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .shape .app { fill: var(--bg); stroke: var(--ink); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
+  .shape .tie { fill: none; stroke: var(--violet); stroke-width: 1.5; stroke-dasharray: 4 6; vector-effect: non-scaling-stroke; }
+  .f-a { fill: var(--butter); }
+  .f-b { fill: var(--mint); }
+  .f-c { fill: var(--peach); }
+
+  /* the orb in play: two clips side by side at the same height */
+  .play { margin-top: clamp(24px, 4vh, 48px); padding: clamp(80px, 12vh, 140px) 0; background: var(--night); color: var(--ink-n); }
+  .play .k { margin: 0; color: var(--lilac); }
+  .play .cap { color: var(--muted-n); }
+  .play :focus-visible { outline-color: var(--lilac); }
+  .play-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; }
+  .clips { display: flex; gap: clamp(14px, 1.8vw, 28px); margin-top: clamp(24px, 4vh, 40px); }
+  .clip { margin: 0; min-width: 0; }
+  .clip-a { flex: 2.4615 1 0; }
+  .clip-b { flex: 1.7778 1 0; }
+  .clip-frame { overflow: hidden; border-radius: 6px; background: var(--night-2); }
+  .clip-a .clip-frame { aspect-ratio: 1280 / 520; }
+  .clip-b .clip-frame { aspect-ratio: 16 / 9; }
+  .clip video { width: 100%; height: 100%; object-fit: cover; }
+  .vbtn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 20px; border: 1px solid rgba(241, 239, 250, .45); border-radius: 99px; background: none; color: var(--ink-n); font: 500 14px var(--f-body); cursor: pointer; transition: background .35s var(--ease), color .35s var(--ease); }
+  .vbtn:hover { background: var(--ink-n); color: var(--night); }
+
+  /* next case + footer */
+  .case-nav { padding: clamp(40px, 6vh, 72px) 0 clamp(64px, 10vh, 110px); }
+  .cn-bar { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 24px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .cn-bar::before { content: ""; position: absolute; left: 0; top: -9px; width: 22%; height: 9px; background: var(--ink); }
+  .next-case { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 38%); column-gap: clamp(24px, 4vw, 72px); row-gap: clamp(28px, 5vh, 48px); align-items: end; padding: 28px 0 8px; color: var(--ink); text-decoration: none; }
+  .nc-text { display: block; }
+  .nc-t { grid-column: 1 / -1; position: relative; display: block; --p: 0%; font: 800 clamp(32px, 10vw, 150px)/.86 var(--f-display); letter-spacing: -.045em; text-transform: uppercase; color: var(--bg); -webkit-text-stroke: 2px rgba(22, 20, 27, .55); paint-order: stroke fill; white-space: nowrap; transition: --p .9s var(--ease); }
+  .nc-t::after { content: attr(data-text); position: absolute; inset: 0; color: var(--ink); -webkit-text-stroke: 0; clip-path: inset(0 calc(100% - var(--p)) 0 0); }
+  .nc-sub { display: block; max-width: 44ch; margin-top: 22px; color: var(--muted); font-size: 17px; line-height: 1.5; }
+  .nc-go { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; color: var(--violet); font: 500 15px var(--f-body); }
+  .nc-go i { font-style: normal; transition: transform .5s var(--ease); }
+  .nc-media { position: relative; display: block; aspect-ratio: 16 / 10; overflow: hidden; border-radius: 4px; background: var(--night); }
+  .nc-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 1.2s var(--ease); }
+  .nc-media img { object-position: 50% 40%; }
+  .next-case:hover .nc-t, .next-case:focus-visible .nc-t { --p: 100%; }
+  .next-case:hover .nc-media img { transform: scale(1.03); }
+  .next-case:hover .nc-go i { transform: translateX(6px); }
+  .foot-in { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 12px 0 28px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  .totop { background: none; border: 0; cursor: pointer; }
+
+  @media (max-width: 900px) {
+    .nav { filter: none; mix-blend-mode: normal; background: rgba(243, 240, 232, .86); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); padding-top: 8px; padding-bottom: 8px; }
+    .nav nav { gap: 18px; }
+    .hero { height: auto; min-height: 0; display: flex; flex-direction: column; padding-top: 92px; overflow: visible; }
+    .hero-head { display: contents; }
+    .meta { order: 1; padding: 0 var(--gut); }
+    /* the hero box is gone on a phone, so the text needs its own layer above the lines */
+    .meta, .hero-side { position: relative; z-index: 2; }
+    .hero-title { order: 2; margin-top: 22px; }
+    .hero-side { order: 3; max-width: none; padding: 22px var(--gut) 0; }
+    .hero-media { order: 4; position: relative; inset: auto; aspect-ratio: 4 / 3; margin: 22px var(--gut) 0; --ct: 0px; --cr: 0px; --cb: 0px; --cl: 0px; --rad: 6px; }
+    .hero-img { object-position: 62% 50%; }
+    .hero-slot, .cue, .hb { display: none; }
+    .facts-grid { grid-template-columns: 1fr 1fr; }
+    .f { padding: 20px 0 22px; border-bottom: 1px solid var(--line); }
+    .f-team, .f-built, .f-part, .f-result { grid-column: 1 / -1; }
+    .f-time, .f-links { grid-column: span 1; }
+    .f-part, .f-result { border-top: 0; }
+    .lines p { font-size: 17px; }
+    /* on a phone the photo comes between the heading and the three lines */
+    .glance-pin { display: flex; flex-direction: column; }
+    .g-copy { display: contents; }
+    .g-copy > * { padding: 0 var(--gut); }
+    .g-fig { order: 2; }
+    .lines { order: 3; }
+    .g-cap { margin-top: 14px; }
+    .bigidx { top: 2vh; }
+    .pbody { margin-left: 0; }
+    .wait { flex-wrap: wrap; }
+    .wait span { flex: 1 1 100%; }
+    .wait-line { flex-basis: 100%; }
+    .r-head, .in-grid, .d1-grid, .d2-grid, .d3-grid, .d4-grid, .t-grid, .showed, .res-grid, .ns-grid, .next-case { grid-template-columns: 1fr; }
+    .r-head { gap: 20px; }
+    .pt, .pt thead, .pt tbody, .pt tr, .pt th, .pt td { display: block; }
+    .pt thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .pt tr { display: grid; grid-template-columns: 40px minmax(0, 1fr); padding: 22px 0; border-bottom: 1px solid var(--line); }
+    .pt td { padding: 0; border: 0; }
+    .pt .c-n { width: auto; grid-row: span 2; font-size: 26px; }
+    .pt .c-pain { width: auto; padding: 0 0 14px; font-size: 20px; }
+    .pt .c-ans { padding-left: 26px; }
+    .pt .con { left: 4px; top: -8px; width: 1px; height: calc(50% + 8px); transform-origin: top; }
+    .pt .con::after { right: auto; left: -4px; top: 100%; border-left: 4.5px solid transparent; border-right: 4.5px solid transparent; border-top: 8px solid var(--violet); border-bottom: 0; }
+    .senses { width: min(100%, 420px); margin: 12px auto 0; }
+    .d-num { margin-bottom: 18px; }
+    .dn { font-size: 112px; }
+    .own { vertical-align: .3em; }
+    .sk-ball { width: min(84%, 380px); }
+    .sk-row { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); column-gap: 20px; row-gap: 44px; border: 0; }
+    .sk-g { row-gap: 22px; border-top: 1px solid var(--line); }
+    .sk-g-int { grid-column: 1 / -1; }
+    .sk-label { letter-spacing: .14em; }
+    .sk-label::before { display: none; }
+    .clips { flex-direction: column; }
+    .swap { order: 2; }
+    .row { grid-template-columns: 1fr; gap: 12px; }
+    .row-k { padding: 0; }
+    .tiles { display: flex; gap: 10px; margin: 0 calc(-1 * var(--gut)); padding: 0 var(--gut) 4px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--gut); overscroll-behavior-x: contain; scrollbar-width: none; }
+    .tiles::-webkit-scrollbar { display: none; }
+    .sw { flex: none; scroll-snap-align: start; }
+    .sw-img { aspect-ratio: auto; height: 46vw; background: none; }
+    .sw-img img { width: auto; height: 100%; }
+    .sw-n { left: 8px; top: 8px; font-size: 12px; }
+    .layers, .sys-copy, .code, .tests { grid-template-columns: 1fr; }
+    .layers, .sys-copy { gap: 22px; }
+    .layers-img { width: min(100%, 420px); }
+    .circuit { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .c-wires { display: none; }
+    .c-a, .c-b, .c-c, .c-d, .c-e, .c-f { grid-area: auto; }
+    .c-hub { grid-area: auto; grid-column: 1 / -1; }
+    .stages { grid-template-columns: 1fr 1fr; }
+    .plots { grid-template-columns: 1fr; gap: 22px; }
+    .make-strip { overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 var(--gut); overscroll-behavior-x: contain; scrollbar-width: none; }
+    .make-strip::-webkit-scrollbar { display: none; }
+    .mk { scroll-snap-align: start; }
+    .mk-img { height: 64vw; }
+    .t-more { grid-template-columns: 1fr; }
+    .story-grid { grid-template-columns: 1fr; row-gap: 28px; padding-left: 34px; }
+    .st-1, .st-2, .st-3, .st-4, .st-5, .st-6 { grid-area: auto; margin-top: 0; }
+    .bars { height: 300px; }
+    .chart .cap { margin-top: 64px; }
+    .shape { position: relative; top: auto; height: auto; margin-top: 12px; }
+    .shape svg { max-width: 240px; }
+    .nc-media { order: -1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cue i::after { animation: none; }
+    .st-frame, .st-frame img, .st-n, .story-path .sd, .nc-t, .nc-media img, .btn, .vbtn, .pipe li, .pipe .pi, .plot .pl-img, .pl-k, .cn, .cn .ci, .cl, .stages li, .stages span, .lines li, .g-pins li { transition: none; }
+  }
+  /* without the motion layer everything is shown in its finished state */
+  .static .cue i::after { animation: none; }
+  .static .dn { --p: 100%; }
+  .static .st-frame img { filter: none; opacity: 1; }
+  .static .pipe li, .static .plot .pl-img { opacity: 1; }
+  @media (min-width: 901px) {
+    .static .make-strip { overflow: visible; }
+    .static .make-row { flex-wrap: wrap; width: auto; max-width: 1440px; margin: 0 auto; row-gap: 32px; }
+  }
+  .static .bar { --h: var(--v); }
+  /* ds-allow-hardcode:end */
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="nav">
+  <a class="brand" href="../">Tianhao Wang</a>
+  <nav aria-label="Main">
+    <a href="../#work">Work</a>
+    <a href="../#about">About</a>
+  </nav>
+</header>
+
+<main id="main">
+  <!-- Hero: the unretouched photo behind board 22 (Figma), top trimmed so the face stays out; light sharpening only -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-media">
+      <div class="hero-frame"><img class="hero-img" src="media/wonderorb-hero.jpg" width="2677" height="1520" alt="A child in a white dress rests both hands on Wonderorb, a ball covered in fabric modules, on a striped carpet"></div>
+      <i class="hb hb-a" aria-hidden="true"></i>
+      <i class="hb hb-r" aria-hidden="true"></i>
+      <i class="hb hb-c" aria-hidden="true"></i>
+    </div>
+    <div class="hero-head wrap">
+      <p class="meta"><span>Case study 02</span><span>Solo project</span><span>2025</span></p>
+      <i class="hb hb-m" aria-hidden="true"></i>
+      <div class="hero-side">
+        <i class="hb hb-v" aria-hidden="true"></i>
+        <p class="lede">A soft play orb that helps children with touch sensitivity get used to new textures, at home and while they wait for treatment</p>
+        <a class="link" href="https://www.youtube.com/watch?v=ujKzmvcCCZI" target="_blank" rel="noopener">Final video <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+    <h1 id="hero-title" class="hero-title" aria-label="Wonderorb"><span class="line" aria-hidden="true">Wonderorb</span></h1>
+    <div class="hero-slot" aria-hidden="true"></div>
+    <div class="cue" aria-hidden="true"><span class="cue-in"><span>Scroll</span><i></i></span></div>
+  </section>
+
+  <section class="facts" aria-label="Project facts">
+    <div class="wrap">
+      <div class="rule"><i></i></div>
+      <dl class="facts-grid">
+        <div class="f f-team"><dt>Team</dt><dd>Solo project</dd></div>
+        <div class="f f-time"><dt>Timeline</dt><dd>2025</dd></div>
+        <div class="f f-built"><dt>Built with</dt><dd>Arduino, pressure sensors, a gyroscope, LED strips, and fabric</dd></div>
+        <div class="f f-links"><dt>Links</dt><dd>
+          <a class="link" href="https://www.youtube.com/watch?v=XIw_oB1jYSo" target="_blank" rel="noopener">Process video <span aria-hidden="true">↗</span></a>
+          <a class="link" href="https://www.youtube.com/watch?v=ujKzmvcCCZI" target="_blank" rel="noopener">Final video <span aria-hidden="true">↗</span></a>
+        </dd></div>
+        <div class="f f-part"><dt>Role</dt><dd>Research, product design, the parent app’s UI, illustration and storyboards, 14 fabric samples, physical production, the Arduino game logic and machine-learning code, testing, and video</dd></div>
+        <div class="f f-result"><dt>Result</dt><dd>A prototype tested with one child in two rooms, plus a process video and a final video</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- At a glance: Canon original IMG_4434, cropped below the child's face; resized only. The numbered spots are live text -->
+  <section class="glance" aria-labelledby="glance-title">
+    <div class="glance-pin">
+      <div class="g-copy">
+        <div class="ix" aria-hidden="true"><i style="--w:64px"></i><i style="--w:18px"></i><i style="--w:140px"></i></div>
+        <p class="eyebrow">At a glance</p>
+        <h2 id="glance-title" class="h2" data-split>A soft ball that turns touch training into play</h2>
+        <ol class="lines">
+          <li><span class="n">01</span><p>Children press, squeeze, and roll a soft orb covered in fabric modules.</p></li>
+          <li><span class="n">02</span><p>Each press lights up a strip and plays a sound, and the modules can be swapped to bring in new textures.</p></li>
+          <li><span class="n">03</span><p>A small machine-learning model reads motion data to tell how the child is playing, and a parent app shows the progress.</p></li>
+        </ol>
+      </div>
+      <figure class="g-fig">
+        <div class="g-frame">
+          <div class="g-img">
+            <img src="media/wonderorb-glance-IMG_4434.jpg" width="3000" height="1665" alt="A child in a white dress presses the orb with both hands while the light strip along a white fringe module glows">
+            <ol class="g-pins" aria-hidden="true">
+              <li style="--x:50%;--y:35%">1</li>
+              <li style="--x:31%;--y:51%">2</li>
+              <li style="--x:37%;--y:77%">3</li>
+            </ol>
+          </div>
+        </div>
+        <figcaption class="cap g-cap">The light strip glows under a child’s hands</figcaption>
+      </figure>
+      <svg class="g-links" aria-hidden="true"></svg>
+    </div>
+  </section>
+
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="bigidx" aria-hidden="true">01</div>
+    <div class="wrap">
+      <div class="ix" aria-hidden="true"><i style="--w:120px"></i><i style="--w:32px"></i></div>
+      <p class="eyebrow">01 · Problem</p>
+      <h2 id="problem-title" class="statement" data-split>For some children, touch is <em>overwhelming</em></h2>
+      <p class="pbody">Children with touch sensitivity may <mark class="hl hl-1">overreact to a light touch</mark>, <mark class="hl hl-2">avoid some clothes</mark>, or <mark class="hl hl-3">refuse certain textures</mark>. Without help, this can affect their emotions, social skills, and daily life.</p>
+      <p class="wait"><span>Professional treatment often means a long wait.</span><i class="wait-line" aria-hidden="true"></i></p>
+    </div>
+  </section>
+
+  <section class="research" aria-labelledby="research-title">
+    <div class="wrap">
+      <div class="r-head">
+        <div>
+          <div class="ix" aria-hidden="true"><i style="--w:40px"></i><i style="--w:160px"></i></div>
+          <p class="eyebrow">02 · Research</p>
+          <h2 id="research-title" class="h2" data-split>I interviewed people online and in person</h2>
+        </div>
+        <p class="body">I interviewed community members online and in person and found four pain points:</p>
+      </div>
+      <!-- N3, built as a real table -->
+      <figure class="pairs">
+        <table class="pt" role="table">
+          <thead role="rowgroup">
+            <tr role="row"><th class="c-n" role="columnheader" scope="col"><span class="sr">Number</span></th><th role="columnheader" scope="col">Pain point</th><th role="columnheader" scope="col">What I designed</th></tr>
+          </thead>
+          <tbody role="rowgroup">
+            <tr role="row"><td class="c-n" role="cell">1</td><td class="c-pain" role="cell"><span>There is no clear system for training at home</span></td><td class="c-ans" role="cell"><i class="con" aria-hidden="true"></i><span><span class="chip">A parent app that tracks play and gives suggestions</span></span></td></tr>
+            <tr role="row"><td class="c-n" role="cell">2</td><td class="c-pain" role="cell"><span>Families wait a long time for standard treatment</span></td><td class="c-ans" role="cell"><i class="con" aria-hidden="true"></i><span><span class="chip">A simple product families can use at home</span></span></td></tr>
+            <tr role="row"><td class="c-n" role="cell">3</td><td class="c-pain" role="cell"><span>Each child is sensitive to different materials</span></td><td class="c-ans" role="cell"><i class="con" aria-hidden="true"></i><span><span class="chip">Fabric modules you can swap</span></span></td></tr>
+            <tr role="row"><td class="c-n" role="cell">4</td><td class="c-pain" role="cell"><span>Training often ignores how the child feels</span></td><td class="c-ans" role="cell"><i class="con" aria-hidden="true"></i><span><span class="chip">Games with light and sound that make touching fun</span></span></td></tr>
+          </tbody>
+        </table>
+        <figcaption class="cap">Four pain points, four design answers</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="insight" aria-labelledby="insight-title">
+    <div class="wrap in-grid">
+      <div class="in-copy">
+        <div class="ix" aria-hidden="true"><i style="--w:180px"></i><i style="--w:20px"></i><i style="--w:48px"></i></div>
+        <p class="eyebrow">03 · Insight</p>
+        <h2 id="insight-title" class="statement" data-split>Children learn through <em>play</em></h2>
+        <p class="body">Research on how children learn showed the same thing. Children respond better when an activity uses several senses, and a toy-like form makes them less resistant. So I designed a training tool that feels like a toy.</p>
+      </div>
+      <div class="senses" aria-hidden="true">
+        <span class="sense s-touch"><b>Touch</b></span>
+        <span class="sense s-light"><b>Light</b></span>
+        <span class="sense s-sound"><b>Sound</b></span>
+        <span class="sense s-scent"><b>Scent</b></span>
+        <svg class="ring" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" pathLength="1"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 Key decisions -->
+  <section class="decisions" aria-labelledby="decisions-title">
+    <div class="wrap d-head">
+      <div class="ix" aria-hidden="true"><i style="--w:140px"></i><i style="--w:24px"></i></div>
+      <p class="eyebrow">04 · Key decisions</p>
+      <h2 id="decisions-title" class="statement" data-split>Four decisions that shaped <em>the orb</em></h2>
+    </div>
+
+    <article class="d" aria-labelledby="d1-title">
+      <div class="wrap d1-grid">
+        <div class="d-copy">
+          <div class="d-num" aria-hidden="true"><span class="dn" data-text="1">1</span><span class="d-of"><span class="d-track"><i class="on"></i><i></i><i></i><i></i></span>Decision 1 of 4</span></div>
+          <h3 id="d1-title" class="d-title">A simple ball</h3>
+          <p class="body">A ball is easy to understand. Children can press it, squeeze it, and roll it.</p>
+        </div>
+        <!-- board 25 (Figma, read only): my own drawings, exported on their own without the board behind them -->
+        <figure class="sk-ball">
+          <img src="media/sketch-ball.webp" width="1062" height="1031" alt="Sketch of the orb: a ball of rounded fabric modules with glowing pink seams">
+          <figcaption class="sk-label">Product sketch</figcaption>
+        </figure>
+      </div>
+      <figure class="wrap sk-sheet">
+        <div class="sk-row">
+          <div class="sk-g sk-g-int">
+            <p class="sk-label">Interior structure</p>
+            <div class="sk-pair">
+              <img class="sk-int" src="media/sketch-interior.webp" width="600" height="722" alt="Sketch of the orb opened like a shell, showing the frame inside" loading="lazy">
+              <img class="sk-half" src="media/sketch-half.webp" width="600" height="671" alt="Sketch of the orb cut in half, with the outlines of the modules inside" loading="lazy">
+            </div>
+          </div>
+          <div class="sk-g sk-g-mod">
+            <p class="sk-label">Single-module structure</p>
+            <div class="sk-mod" role="img" aria-label="Sketch of one module pulled apart: the fabric, a foam layer, a white shell, a glowing light strip with a sensor, and the clear inner sphere with its circuit board">
+              <img class="ly ly-3" src="media/sketch-layers.webp" width="700" height="1379" alt="" loading="lazy">
+              <img class="ly ly-2" src="media/sketch-layers.webp" width="700" height="1379" alt="" loading="lazy">
+              <img class="ly ly-1" src="media/sketch-layers.webp" width="700" height="1379" alt="" loading="lazy">
+            </div>
+          </div>
+          <div class="sk-g sk-g-play">
+            <p class="sk-label">Play scenario</p>
+            <img class="sk-child" src="media/sketch-child.webp" width="900" height="754" alt="Sketch of a child sitting cross-legged and holding the glowing orb" loading="lazy">
+          </div>
+        </div>
+        <figcaption class="cap">My early sketches</figcaption>
+      </figure>
+      <!-- the render from board 26, Figma original without the board text; the numbers are live text -->
+      <div class="wrap layers">
+        <figure class="layers-fig">
+          <div class="layers-img">
+            <img src="media/wonderorb-render.jpg" width="1002" height="1132" alt="Rendering of the orb pulled apart: fabric modules, the layer they attach to, a clear layer, and the inner sphere" loading="lazy">
+            <ol class="dots" aria-hidden="true">
+              <li style="--x:30%;--y:53%">1</li>
+              <li style="--x:57%;--y:19%">2</li>
+              <li style="--x:69%;--y:33%">3</li>
+              <li style="--x:59%;--y:50%">4</li>
+              <li style="--x:76%;--y:69%">5</li>
+            </ol>
+          </div>
+          <figcaption class="cap">Rendering: the layers of the orb</figcaption>
+        </figure>
+        <div class="layers-copy">
+          <h4 class="k">How it is built</h4>
+          <ol class="built">
+            <li><span class="n">1</span><div><b>Fabric module</b><p>Each module’s surface is a different material, some sensitive and some not.</p></div></li>
+            <li><span class="n">2</span><div><b>Velcro</b><p>The fabric attaches to the module with Velcro, so it is easy to replace.</p></div></li>
+            <li><span class="n">3</span><div><b>Light strip</b><p>Each module has its own light strip, which shows when it is triggered.</p></div></li>
+            <li><span class="n">4</span><div><b>Inner sphere</b><p>Sensors and parts sit on the inner surface of a clear sphere.</p></div></li>
+            <li><span class="n">5</span><div><b>Pressure</b><p>A press passes through the module to the sensors on the sphere.</p></div></li>
+          </ol>
+        </div>
+      </div>
+    </article>
+
+    <article class="d" aria-labelledby="d2-title">
+      <div class="wrap d2-grid">
+        <!-- a still frame from the making footage (153_1755419793.mp4): hands only, nothing retouched -->
+        <figure class="swap">
+          <div class="vframe"><img src="media/wonderorb-fit-module.jpg" width="1280" height="720" alt="A hand presses a fleece module with felt letters onto the clear sphere, with the wiring visible inside" loading="lazy"></div>
+          <figcaption class="cap">Fitting a fabric module onto the clear sphere</figcaption>
+        </figure>
+        <div class="d-copy">
+          <div class="d-num" aria-hidden="true"><span class="dn" data-text="2">2</span><span class="d-of"><span class="d-track"><i class="on"></i><i class="on"></i><i></i><i></i></span>Decision 2 of 4</span></div>
+          <h3 id="d2-title" class="d-title">Fabric modules you can swap</h3>
+          <p class="body">Each child reacts to different textures. So the surface is made of fabric modules that attach with Velcro and can be swapped. I made 14 textile samples, from soft and smooth to rough and cold.</p>
+        </div>
+      </div>
+      <!-- the 14 selected photos DSCF1834 to DSCF1855, cropped and graded only, in the board's order -->
+      <figure class="scale">
+        <div class="scale-pin">
+          <div class="scale-top wrap">
+            <figcaption class="cap">14 textile samples, from easy to hard to touch</figcaption>
+          </div>
+          <div class="rows">
+            <div class="row">
+              <p class="row-k">Easy</p>
+              <ol class="tiles">
+                <li class="sw"><div class="sw-img"><img src="media/fabric-01-DSCF1854.jpg" width="1185" height="900" alt="White waffle-weave fabric" loading="lazy"></div><span class="sw-n" aria-hidden="true">01</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-02-DSCF1844.jpg" width="945" height="900" alt="Smooth beige fabric, cut round" loading="lazy"></div><span class="sw-n" aria-hidden="true">02</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-03-DSCF1843.jpg" width="1414" height="900" alt="Ribbed brown fabric with a mint edge" loading="lazy"></div><span class="sw-n" aria-hidden="true">03</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-04-DSCF1839.jpg" width="1038" height="900" alt="White fleece covered in felt letters and numbers" loading="lazy"></div><span class="sw-n" aria-hidden="true">04</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-05-DSCF1841.jpg" width="1132" height="900" alt="Smooth white fabric with a brown edge" loading="lazy"></div><span class="sw-n" aria-hidden="true">05</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-06-DSCF1850.jpg" width="839" height="900" alt="Cream felt with soft dots" loading="lazy"></div><span class="sw-n" aria-hidden="true">06</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-07-DSCF1840.jpg" width="888" height="900" alt="Curly brown faux fur" loading="lazy"></div><span class="sw-n" aria-hidden="true">07</span></li>
+              </ol>
+            </div>
+            <div class="row">
+              <p class="row-k">Hard</p>
+              <ol class="tiles" start="8">
+                <li class="sw"><div class="sw-img"><img src="media/fabric-08-DSCF1853.jpg" width="1173" height="900" alt="Silver sequins" loading="lazy"></div><span class="sw-n" aria-hidden="true">08</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-09-DSCF1842.jpg" width="951" height="900" alt="Shredded white fringe" loading="lazy"></div><span class="sw-n" aria-hidden="true">09</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-10-DSCF1834.jpg" width="759" height="900" alt="Loose yellow tweed" loading="lazy"></div><span class="sw-n" aria-hidden="true">10</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-11-DSCF1851.jpg" width="1368" height="900" alt="Pale, stiff fiber sheet" loading="lazy"></div><span class="sw-n" aria-hidden="true">11</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-12-DSCF1855.jpg" width="1101" height="900" alt="Smooth brown fabric with a mint edge" loading="lazy"></div><span class="sw-n" aria-hidden="true">12</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-13-DSCF1852.jpg" width="1526" height="900" alt="Striped yarn fabric with small flowers" loading="lazy"></div><span class="sw-n" aria-hidden="true">13</span></li>
+                <li class="sw"><div class="sw-img"><img src="media/fabric-14-DSCF1848.jpg" width="957" height="900" alt="Brown fur wrapped in cords and beads" loading="lazy"></div><span class="sw-n" aria-hidden="true">14</span></li>
+              </ol>
+            </div>
+          </div>
+          <div class="scale-bar wrap" aria-hidden="true"><i><b></b></i></div>
+        </div>
+      </figure>
+    </article>
+
+    <article class="d" aria-labelledby="d3-title">
+      <div class="wrap d3-grid">
+        <div class="d-copy">
+          <div class="d-num" aria-hidden="true"><span class="dn" data-text="3">3</span><span class="d-of"><span class="d-track"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></span>Decision 3 of 4</span></div>
+          <h3 id="d3-title" class="d-title">Light and sound reward every touch</h3>
+          <p class="body">Pressure sensors sit under the modules. When a child presses one, its light strip turns on and a sound plays. The game has two stages. In the second stage, the orb releases a scent and changes how strong the feedback is. I wrote this game logic on Arduino.</p>
+        </div>
+        <!-- Canon original IMG_4433, cropped below the child's face; nothing retouched -->
+        <figure class="build">
+          <div class="build-img"><img src="media/wonderorb-press-IMG_4433.jpg" width="1600" height="770" alt="A child in a white dress presses a fabric module on top of the orb with both hands" loading="lazy"></div>
+          <figcaption class="cap">Pressing a module on top of the orb</figcaption>
+        </figure>
+      </div>
+      <!-- storyboard: my own drawings, the six panels from board application-25, from the original files -->
+      <figure class="story">
+        <div class="wrap">
+          <div class="story-grid" data-story>
+            <svg class="story-path" aria-hidden="true"><defs><linearGradient id="rib" x1="0" y1="0" x2="1" y2="1"><stop class="rib-a" offset="0"/><stop class="rib-b" offset=".55"/><stop class="rib-c" offset="1"/></linearGradient></defs></svg>
+            <div class="st st-1"><div class="st-frame"><img src="media/story-1.jpg" width="960" height="733" alt="The orb lights up and plays music on a rug" loading="lazy"></div><span class="st-n" aria-hidden="true">01</span></div>
+            <div class="st st-2"><div class="st-frame"><img src="media/story-2.jpg" width="960" height="733" alt="A parent holds a phone" loading="lazy"></div><span class="st-n" aria-hidden="true">02</span></div>
+            <div class="st st-3"><div class="st-frame"><img src="media/story-3.jpg" width="960" height="738" alt="A child walks toward the glowing orb" loading="lazy"></div><span class="st-n" aria-hidden="true">03</span></div>
+            <div class="st st-4"><div class="st-frame"><img src="media/story-4.jpg" width="960" height="722" alt="A child holds the orb, its seams lit" loading="lazy"></div><span class="st-n" aria-hidden="true">04</span></div>
+            <div class="st st-5"><div class="st-frame"><img src="media/story-5.jpg" width="960" height="730" alt="The orb gives off a mist of scent" loading="lazy"></div><span class="st-n" aria-hidden="true">05</span></div>
+            <div class="st st-6"><div class="st-frame"><img src="media/story-6.jpg" width="960" height="731" alt="Two hands swap a fabric module on the orb" loading="lazy"></div><span class="st-n" aria-hidden="true">06</span></div>
+          </div>
+          <figcaption class="cap">My storyboard of a play session</figcaption>
+        </div>
+      </figure>
+      <!-- board 27: the wiring diagram rebuilt as a live diagram; the two photos are the Figma originals -->
+      <div class="wrap sys">
+        <div class="sys-copy">
+          <h4 class="k">The circuit inside</h4>
+          <p class="body">An ESP32 board reads the pressure sensors and the gyroscope. It controls the LED light strips, an MP3 player with a speaker, and two heaters through relays. A 330-ohm resistor on each LED strip keeps it working. After wiring, the circuit went through two rounds of testing before it was installed inside the orb.</p>
+        </div>
+        <div class="circuit" data-circuit>
+          <svg class="c-wires" aria-hidden="true"></svg>
+          <div class="cn c-a"><span class="ci">Input</span><p>Pressure sensors</p></div>
+          <div class="cn c-b"><span class="ci">Input</span><p>MPU6050 gyroscope</p></div>
+          <div class="cn c-hub"><span class="ci">Controller</span><p>ESP32 board</p></div>
+          <div class="cn c-c"><span class="ci">Output</span><p>LED light strips</p></div>
+          <div class="cn c-d"><span class="ci">Output</span><p>DFPlayer Mini MP3 and speaker</p></div>
+          <div class="cn c-e"><span class="ci">Output</span><p>5V relays and heaters</p></div>
+          <div class="cn c-f"><span class="ci">Power</span><p>Two 5V/8A power supplies</p></div>
+        </div>
+        <div class="tests">
+          <figure class="t1"><div class="t-img"><img src="media/wonderorb-link-test.jpg" width="1050" height="1400" alt="The whole circuit laid out on a table: pressure sensors, sensor boards, reels of LED strip, and an ESP32 board on a breadboard" loading="lazy"></div><figcaption class="cap">Link test</figcaption></figure>
+          <figure class="t2"><div class="t-img"><img src="media/wonderorb-functional-test.jpg" width="1400" height="709" alt="A hand presses the clear sphere while the wired parts inside light up" loading="lazy"></div><figcaption class="cap">Functional test</figcaption></figure>
+        </div>
+      </div>
+      <!-- board 27: the state machine from my code -->
+      <div class="wrap code">
+        <div class="code-copy">
+          <h4 class="k">The game logic in code</h4>
+          <p class="body">The code is about 600 lines. A state machine splits the game into four stages: startup, stage one, stage two, and shutdown. Each pressure sensor is paired with one light strip, and a press also triggers the MP3 player. Layered conditions decide which feedback to give.</p>
+        </div>
+        <div class="sm">
+          <div class="codebox"><code><span class="cl">enum SystemState {</span><span class="cl" data-s="0">  STAGE0_STARTUP,</span><span class="cl" data-s="1">  STAGE1_TIMER1,</span><span class="cl" data-s="2">  STAGE2_TIMER2,</span><span class="cl" data-s="3">  SYSTEM_SHUTDOWN</span><span class="cl">};</span></code></div>
+          <ol class="stages">
+            <li><b>Startup</b><span>Sounds and flashes draw the child in</span></li>
+            <li><b>Stage one</b><span>Press a lit module for light and sound</span></li>
+            <li><b>Stage two</b><span>A scent is released and the feedback changes</span></li>
+            <li><b>Shutdown</b></li>
+          </ol>
+        </div>
+      </div>
+    </article>
+
+    <article class="d" aria-labelledby="d4-title">
+      <div class="wrap d4-grid">
+        <div class="d-copy">
+          <div class="d-num" aria-hidden="true"><span class="dn" data-text="4">4</span><span class="d-of"><span class="d-track"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i></span>Decision 4 of 4</span></div>
+          <h3 id="d4-title" class="d-title">A small model that reads motion</h3>
+          <p class="body">I also wrote the code for a small machine-learning model. It reads gyroscope data to tell whether the child is playing with the orb, rolling it, or has stopped. A parent app shows this data.</p>
+          <p class="body">I recorded gyroscope data for each state and split it 8:2 into training and test data. Then I trained the model and put it into the Arduino code.</p>
+        </div>
+        <!-- board 28, the model's steps as a live list -->
+        <ol class="pipe">
+          <li><span class="pi">01</span><p>Gyroscope data on three axes</p></li>
+          <li><span class="pi">02</span><p>Spectral analysis</p></li>
+          <li><span class="pi">03</span><p>39 features</p></li>
+          <li><span class="pi">04</span><p>Three states: playing, rolling, stopped</p></li>
+          <li><span class="pi">05</span><p>Runs in the Arduino code every 30 seconds</p></li>
+        </ol>
+      </div>
+      <!-- board 28, Figma originals: screenshots of the real recorded data -->
+      <figure class="data wrap">
+        <div class="plots">
+          <div class="plot"><div class="pl-img"><img src="media/data-playing.jpg" width="800" height="424" alt="Gyroscope chart while playing: three lines with frequent sharp spikes" loading="lazy"><i class="scan" aria-hidden="true"></i></div><span class="pl-k">Playing</span></div>
+          <div class="plot"><div class="pl-img"><img src="media/data-rolling.jpg" width="800" height="459" alt="Gyroscope chart while rolling: three lines in long, slow waves" loading="lazy"><i class="scan" aria-hidden="true"></i></div><span class="pl-k">Rolling</span></div>
+          <div class="plot"><div class="pl-img"><img src="media/data-stopped.jpg" width="800" height="452" alt="Gyroscope chart when stopped: three flat lines" loading="lazy"><i class="scan" aria-hidden="true"></i></div><span class="pl-k">Stopped</span></div>
+        </div>
+        <figcaption class="cap">Gyroscope data I recorded for each state</figcaption>
+      </figure>
+      <!-- board 26 (Figma, read only): the "final App Output" screens, cut from their white background; the photo is from the final output board -->
+      <div class="wrap app">
+        <div class="app-top">
+          <div class="app-copy">
+            <h4 class="k">The parent app</h4>
+            <p class="body">The app design follows the user flow. Parents can view the orb’s data, get help replacing modules, and read suggestions for the training. Its style stays mostly linear, to match the orb itself.</p>
+          </div>
+          <figure class="app-hand">
+            <div class="ah-img"><img src="media/app-in-hand.jpg" width="746" height="438" alt="A hand holds a phone open on the app’s suggestion screen" loading="lazy"></div>
+            <figcaption class="cap">Suggestions for parents on using the app</figcaption>
+          </figure>
+        </div>
+        <div class="ph-grid">
+          <div class="ph-g ph-g1" aria-hidden="true"><i></i><span>Start and connect</span></div>
+          <div class="ph-g ph-g2" aria-hidden="true"><i></i><span>Product status</span></div>
+          <div class="ph-g ph-g3" aria-hidden="true"><i></i><span>Recommendation and data</span></div>
+          <figure class="ph"><img src="media/app-1-home.webp" width="374" height="760" alt="App start screen: Wonderorb, Design for the children" loading="lazy"><figcaption class="ph-k">Start</figcaption></figure>
+          <figure class="ph"><img src="media/app-2-connect.webp" width="376" height="760" alt="Screen waiting for the orb to connect" loading="lazy"><figcaption class="ph-k">Connecting</figcaption></figure>
+          <figure class="ph"><img src="media/app-3-working.webp" width="376" height="760" alt="System state screen: Device is working" loading="lazy"><figcaption class="ph-k">Device is working</figcaption></figure>
+          <figure class="ph"><img src="media/app-4-stops.webp" width="376" height="760" alt="System state screen: Device stops" loading="lazy"><figcaption class="ph-k">Device stops</figcaption></figure>
+          <figure class="ph"><img src="media/app-5-touching.webp" width="376" height="760" alt="Touching situation screen with a bar chart of presses, temperature, game time, and the equipment list" loading="lazy"><figcaption class="ph-k">Touching situation</figcaption></figure>
+          <figure class="ph"><img src="media/app-6-suggestion.webp" width="376" height="760" alt="Suggestion screen with a written recommendation for the training" loading="lazy"><figcaption class="ph-k">Suggestion</figcaption></figure>
+          <figure class="ph"><img src="media/app-7-details.webp" width="371" height="760" alt="Data details screen: each fabric module with its trigger count" loading="lazy"><figcaption class="ph-k">Data details</figcaption></figure>
+        </div>
+        <p class="cap">The final app screens</p>
+      </div>
+    </article>
+
+    <!-- frames from the original making footage, hands only; portrait frames cropped to 4:5 -->
+    <div class="make" aria-labelledby="make-title">
+      <div class="wrap make-head">
+        <h3 id="make-title" class="k">Making the prototype</h3>
+      </div>
+      <div class="make-strip">
+        <ol class="make-row">
+          <li class="mk"><div class="mk-img"><img src="media/make-1-drill.jpg" width="1280" height="720" alt="A rotary tool drilling into the clear sphere while a hand holds it steady" loading="lazy"></div><span class="mk-cap">Drilling the clear sphere</span></li>
+          <li class="mk"><div class="mk-img"><img src="media/make-2-shells.jpg" width="1080" height="1350" alt="White module shells lying in a tray of liquid" loading="lazy"></div><span class="mk-cap">Module shells</span></li>
+          <li class="mk"><div class="mk-img"><img src="media/make-3-sand.jpg" width="1080" height="1350" alt="Hands sanding a white module shell on a workbench" loading="lazy"></div><span class="mk-cap">Sanding a shell</span></li>
+          <li class="mk"><div class="mk-img"><img src="media/make-4-sequins.jpg" width="1080" height="1350" alt="A hand folding sequin fabric over a white shell" loading="lazy"></div><span class="mk-cap">Sequin fabric for a module</span></li>
+          <li class="mk"><div class="mk-img"><img src="media/make-5-sew.jpg" width="1080" height="1350" alt="A sewing machine with a sewing textbook clipped beside it" loading="lazy"></div><span class="mk-cap">Sewing</span></li>
+          <li class="mk"><div class="mk-img"><img src="media/make-7-code.jpg" width="1280" height="720" alt="A hand on the lit clear sphere next to a laptop showing the Arduino code" loading="lazy"></div><span class="mk-cap">Testing the code</span></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 Prototype and test: the page turns to night -->
+  <section class="lab" aria-labelledby="lab-title">
+    <div class="wrap">
+      <div class="ix" aria-hidden="true"><i style="--w:56px"></i><i style="--w:200px"></i></div>
+      <p class="eyebrow">05 · Prototype and test</p>
+      <h2 id="lab-title" class="h2" data-split>I tested three ways to play, in two kinds of rooms</h2>
+      <p class="lab-lead">I tested three ways to play with one child: tapping, rolling, and swapping modules. I ran the test in a simple room and in a room set up like a home, with furniture and toys.</p>
+      <div class="t-grid">
+        <!-- N4, built as a live chart -->
+        <figure class="chart">
+          <div class="bars" role="img" aria-label="Bar chart of task success: 60% in the simple room, 40% in the home-like room">
+            <span class="grid-l g100" aria-hidden="true"><span>100%</span></span>
+            <span class="grid-l g50" aria-hidden="true"><span>50%</span></span>
+            <span class="grid-l g0" aria-hidden="true"><span>0</span></span>
+            <div class="bar" style="--v:60" aria-hidden="true"><b class="val">60%</b><i></i><span class="bl">Simple room</span></div>
+            <div class="bar" style="--v:40" aria-hidden="true"><b class="val">40%</b><i></i><span class="bl">Home-like room</span></div>
+          </div>
+          <figcaption class="cap">Task success by room</figcaption>
+        </figure>
+        <!-- IMG_4400 original, cropped so the child's face is out of frame; nothing retouched -->
+        <figure class="room">
+          <div class="room-img"><img src="media/wonderorb-home-test-IMG_4400.jpg" width="1100" height="1274" alt="The orb on a striped carpet in a room set up like a home, with a table, a plant, toys, and loose yarn on the floor; a child’s arm reaches in from the right" loading="lazy"></div>
+          <figcaption class="cap">Testing in the home-like room</figcaption>
+        </figure>
+      </div>
+      <!-- Canon originals from the test: IMG_4441 shows the child from behind; IMG_4413 cropped to the hands -->
+      <div class="t-more">
+        <figure class="tm-a"><div class="room-img"><img src="media/wonderorb-test-IMG_4441.jpg" width="1200" height="909" alt="Seen from behind, the child leans over the orb next to a green balance board" loading="lazy"></div><figcaption class="cap">Playing next to the balance board</figcaption></figure>
+        <figure class="tm-b"><div class="room-img"><img src="media/wonderorb-rack-IMG_4413.jpg" width="1100" height="1183" alt="A child’s hands take a fabric module from the shelf of the rack" loading="lazy"></div><figcaption class="cap">Picking a module from the rack</figcaption></figure>
+      </div>
+      <div class="showed">
+        <div class="showed-side">
+          <h3 class="k">What the test showed</h3>
+          <!-- Canon original IMG_4436, cropped below the child's face; nothing retouched -->
+          <figure class="mod-fig">
+            <div class="room-img"><img src="media/wonderorb-module-IMG_4436.jpg" width="1400" height="641" alt="A child kneels by the orb, holding a fabric module in both hands" loading="lazy"></div>
+            <figcaption class="cap">A fabric module in the child’s hands</figcaption>
+          </figure>
+        </div>
+        <div>
+          <ol class="finds">
+            <li><span class="n">01</span><p>Task success was 60% in the simple room and 40% in the home-like room. The room itself seemed to pull the child’s attention away.</p></li>
+            <li><span class="n">02</span><p>Rolling felt natural, even without guidance.</p></li>
+            <li><span class="n">03</span><p>The child was more interested in swapping modules than I expected.</p></li>
+            <li><span class="n">04</span><p>The orb was too big for small hands and hard to control. It also needs to be more appealing to children.</p></li>
+          </ol>
+          <p class="note">It was a small test with one child, but it suggested how much the room matters.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 Result -->
+  <section class="result" aria-labelledby="result-title">
+    <div class="wrap res-grid">
+      <div class="res-copy">
+        <div class="ix" aria-hidden="true"><i style="--w:210px"></i><i style="--w:36px"></i></div>
+        <p class="eyebrow">06 · Result</p>
+        <h2 id="result-title" class="statement" data-split>What I made</h2>
+        <ol class="made">
+          <li><span class="n">01</span><p>A prototype with swappable fabric modules, pressure sensors, light, sound, and a parent app</p></li>
+          <li><span class="n">02</span><p>Tested with one child in two rooms</p></li>
+          <li><span class="n">03</span><p>A process video and a final video</p></li>
+        </ol>
+      </div>
+      <!-- DSCF1863 original, resized only -->
+      <figure class="final">
+        <div class="final-img"><img src="media/wonderorb-final-DSCF1863.jpg" width="1200" height="1870" alt="The fabric modules hang from a small wooden rack, with more modules piled on its lower shelf" loading="lazy"></div>
+        <figcaption class="cap">The final prototype</figcaption>
+      </figure>
+    </div>
+    <!-- the final output board (Figma, read only): only the photos without a face; resized only -->
+    <div class="wrap fo">
+      <div class="fo-top">
+        <div>
+          <div class="ix" aria-hidden="true"><i style="--w:28px"></i><i style="--w:96px"></i></div>
+          <p class="k">Final output</p>
+          <p class="fo-line">Through play and multisensory guidance, this device helps children gently overcome touch sensitivity and grow with confidence.</p>
+        </div>
+        <div class="fo-key">
+          <ol class="fo-legend">
+            <li>1: The finished orb, lit</li>
+            <li>2: Parent replacement module</li>
+            <li>3: Complete product photos</li>
+          </ol>
+          <div class="fo-idx" aria-hidden="true"><span>1</span><i class="fv"></i><span>2</span><i class="fv"></i><span>3</span><i class="fh"></i></div>
+        </div>
+      </div>
+      <div class="fo-row">
+        <figure style="--a:1.27"><div class="fo-img"><img src="media/final-orb-lit.jpg" width="1600" height="1260" alt="The finished orb up close, its light strips glowing between the fringe, fur, and corded modules" loading="lazy"></div><span class="fo-n" aria-hidden="true">1</span></figure>
+        <figure style="--a:1.3"><div class="fo-img"><img src="media/final-parent-module.jpg" width="1600" height="1232" alt="An adult’s hands press a brown fur module onto the orb" loading="lazy"></div><span class="fo-n" aria-hidden="true">2</span></figure>
+        <figure style="--a:1.29"><div class="fo-img"><img src="media/final-rack.jpg" width="1120" height="866" alt="Fabric modules hang on a wooden rack, with more modules on the floor below it" loading="lazy"></div><span class="fo-n" aria-hidden="true">3</span></figure>
+      </div>
+    </div>
+    <!-- Canon original IMG_4389, resized only -->
+    <figure class="wrap wide">
+      <div class="wide-img"><img src="media/wonderorb-room-IMG_4389.jpg" width="1800" height="1200" alt="The home-like test room: the orb on a mat among foam blocks, a toy horse, plants, a round table, and the module rack" loading="lazy"></div>
+      <figcaption class="cap">The orb and the module rack in the home-like room</figcaption>
+    </figure>
+    <div class="wrap learned">
+      <p class="k">What I learned</p>
+      <p class="lq" data-words>Test where the product will really be used. The same orb did worse in a home-like room.</p>
+      <div class="btns">
+        <a class="btn" href="https://www.youtube.com/watch?v=ujKzmvcCCZI" target="_blank" rel="noopener">Final video <span aria-hidden="true">↗</span></a>
+        <a class="btn" href="https://www.youtube.com/watch?v=XIw_oB1jYSo" target="_blank" rel="noopener">Process video <span aria-hidden="true">↗</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 Next -->
+  <section class="nextstep" aria-labelledby="next-title">
+    <div class="wrap ns-grid">
+      <div class="ns-copy">
+        <div class="ix" aria-hidden="true"><i style="--w:32px"></i><i style="--w:120px"></i><i style="--w:16px"></i></div>
+        <p class="eyebrow">07 · Next</p>
+        <h2 id="next-title" class="statement" data-split>What I’d change next</h2>
+        <ol class="changes">
+          <li><span class="n">01</span><p>Make the orb smaller, so small hands can control it.</p><i class="ln" aria-hidden="true"></i></li>
+          <li><span class="n">02</span><p>Make it more appealing to children.</p><i class="ln" aria-hidden="true"></i></li>
+          <li><span class="n">03</span><p>Connect the app and the orb more closely.</p><i class="ln" aria-hidden="true"></i></li>
+        </ol>
+      </div>
+      <div class="shape" aria-hidden="true">
+        <svg viewBox="0 0 400 400">
+          <circle class="o-fill" cx="200" cy="200" r="150"/>
+          <g class="o-mods"><circle class="f-a" cx="176" cy="180" r="0"/><circle class="f-b" cx="226" cy="190" r="0"/><circle class="f-c" cx="194" cy="232" r="0"/></g>
+          <circle class="o-ring" cx="200" cy="200" r="150"/>
+          <line class="tie" x1="200" y1="200" x2="360" y2="60"/>
+          <rect class="app" x="342" y="30" width="36" height="60" rx="8"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- the orb in play: DJI test footage (143845_026) and the hands-only clip from the site, cropped below the child's face; no sound -->
+  <section class="play" aria-labelledby="play-title">
+    <div class="wrap">
+      <div class="play-head">
+        <div class="play-t"><div class="ix" aria-hidden="true"><i style="--w:80px"></i><i style="--w:24px"></i></div><h2 id="play-title" class="k">The orb in play</h2></div>
+        <button class="vbtn" type="button" data-vtoggle>Pause videos</button>
+      </div>
+      <div class="clips">
+        <figure class="clip clip-a">
+          <div class="clip-frame"><video src="media/play-turn.mp4" poster="media/play-turn.jpg" width="1280" height="520" muted loop playsinline preload="none" aria-label="A child turns the orb over on the carpet while the light strips along its seams glow"></video></div>
+          <figcaption class="cap">Turning the orb, its seams lit</figcaption>
+        </figure>
+        <figure class="clip clip-b">
+          <div class="clip-frame"><video src="media/play-explore.mp4" poster="media/play-explore.jpg" width="1280" height="720" muted loop playsinline preload="none" aria-label="A child’s hands feel and lift the fabric modules on the orb"></video></div>
+          <figcaption class="cap">Exploring the fabric modules</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <nav class="case-nav" aria-label="More work">
+    <div class="wrap">
+      <div class="cn-bar">
+        <p class="eyebrow">Next case</p>
+        <a class="link" href="../#work">All work</a>
+      </div>
+      <a class="next-case" href="../fadence/" aria-label="Next case: Fadence">
+        <span class="nc-t" data-text="Fadence">Fadence</span>
+        <span class="nc-text">
+          <span class="nc-sub">A wearable for the moment before sleep, when racing thoughts won’t stop. No screen, no commands.</span>
+          <span class="nc-go">Next: Fadence <i aria-hidden="true">→</i></span>
+        </span>
+        <span class="nc-media" aria-hidden="true">
+          <img src="media/fadence-studio-wide.jpg" width="1600" height="1067" alt="" loading="lazy">
+        </span>
+      </a>
+    </div>
+  </nav>
+</main>
+
+<footer class="foot">
+  <div class="wrap"><div class="foot-in"><span>© 2026 Tianhao Wang</span><button class="link totop" type="button">Back to top <span aria-hidden="true">↑</span></button></div></div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
+<script>
+(() => {
+  const root = document.documentElement;
+  // ?still shows the reduced-motion version, for checking it
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches || new URLSearchParams(location.search).has("still");
+  const desk = matchMedia("(min-width: 901px)");
+  const NS = "http://www.w3.org/2000/svg";
+  const clamp01 = v => Math.min(1, Math.max(0, v));
+
+  // Split headings into words, the hero title into letters, the quote into words
+  const title = document.querySelector(".hero-title .line");
+  title.innerHTML = [...title.textContent].map(c => `<span class="ch">${c}</span>`).join("");
+  document.querySelectorAll("[data-split]").forEach(el => {
+    const parts = [];
+    el.childNodes.forEach(n => {
+      const wrapWords = text => text.split(/(\s+)/).forEach(w => {
+        if (!w) return;
+        parts.push(/\s+/.test(w) ? " " : `<span class="wl"><span class="w">${w}</span></span>`);
+      });
+      if (n.nodeType === 3) wrapWords(n.textContent);
+      else if (n.nodeType === 1) parts.push(`<em>${n.textContent.split(/\s+/).map(w => `<span class="wl"><span class="w">${w}</span></span>`).join(" ")}</em>`);
+    });
+    el.innerHTML = parts.join("");
+  });
+  document.querySelectorAll("[data-words]").forEach(el => {
+    const out = [];
+    el.childNodes.forEach(n => {
+      if (n.nodeType === 1) { out.push(n.outerHTML); return; }
+      n.textContent.split(/(\s+)/).forEach(w => { if (w) out.push(/\s+/.test(w) ? w : `<span class="w">${w}</span>`); });
+    });
+    el.innerHTML = out.join("");
+  });
+
+  // Back to top
+  document.querySelector(".totop").addEventListener("click", () => {
+    if (window.__lenis) window.__lenis.scrollTo(0, { duration: 1.8 });
+    else window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+    document.querySelector(".brand").focus({ preventScroll: true });
+  });
+
+  // Hero band: the photo window sits under the title, measured from the layout
+  const hero = document.querySelector(".hero");
+  const hm = document.querySelector(".hero-media");
+  const slot = document.querySelector(".hero-slot");
+  const band = () => { const h = hero.getBoundingClientRect(), s = slot.getBoundingClientRect(); return { t: s.top - h.top, r: h.right - s.right, b: h.bottom - s.bottom, l: s.left - h.left }; };
+  const setBand = () => { if (!desk.matches) return; const b = band(); ["t", "r", "b", "l"].forEach((k, i) => hm.style.setProperty(["--ct", "--cr", "--cb", "--cl"][i], b[k] + "px")); };
+
+  // At a glance: on a computer each line is drawn to its numbered spot in the photo; a phone shows the numbered spots only
+  const gPin = document.querySelector(".glance-pin");
+  const gSvg = gPin.querySelector(".g-links");
+  const gLis = [...gPin.querySelectorAll(".lines li")];
+  const gDots = [...gPin.querySelectorAll(".g-pins li")];
+  const G_STEP = [[.06, .3], [.38, .62], [.7, .94]]; // when each line lights up and its link is drawn
+  let gWires = [], glanceP = 0;
+  function renderGlance(p) {
+    glanceP = p;
+    gLis.forEach((li, i) => li.classList.toggle("is-on", p > 0 && p >= G_STEP[i][0]));
+    gDots.forEach((d, i) => d.classList.toggle("is-on", p > 0 && p >= G_STEP[i][1] - .05));
+    gWires.forEach((w, i) => { const [a, b] = G_STEP[i]; const k = clamp01((p - a) / (b - a)); w.path.style.strokeDashoffset = String(w.len * (1 - k)); w.dot.style.opacity = k > 0 ? "1" : "0"; });
+  }
+  function buildGlance() {
+    gSvg.textContent = "";
+    gWires = [];
+    const fr = gPin.getBoundingClientRect();
+    if (!fr.width || !desk.matches) { renderGlance(glanceP); return; }
+    gSvg.setAttribute("width", fr.width);
+    gSvg.setAttribute("height", fr.height);
+    gSvg.setAttribute("viewBox", `0 0 ${fr.width} ${fr.height}`);
+    // every link starts on one shared edge after the text, runs across, and stops just short of its spot
+    const x0 = Math.max(...gLis.map(li => li.querySelector("p").getBoundingClientRect().right)) - fr.left + 22;
+    gWires = gLis.map((li, i) => {
+      const a = li.getBoundingClientRect(), b = gDots[i].getBoundingClientRect();
+      const y0 = a.top - fr.top + a.height / 2, y1 = b.top - fr.top + b.height / 2;
+      const x1 = b.left - fr.left + b.width / 2 - 21, k = Math.max(8, Math.min(56, (x1 - x0) / 3));
+      const path = document.createElementNS(NS, "path");
+      path.setAttribute("d", `M${x0.toFixed(1)} ${y0.toFixed(1)} C${(x0 + k).toFixed(1)} ${y0.toFixed(1)} ${(x0 + k).toFixed(1)} ${y1.toFixed(1)} ${(x0 + 2 * k).toFixed(1)} ${y1.toFixed(1)} L${x1.toFixed(1)} ${y1.toFixed(1)}`);
+      gSvg.appendChild(path);
+      const dot = document.createElementNS(NS, "circle");
+      dot.setAttribute("cx", x0.toFixed(1));
+      dot.setAttribute("cy", y0.toFixed(1));
+      dot.setAttribute("r", "4");
+      gSvg.appendChild(dot);
+      const len = path.getTotalLength();
+      path.style.strokeDasharray = `${len} ${len}`;
+      return { path, dot, len };
+    });
+    renderGlance(glanceP);
+  }
+
+  // The orb in play: clips play only while on screen, and one button pauses them all. With motion off nothing plays until asked
+  const vids = [...document.querySelectorAll(".clip video")];
+  const vbtn = document.querySelector("[data-vtoggle]");
+  const vSeen = new Set();
+  let vOn = !reduce;
+  const syncVids = () => {
+    vids.forEach(v => { if (vOn && vSeen.has(v)) { const pr = v.play(); if (pr) pr.catch(() => {}); } else v.pause(); });
+    vbtn.textContent = vOn ? "Pause videos" : "Play videos";
+  };
+  vbtn.addEventListener("click", () => { vOn = !vOn; syncVids(); });
+  if ("IntersectionObserver" in window) {
+    const vio = new IntersectionObserver(es => { es.forEach(e => { if (e.isIntersecting) vSeen.add(e.target); else vSeen.delete(e.target); }); syncVids(); }, { threshold: .25 });
+    vids.forEach(v => vio.observe(v));
+  } else vids.forEach(v => vSeen.add(v));
+  syncVids();
+
+  // 04-3 storyboard: a ribbon runs through the six panels, each panel lights when it arrives
+  const story = document.querySelector("[data-story]");
+  const sSvg = story.querySelector(".story-path");
+  const panels = [...story.querySelectorAll(".st")];
+  let sLive = null, sLen = 0, sAnchors = [], sDots = [], storyP = 0;
+  const curve = p => {
+    let d = `M${p[0][0].toFixed(1)} ${p[0][1].toFixed(1)}`;
+    for (let i = 0; i < p.length - 1; i++) {
+      const p0 = p[i - 1] || p[i], p1 = p[i], p2 = p[i + 1], p3 = p[i + 2] || p2;
+      const c = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6, p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+      d += ` C${c.map(v => v.toFixed(1)).join(" ")} ${p2[0].toFixed(1)} ${p2[1].toFixed(1)}`;
+    }
+    return d;
+  };
+  function renderStory(p) {
+    storyP = p;
+    if (!sLive) return;
+    const drawn = sLen * p;
+    sLive.style.strokeDashoffset = String(sLen - drawn);
+    panels.forEach((s, i) => s.classList.toggle("is-on", drawn >= sAnchors[i] - 2));
+    sDots.forEach((d, i) => d.classList.toggle("is-on", drawn >= sAnchors[i] - 2));
+  }
+  function buildStory() {
+    const r = story.getBoundingClientRect();
+    if (!r.width) return;
+    sSvg.setAttribute("width", r.width);
+    sSvg.setAttribute("height", r.height);
+    sSvg.setAttribute("viewBox", `0 0 ${r.width} ${r.height}`);
+    [...sSvg.querySelectorAll("path, circle")].forEach(n => n.remove());
+    const narrow = !desk.matches;
+    const pts = panels.map(s => {
+      const b = s.querySelector(".st-frame").getBoundingClientRect();
+      return narrow ? [12, b.top - r.top + b.height / 2] : [b.left - r.left + b.width / 2, b.top - r.top + b.height / 2];
+    });
+    const d = curve(pts);
+    const make = (tag, cls) => { const el = document.createElementNS(NS, tag); el.setAttribute("class", cls); sSvg.appendChild(el); return el; };
+    make("path", "sb").setAttribute("d", d);
+    sLive = make("path", "sl");
+    sLive.setAttribute("d", d);
+    if (narrow) sLive.style.strokeWidth = "6";
+    sLen = sLive.getTotalLength();
+    sLive.style.strokeDasharray = `${sLen} ${sLen}`;
+    // where along the ribbon each panel sits
+    const samples = [];
+    for (let l = 0; l <= sLen; l += 4) { const q = sLive.getPointAtLength(l); samples.push([l, q.x, q.y]); }
+    sAnchors = pts.map(([x, y]) => samples.reduce((best, s) => { const dd = (s[1] - x) ** 2 + (s[2] - y) ** 2; return dd < best[1] ? [s[0], dd] : best; }, [0, Infinity])[0]);
+    sDots = narrow ? pts.map(([x, y]) => { const c = make("circle", "sd"); c.setAttribute("cx", x); c.setAttribute("cy", y); c.setAttribute("r", "7"); return c; }) : [];
+    renderStory(storyP);
+  }
+
+  // 04-3 circuit: wires drawn between the real boxes, coloured like the board's legend (signal, output, power)
+  const circuit = document.querySelector("[data-circuit]");
+  const cSvg = circuit.querySelector(".c-wires");
+  const CN = { a: ".c-a", b: ".c-b", hub: ".c-hub", c: ".c-c", d: ".c-d", e: ".c-e", f: ".c-f" };
+  Object.keys(CN).forEach(k => { CN[k] = circuit.querySelector(CN[k]); });
+  const C_EDGES = [["a", "hub", "w-in", 0], ["b", "hub", "w-in", 0], ["f", "hub", "w-pow", 0], ["hub", "c", "w-out", 1], ["hub", "d", "w-out", 1], ["hub", "e", "w-out", 1]];
+  const C_SEG = [[.06, .46], [.52, .92]]; // the inputs and power reach the board first, then the board reaches the outputs
+  const C_LIT = { a: .02, b: .02, f: .02, hub: .46, c: .92, d: .92, e: .92 };
+  let cWires = [], circuitP = 0;
+  function renderCircuit(p) {
+    circuitP = p;
+    cWires.forEach(w => { const [s0, s1] = C_SEG[w.step]; const k = clamp01((p - s0) / (s1 - s0)); w.live.style.strokeDashoffset = String(w.len * (1 - k)); });
+    Object.entries(C_LIT).forEach(([k, t]) => CN[k].classList.toggle("is-on", p > 0 && p >= t));
+  }
+  function buildCircuit() {
+    cSvg.textContent = "";
+    cWires = [];
+    const fr = circuit.getBoundingClientRect();
+    if (!fr.width || !desk.matches) { renderCircuit(circuitP); return; }
+    cSvg.setAttribute("width", fr.width);
+    cSvg.setAttribute("height", fr.height);
+    cSvg.setAttribute("viewBox", `0 0 ${fr.width} ${fr.height}`);
+    const box = n => { const r = n.getBoundingClientRect(); return { l: r.left - fr.left, t: r.top - fr.top, r: r.right - fr.left, b: r.bottom - fr.top }; };
+    const make = (tag, cls) => { const el = document.createElementNS(NS, tag); el.setAttribute("class", cls); cSvg.appendChild(el); return el; };
+    cWires = C_EDGES.map(([from, to, cls, step]) => {
+      const A = box(CN[from]), B = box(CN[to]);
+      let d;
+      if (B.l >= A.r - 2) { // the next box sits to the right
+        const x0 = A.r, y0 = (A.t + A.b) / 2, x1 = B.l, y1 = (B.t + B.b) / 2, m = (x1 - x0) / 2;
+        d = `M${x0} ${y0} C${x0 + m} ${y0} ${x1 - m} ${y1} ${x1} ${y1}`;
+      } else { // power comes up from below
+        const x0 = (A.l + A.r) / 2, y0 = A.t, x1 = (B.l + B.r) / 2, y1 = B.b, m = (y0 - y1) / 2;
+        d = `M${x0} ${y0} C${x0} ${y0 - m} ${x1} ${y1 + m} ${x1} ${y1}`;
+      }
+      make("path", "bw").setAttribute("d", d);
+      const live = make("path", "lw " + cls);
+      live.setAttribute("d", d);
+      const len = live.getTotalLength();
+      live.style.strokeDasharray = `${len} ${len}`;
+      return { live, len, step };
+    });
+    renderCircuit(circuitP);
+  }
+
+  // 04-3 code: the four stages light up in turn, with their line in the code
+  const stageEls = [...document.querySelectorAll(".stages li")];
+  const codeLines = [...document.querySelectorAll(".cl[data-s]")];
+  const renderStages = p => { const at = p <= 0 ? -1 : Math.min(3, Math.floor(p * 4 * .9999)); stageEls.forEach((el, i) => el.classList.toggle("is-on", i === at)); codeLines.forEach((el, i) => el.classList.toggle("is-on", i === at)); };
+
+  // 04-4: the model's steps light up, then each recorded state is read from left to right
+  const pipeSteps = [...document.querySelectorAll(".pipe li")];
+  const renderPipe = p => pipeSteps.forEach((el, i) => el.classList.toggle("is-on", p >= (i + .5) / pipeSteps.length));
+  const plots = [...document.querySelectorAll(".plot")];
+  const renderPlots = p => plots.forEach((el, i) => {
+    const k = clamp01(p * plots.length - i);
+    el.classList.toggle("is-on", k > 0);
+    const sc = el.querySelector(".scan");
+    sc.style.left = (k * 100) + "%";
+    sc.style.opacity = k > 0 && k < 1 ? "1" : "0";
+  });
+
+  // 05 bars: height and number move together
+  const bars = [...document.querySelectorAll(".bar")];
+  const renderBars = k => bars.forEach(b => { const v = +b.style.getPropertyValue("--v"); b.style.setProperty("--h", String(v * k)); b.querySelector(".val").textContent = Math.round(v * k) + "%"; });
+
+  if (reduce || !window.gsap || !window.ScrollTrigger || !window.Lenis) {
+    root.classList.add("static");
+    setBand();
+    glanceP = 1;
+    buildGlance();
+    storyP = 1;
+    buildStory();
+    circuitP = 1;
+    buildCircuit();
+    renderPipe(1);
+    renderPlots(1);
+    renderBars(1);
+    // 07: the finished shape: smaller, coloured, closer to the app
+    const at = (sel, a) => document.querySelectorAll(sel).forEach(n => Object.entries(a).forEach(([k, v]) => n.setAttribute(k, v)));
+    at(".o-ring, .o-fill", { r: 92 });
+    at(".o-mods .f-a", { r: 22 });
+    at(".o-mods .f-b", { r: 18 });
+    at(".o-mods .f-c", { r: 20 });
+    at(".app", { x: 282, y: 96 });
+    at(".tie", { x2: 300, y2: 126 });
+    document.querySelector(".o-fill").style.opacity = ".85";
+    const relayout = () => { setBand(); buildGlance(); buildStory(); buildCircuit(); };
+    addEventListener("resize", relayout);
+    addEventListener("load", relayout);
+    document.fonts && document.fonts.ready.then(relayout);
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+  const lenis = new Lenis({ lerp: .085, wheelMultiplier: 1, smoothWheel: true });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add(t => lenis.raf(t * 1000));
+  gsap.ticker.lagSmoothing(0);
+  window.__lenis = lenis; // lets the preview checks jump to a section
+
+  const mm = gsap.matchMedia();
+  // desktop gets the pinned layouts; set the class first so every trigger measures the right layout
+  mm.add("(min-width: 901px)", () => { root.classList.add("m-desk"); return () => root.classList.remove("m-desk"); });
+
+  // Hero enters once
+  gsap.set(".hero-title .ch", { yPercent: 108 });
+  // the long bar under the photo is drawn first and the photo opens behind it; the other bars follow one by one
+  gsap.timeline({ delay: .1 })
+    .to(".hero-title .ch", { yPercent: 0, duration: 1.5, ease: "expo.out", stagger: .05 }, .15)
+    .from(".hb-a", { scaleX: 0, duration: 1.5, ease: "expo.inOut" }, .3)
+    .fromTo(".hero-frame", { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.5, ease: "expo.inOut" }, .3)
+    .from(".hero-img", { scale: 1.18, duration: 2.4, ease: "expo.out" }, .3)
+    .fromTo(".hero-head .meta, .hero-side > :not(.hb)", { y: 26, clipPath: "inset(0% 0% 100% 0%)" }, { y: 0, clipPath: "inset(0% 0% 0% 0%)", duration: 1.1, ease: "power3.out", stagger: .1 }, .5)
+    .from(".hb-m", { scaleX: 0, duration: 1.2, ease: "expo.out" }, .75)
+    .from(".hb-v", { scaleY: 0, duration: 1.2, ease: "expo.out" }, .9)
+    .from(".hb-r", { scaleY: 0, duration: 1.1, ease: "expo.out" }, 1.25)
+    .from(".hb-c", { scaleX: 0, duration: 1, ease: "expo.out" }, 1.4)
+    .fromTo(".cue-in", { y: 12, clipPath: "inset(0% 0% 100% 0% round 99px)" }, { y: 0, clipPath: "inset(0% 0% 0% 0% round 99px)", duration: .9, ease: "power3.out" }, 1.4);
+
+  // Facts: the rule draws, the columns follow
+  const ft = { trigger: ".facts", start: "top 80%" };
+  gsap.from(".facts .rule", { scaleX: 0, duration: 1.4, ease: "expo.out", scrollTrigger: ft });
+  gsap.from(".facts .rule i", { scaleX: 0, duration: 1.1, ease: "expo.out", delay: .25, scrollTrigger: ft });
+
+  // the bar indexes: every section's bars grow in from the left, one after another
+  gsap.utils.toArray(".ix").forEach(b => gsap.from(b.children, { scaleX: 0, duration: 1.1, ease: "expo.out", stagger: .09, scrollTrigger: { trigger: b, start: "top 90%" } }));
+  gsap.utils.toArray(".d-track").forEach(t => gsap.from(t.children, { scaleX: 0, duration: .9, ease: "expo.out", stagger: .08, scrollTrigger: { trigger: t, start: "top 88%" } }));
+  gsap.from(".facts .f", { y: 32, opacity: 0, duration: 1, ease: "power3.out", stagger: .07, delay: .15, scrollTrigger: ft });
+
+  // Headings rise word by word
+  document.querySelectorAll("[data-split]").forEach(h => {
+    gsap.from(h.querySelectorAll(".w"), { yPercent: 115, duration: 1.2, ease: "expo.out", stagger: .045, scrollTrigger: { trigger: h, start: "top 84%" } });
+  });
+
+  mm.add("(min-width: 901px)", () => {
+    // Hero: the photo window opens to the whole screen
+    gsap.timeline({ scrollTrigger: { trigger: ".hero", start: "top top", end: "+=95%", scrub: 1, pin: true, anticipatePin: 1, invalidateOnRefresh: true } })
+      .fromTo(hm, { "--ct": () => band().t + "px", "--cr": () => band().r + "px", "--cb": () => band().b + "px", "--cl": () => band().l + "px", "--rad": "6px" },
+        { "--ct": "0px", "--cr": "0px", "--cb": "0px", "--cl": "0px", "--rad": "0px", ease: "none" }, 0)
+      // the photo pushes the title and the intro up and out, so nothing ever sits half-faded on the photo
+      .fromTo(".hero-title, .hero-head", { y: 0 }, { y: () => -band().t, ease: "none" }, 0)
+      .to(".cue", { opacity: 0, ease: "none", duration: .3 }, 0);
+
+    // At a glance: the photo opens out of an orb, then each line is drawn to its spot in the photo
+    const gp = { p: 0 };
+    gsap.timeline({ scrollTrigger: { trigger: ".glance", start: "top top", end: () => "+=" + innerHeight * 2.2, pin: ".glance-pin", scrub: 1, anticipatePin: 1, invalidateOnRefresh: true } })
+      .fromTo(".g-frame", { clipPath: "circle(24% at 52% 56%)" }, { clipPath: "circle(110% at 52% 56%)", ease: "power1.in", duration: .3 }, 0)
+      .fromTo(".g-img img", { scale: 1.1 }, { scale: 1, ease: "none", duration: .3 }, 0)
+      .to(gp, { p: 1, ease: "none", duration: .62, onUpdate: () => renderGlance(gp.p) }, .32)
+      .to({}, { duration: .06 }, .94);
+
+    // 04-2: the swatches are laid down one by one, easy row first, as both rows slide past
+    const rows = document.querySelector(".rows");
+    const fill = document.querySelector(".scale-bar b");
+    const dist = () => Math.max(0, rows.scrollWidth - innerWidth);
+    gsap.set(fill, { scaleX: 0 });
+    const slide = gsap.to(rows, {
+      x: () => -dist(), ease: "none",
+      scrollTrigger: {
+        trigger: ".scale", start: "top top", end: () => "+=" + dist(), pin: ".scale-pin", scrub: 1, anticipatePin: 1, invalidateOnRefresh: true,
+        onUpdate: self => gsap.set(fill, { scaleX: self.progress })
+      }
+    });
+    // 4: the app screens are dealt out of one fanned stack into the row, then each group gets its bar
+    const phs = gsap.utils.toArray(".ph");
+    gsap.fromTo(phs,
+      { x: (i, el) => el.parentElement.offsetWidth / 2 - (el.offsetLeft + el.offsetWidth / 2), y: i => Math.abs(i - 3) * 14, rotate: i => (i - 3) * 5 },
+      { x: 0, y: 0, rotate: 0, ease: "power2.out", stagger: .03, scrollTrigger: { trigger: ".ph-grid", start: "top 88%", end: "center 52%", scrub: 1, invalidateOnRefresh: true } });
+    // making strip: drifts sideways while the block passes
+    const mrow = document.querySelector(".make-row");
+    gsap.fromTo(mrow, { x: () => innerWidth * .14 }, { x: () => -Math.max(0, mrow.scrollWidth - innerWidth), ease: "none", scrollTrigger: { trigger: ".make", start: "top bottom", end: "bottom top", scrub: true, invalidateOnRefresh: true } });
+    gsap.utils.toArray(".sw").forEach((s, i) => gsap.fromTo(s.querySelector(".sw-img"), { y: 80, rotate: i % 2 ? -6 : 6, opacity: .2 }, { y: 0, rotate: 0, opacity: 1, ease: "power2.out", scrollTrigger: { trigger: s, containerAnimation: slide, start: "left 104%", end: "left 70%", scrub: true } }));
+    ScrollTrigger.sort();
+  });
+
+  mm.add("(max-width: 900px)", () => {
+    // At a glance on a phone: the photo opens out of an orb, the numbered spots pop in, the lines follow
+    gsap.fromTo(".g-frame", { clipPath: "circle(30% at 40% 60%)" }, { clipPath: "circle(100% at 40% 60%)", ease: "none", scrollTrigger: { trigger: ".g-fig", start: "top 88%", end: "center 45%", scrub: 1 } });
+    gsap.from(".g-pins li", { scale: 0, duration: .6, ease: "back.out(2.2)", stagger: .15, scrollTrigger: { trigger: ".g-fig", start: "center 62%" } });
+    gsap.from(".lines li", { y: 30, opacity: 0, duration: .9, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".lines", start: "top 82%" } });
+    // 04-2 on a phone: each row's swatches are dealt out in order
+    gsap.utils.toArray(".tiles").forEach(t => gsap.from(t.children, { x: 60, opacity: 0, duration: .8, ease: "power3.out", stagger: .07, scrollTrigger: { trigger: t, start: "top 84%" } }));
+    ScrollTrigger.sort();
+  });
+
+  // 01 Problem: the big index drifts, the three reactions are marked, the wait line runs long
+  gsap.to(".problem .bigidx", { yPercent: -36, ease: "none", scrollTrigger: { trigger: ".problem", start: "top bottom", end: "bottom top", scrub: true } });
+  document.querySelectorAll(".hl").forEach(m => gsap.fromTo(m, { backgroundSize: "0% 42%" }, { backgroundSize: "100% 42%", ease: "none", scrollTrigger: { trigger: m, start: "top 82%", end: "top 58%", scrub: true } }));
+  gsap.from(".pbody", { y: 40, opacity: 0, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: ".pbody", start: "top 88%" } });
+  gsap.fromTo(".wait-line", { scaleX: 0 }, { scaleX: 1, ease: "none", scrollTrigger: { trigger: ".wait", start: "top 90%", end: "top 40%", scrub: true } });
+
+  // 02 Research: each pain point meets its answer
+  gsap.utils.toArray(".pt tbody tr").forEach(tr => {
+    gsap.timeline({ scrollTrigger: { trigger: tr, start: "top 90%", end: "top 60%", scrub: 1 } })
+      .from(tr.querySelector(".c-n"), { opacity: 0, ease: "none", duration: .3 }, 0)
+      .from(tr.querySelector(".c-pain > span"), { x: -40, opacity: .15, ease: "none", duration: .45 }, 0)
+      .from(tr.querySelector(".con"), { scale: 0, ease: "none", duration: .25 }, .4)
+      .from(tr.querySelector(".c-ans > span"), { x: 70, opacity: 0, ease: "none", duration: .45 }, .55);
+  });
+
+  // 03 Insight: four senses move together into one orb
+  const stage = document.querySelector(".senses");
+  const sp = [[24, 24, 39, 39], [76, 24, 61, 39], [24, 76, 39, 61], [76, 76, 61, 61]];
+  const it = { trigger: ".senses", start: "top 82%", end: "center 46%", scrub: 1, invalidateOnRefresh: true };
+  gsap.utils.toArray(".sense").forEach((s, i) => gsap.fromTo(s,
+    { x: () => (sp[i][0] - 50) / 100 * stage.offsetWidth, y: () => (sp[i][1] - 50) / 100 * stage.offsetWidth },
+    { x: () => (sp[i][2] - 50) / 100 * stage.offsetWidth, y: () => (sp[i][3] - 50) / 100 * stage.offsetWidth, ease: "power2.inOut", scrollTrigger: it }));
+  gsap.fromTo(".ring circle", { strokeDasharray: "1 1", strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: "none", scrollTrigger: { trigger: ".senses", start: "center 62%", end: "center 36%", scrub: 1 } });
+
+  // 04 Key decisions: the numbers fill, the copy follows
+  document.querySelectorAll(".dn").forEach(n => gsap.fromTo(n, { "--p": "0%" }, { "--p": "100%", ease: "none", scrollTrigger: { trigger: n, start: "top 85%", end: "top 40%", scrub: true } }));
+  gsap.utils.toArray(".d-copy").forEach(c => gsap.from([...c.children].slice(1), { y: 36, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: c, start: "top 84%" } }));
+  // 1: the ball rolls in; the shell opens; one module comes apart in layers; the play scene rises in
+  gsap.fromTo(".sk-ball img", { xPercent: 90, rotate: 104 }, { xPercent: 0, rotate: 0, ease: "power2.out", scrollTrigger: { trigger: ".sk-ball", start: "top bottom", end: "center 52%", scrub: 1 } });
+  gsap.from(".sk-ball .sk-label", { x: -16, opacity: 0, duration: .9, ease: "power3.out", scrollTrigger: { trigger: ".sk-ball", start: "top 80%" } });
+  const skr = { trigger: ".sk-row", start: "top 88%", end: "center 50%", scrub: 1 };
+  gsap.fromTo(".sk-int", { xPercent: 46 }, { xPercent: 0, ease: "power2.out", scrollTrigger: skr });
+  gsap.fromTo(".sk-half", { xPercent: -30 }, { xPercent: 0, ease: "power2.out", scrollTrigger: skr });
+  gsap.fromTo(".ly-1", { yPercent: 15 }, { yPercent: 0, ease: "power2.out", scrollTrigger: skr });
+  gsap.fromTo(".ly-2", { yPercent: 7 }, { yPercent: 0, ease: "power2.out", scrollTrigger: skr });
+  gsap.from(".sk-row .sk-label", { x: -16, opacity: 0, duration: .9, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".sk-row", start: "top 84%" } });
+  gsap.from(".sk-child", { y: 50, opacity: 0, duration: 1.3, ease: "power3.out", scrollTrigger: { trigger: ".sk-g-play", start: "top 80%" } });
+  // 1: the render settles, the numbered parts pop in, the list follows
+  gsap.fromTo(".layers-img img", { scale: .9, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: ".layers", start: "top 76%" } });
+  gsap.from(".dots li", { scale: 0, duration: .6, ease: "back.out(2.2)", stagger: .12, delay: .5, scrollTrigger: { trigger: ".layers", start: "top 76%" } });
+  gsap.from(".built li", { x: 40, opacity: 0, duration: .9, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".built", start: "top 84%" } });
+  // 2: the making photo opens from the bottom
+  gsap.fromTo(".swap .vframe", { clipPath: "inset(100% 0% 0% 0% round 6px)" }, { clipPath: "inset(0% 0% 0% 0% round 6px)", duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: ".swap", start: "top 78%" } });
+  // 3: the light photo opens, the ribbon runs through the storyboard, the wires draw, the stages step through
+  gsap.fromTo(".build-img img", { clipPath: "inset(0% 0% 100% 0%)", scale: 1.08 }, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: 1.8, ease: "expo.out", scrollTrigger: { trigger: ".build", start: "top 78%" } });
+  buildGlance();
+  ScrollTrigger.addEventListener("refresh", buildGlance);
+  buildStory();
+  ScrollTrigger.addEventListener("refresh", buildStory);
+  const sp2 = { p: 0 };
+  gsap.to(sp2, { p: 1, ease: "none", onUpdate: () => renderStory(sp2.p), scrollTrigger: { trigger: ".story-grid", start: "top 72%", end: "bottom 62%", scrub: 1 } });
+  buildCircuit();
+  ScrollTrigger.addEventListener("refresh", buildCircuit);
+  const cp = { p: 0 };
+  gsap.to(cp, { p: 1, ease: "none", onUpdate: () => renderCircuit(cp.p), scrollTrigger: { trigger: ".circuit", start: "top 80%", end: "bottom 52%", scrub: 1 } });
+  gsap.from(".tests figure", { y: 50, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".tests", start: "top 86%" } });
+  const stp = { p: 0 };
+  gsap.to(stp, { p: 1, ease: "none", onUpdate: () => renderStages(stp.p), scrollTrigger: { trigger: ".sm", start: "top 78%", end: "bottom 38%", scrub: true } });
+  // 4: the model's steps, then the recorded data
+  const pp = { p: 0 };
+  gsap.to(pp, { p: 1, ease: "none", onUpdate: () => renderPipe(pp.p), scrollTrigger: { trigger: ".pipe", start: "top 82%", end: "bottom 56%", scrub: true } });
+  const dp = { p: 0 };
+  gsap.to(dp, { p: 1, ease: "none", onUpdate: () => renderPlots(dp.p), scrollTrigger: { trigger: ".plots", start: "top 82%", end: "bottom 36%", scrub: 1 } });
+
+  // 4: the parent app: the photo opens, the group bars are drawn
+  gsap.fromTo(".ah-img", { clipPath: "inset(0% 0% 100% 0% round 6px)" }, { clipPath: "inset(0% 0% 0% 0% round 6px)", duration: 1.6, ease: "expo.out", scrollTrigger: { trigger: ".app-top", start: "top 78%" } });
+  gsap.from(".ph-g i", { scaleX: 0, duration: 1.1, ease: "expo.inOut", stagger: .15, scrollTrigger: { trigger: ".ph-grid", start: "top 60%" } });
+  gsap.from(".ph-g span", { y: 14, opacity: 0, duration: .9, ease: "power3.out", stagger: .15, delay: .3, scrollTrigger: { trigger: ".ph-grid", start: "top 60%" } });
+
+  // making the prototype: the frames rise in one after another
+  gsap.from(".mk", { y: 50, opacity: 0, duration: 1, ease: "power3.out", stagger: .08, scrollTrigger: { trigger: ".make", start: "top 82%" } });
+
+  // 05 Prototype and test: the page turns to night
+  gsap.fromTo(".lab", { clipPath: "inset(0% 3% 0% 3% round 40px)" }, { clipPath: "inset(0% 0% 0% 0% round 0px)", ease: "none", scrollTrigger: { trigger: ".lab", start: "top bottom", end: "top 12%", scrub: true } });
+  gsap.from(".lab-lead", { y: 36, opacity: 0, duration: 1.1, ease: "power3.out", scrollTrigger: { trigger: ".lab-lead", start: "top 88%" } });
+  const bk = { k: 0 };
+  renderBars(0);
+  gsap.to(bk, { k: 1, ease: "none", onUpdate: () => renderBars(bk.k), scrollTrigger: { trigger: ".bars", start: "top 82%", end: "bottom 62%", scrub: 1 } });
+  gsap.from(".bar .bl", { y: 16, opacity: 0, duration: .8, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".bars", start: "top 80%" } });
+  gsap.utils.toArray(".room-img").forEach(r => gsap.fromTo(r.querySelector("img"), { clipPath: "inset(0% 0% 100% 0%)", scale: 1.08 }, { clipPath: "inset(0% 0% 0% 0%)", scale: 1, duration: 1.8, ease: "expo.out", scrollTrigger: { trigger: r, start: "top 80%" } }));
+  gsap.from(".finds li", { x: 48, opacity: 0, duration: 1, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".finds", start: "top 82%" } });
+  gsap.from(".note", { y: 30, opacity: 0, duration: 1, ease: "power3.out", scrollTrigger: { trigger: ".note", start: "top 92%" } });
+  gsap.fromTo(".lab", { clipPath: "inset(0% 0% 0% 0% round 0px)" }, { clipPath: "inset(0% 3% 0% 3% round 40px)", ease: "none", immediateRender: false, scrollTrigger: { trigger: ".lab", start: "bottom 80%", end: "bottom top", scrub: true } });
+
+  // 06 Result: the photo opens from an orb
+  gsap.fromTo(".final-img", { clipPath: "circle(22% at 50% 50%)" }, { clipPath: "circle(75% at 50% 50%)", ease: "none", scrollTrigger: { trigger: ".final", start: "top 88%", end: "center 52%", scrub: 1 } });
+  gsap.fromTo(".final-img img", { scale: 1.2 }, { scale: 1, ease: "none", scrollTrigger: { trigger: ".final", start: "top 88%", end: "center 52%", scrub: 1 } });
+  gsap.fromTo(".wide-img", { clipPath: "inset(0% 10% 0% 10% round 6px)" }, { clipPath: "inset(0% 0% 0% 0% round 6px)", ease: "none", scrollTrigger: { trigger: ".wide", start: "top 92%", end: "center 52%", scrub: 1 } });
+  gsap.fromTo(".wide-img img", { scale: 1.14 }, { scale: 1, ease: "none", scrollTrigger: { trigger: ".wide", start: "top 92%", end: "center 52%", scrub: 1 } });
+  gsap.from(".made li", { y: 34, opacity: 0, duration: .95, ease: "power3.out", stagger: .12, scrollTrigger: { trigger: ".made", start: "top 84%" } });
+  // final output: the key's bars are drawn, then the three photos open from their numbered corner
+  const fot = { trigger: ".fo", start: "top 76%" };
+  gsap.from(".fo-line", { y: 36, opacity: 0, duration: 1.1, ease: "power3.out", scrollTrigger: fot });
+  gsap.from(".fo-idx .fv", { scaleY: 0, duration: .9, ease: "expo.out", stagger: .12, delay: .2, scrollTrigger: fot });
+  gsap.from(".fo-idx .fh", { scaleX: 0, duration: 1.2, ease: "expo.inOut", delay: .35, scrollTrigger: fot });
+  gsap.from(".fo-legend li", { x: 20, opacity: 0, duration: .8, ease: "power3.out", stagger: .1, delay: .4, scrollTrigger: fot });
+  gsap.utils.toArray(".fo-row figure").forEach((f, i) => gsap.fromTo(f.querySelector(".fo-img"), { clipPath: "inset(0% 100% 100% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.5, ease: "expo.inOut", delay: i * .12, scrollTrigger: { trigger: ".fo-row", start: "top 82%" } }));
+  gsap.fromTo(".lq .w", { opacity: .5 }, { opacity: 1, stagger: .1, ease: "none", scrollTrigger: { trigger: ".lq", start: "top 84%", end: "bottom 56%", scrub: true } });
+  gsap.from(".btns .btn", { y: 24, opacity: 0, duration: 1, ease: "power3.out", stagger: .08, scrollTrigger: { trigger: ".btns", start: "top 94%" } });
+
+  // 07 Next: smaller, then warmer, then closer to the app. On a computer it follows the list; on a phone, the drawing itself
+  const shapeTl = sc => gsap.timeline({ scrollTrigger: sc })
+    .fromTo(".o-ring, .o-fill", { attr: { r: 150 } }, { attr: { r: 92 }, ease: "none", duration: 1 }, 0)
+    .fromTo(".o-fill", { opacity: 0 }, { opacity: .85, ease: "none", duration: .4 }, 1)
+    .fromTo(".o-mods .f-a", { attr: { r: 0 } }, { attr: { r: 22 }, ease: "back.out(2)", duration: .4 }, 1.2)
+    .fromTo(".o-mods .f-b", { attr: { r: 0 } }, { attr: { r: 18 }, ease: "back.out(2)", duration: .4 }, 1.35)
+    .fromTo(".o-mods .f-c", { attr: { r: 0 } }, { attr: { r: 20 }, ease: "back.out(2)", duration: .4 }, 1.5)
+    .fromTo(".app", { attr: { x: 342, y: 30 } }, { attr: { x: 282, y: 96 }, ease: "none", duration: 1 }, 2)
+    .fromTo(".tie", { attr: { x2: 360, y2: 60 } }, { attr: { x2: 300, y2: 126 }, ease: "none", duration: 1 }, 2);
+  mm.add("(min-width: 901px)", () => { shapeTl({ trigger: ".changes", start: "top 72%", end: "bottom 52%", scrub: 1 }); });
+  mm.add("(max-width: 900px)", () => { shapeTl({ trigger: ".shape", start: "top 82%", end: "bottom 30%", scrub: 1 }); });
+  gsap.from(".changes .ln", { scaleX: 0, duration: 1.4, ease: "expo.out", stagger: .15, scrollTrigger: { trigger: ".changes", start: "top 82%" } });
+  gsap.from(".changes .n, .changes p", { y: 40, opacity: 0, duration: 1.1, ease: "power3.out", stagger: .08, scrollTrigger: { trigger: ".changes", start: "top 82%" } });
+  // the orb in play: the dark band opens, then each clip opens out of an orb
+  gsap.fromTo(".play", { clipPath: "inset(0% 3% 0% 3% round 40px)" }, { clipPath: "inset(0% 0% 0% 0% round 0px)", ease: "none", scrollTrigger: { trigger: ".play", start: "top bottom", end: "top 15%", scrub: true } });
+  gsap.utils.toArray(".clip-frame").forEach(f => gsap.fromTo(f, { clipPath: "circle(18% at 50% 50%)" }, { clipPath: "circle(75% at 50% 50%)", ease: "none", scrollTrigger: { trigger: ".clips", start: "top 92%", end: "center 55%", scrub: 1 } }));
+  gsap.from(".clip .cap", { y: 16, opacity: 0, duration: .9, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".clips", start: "center 70%" } });
+
+  gsap.from(".next-case > *", { y: 40, opacity: 0, duration: 1.2, ease: "power3.out", stagger: .1, scrollTrigger: { trigger: ".case-nav", start: "top 88%" } });
+
+  ScrollTrigger.sort();
+  addEventListener("load", () => ScrollTrigger.refresh());
+  document.fonts && document.fonts.ready.then(() => ScrollTrigger.refresh());
+})();
+</script>
+</body>
+</html>
